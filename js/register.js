@@ -21,7 +21,7 @@ document.getElementById('register').addEventListener('submit', async (e) => {
 
     if (res.ok) {
       alert('Registered successfully! Redirecting to login...');
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     }
 
   } catch (err) {
