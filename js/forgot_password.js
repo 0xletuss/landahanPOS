@@ -82,7 +82,7 @@ document.getElementById('otpForm').addEventListener('submit', async (e) => {
         
         setTimeout(() => {
           alert("Password reset successful. Redirecting to login.");
-          window.location.href = "login.html";
+          window.location.href = "index.html";
         }, 1500);
 
         return;
