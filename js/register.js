@@ -1,22 +1,33 @@
-// frontend/js/register.js
-document.getElementById('register').addEventListener('submit', async (e) => {
+// frontend/js/login.js
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const name = document.getElementById('name').value;
-  const email = document.getElementById('email').value;
+  const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
+  const message = document.getElementById('message');
 
-  const res = await fetch("https://landahan-5.onrender.com/api/register", {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email, password })
-  });
+  message.textContent = '';
 
-  const data = await res.json();
-  document.getElementById('message').textContent = data.message;
+  try {
+    const res = await fetch("https://landahan-5.onrender.com/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, password })
+    });
 
-  if (res.ok) {
-    alert('Registered successfully! Redirecting to login...');
-    window.location.href = "login.html";
+    const data = await res.json();
+    message.textContent = data.message;
+
+    if (res.ok) {
+      alert('Login successful! Redirecting...');
+      window.location.href = "home.html"; // Replace with your real homepage
+    }
+
+  } catch (err) {
+    console.error("Login error:", err);
+    message.textContent = "Network error. Please try again.";
   }
 });
+
