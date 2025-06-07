@@ -24,7 +24,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     if (res.ok) {
       alert('Login successful! Redirecting...');
       // Redirect to your protected page
-      window.location.href = "home.html";
+     window.location.href = "./pages/home.html";
     }
   } catch (err) {
     console.error("Login error:", err);
