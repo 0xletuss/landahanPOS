@@ -64,7 +64,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const publicPages = ['/index.html', '/pages/register.html', '/pages/forgot_password.html'];
 
     
-    const isPublicPage = publicPages.some(page => currentPage.includes(page));
+    const isPublicPage = publicPages.includes(currentPage);
+
     
     if (!isPublicPage) {
         checkAuthentication();
