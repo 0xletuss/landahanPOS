@@ -44,7 +44,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     if (data.authenticated) {
       // User is already logged in, redirect to home
-      window.location.href = "home.html";
+  window.location.href = "./pages/home.html";
+
     }
   } catch (err) {
     console.log("Auth check failed:", err);
