@@ -13,7 +13,8 @@ async function checkAuthentication() {
         if (!data.authenticated) {
             // Redirect to login if not authenticated
             alert('Please log in to access this page');
-            window.location.href = 'login.html';
+            window.location.href = '../index.html'; // index.html is your login page
+
             return false;
         }
         
@@ -29,7 +30,8 @@ async function checkAuthentication() {
     } catch (error) {
         console.error('Auth check failed:', error);
         alert('Authentication check failed. Please log in.');
-        window.location.href = 'login.html';
+        window.location.href = '../index.html'; // index.html is your login page
+
         return false;
     }
 }
@@ -44,7 +46,8 @@ async function logout() {
         
         if (response.ok) {
             alert('Logged out successfully');
-            window.location.href = 'login.html';
+           window.location.href = '../index.html'; // index.html is your login page
+
         } else {
             alert('Logout failed');
         }
@@ -58,7 +61,8 @@ async function logout() {
 document.addEventListener('DOMContentLoaded', function() {
     // Only check auth if we're not on public pages
     const currentPage = window.location.pathname;
-    const publicPages = ['login.html', 'register.html', 'forgot_password.html'];
+    const publicPages = ['/index.html', '/pages/register.html', '/pages/forgot_password.html'];
+
     
     const isPublicPage = publicPages.some(page => currentPage.includes(page));
     
