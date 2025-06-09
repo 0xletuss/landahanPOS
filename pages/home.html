@@ -33,8 +33,49 @@
                     </div>
                     
                     <div class="feature-card">
-                        <h3>Private Content</h3>
-                        <p>View content that's only available to logged-in users.</p>
+                        <h3>POS System</h3>
+                        <p>Access the Point of Sale system for transactions.</p>
+                        <button onclick="showPOSSection()" class="test-btn">Open POS</button>
+                    </div>
+                </div>
+                
+                <!-- POS Section -->
+                <div id="posSection" class="pos-section hidden">
+                    <div class="pos-wrapper">
+                        <h2>LANDAHAN POS</h2>
+                        
+                        <button id="sellerBtn">Select a Seller</button>
+
+                        <div id="sellerOptions" class="hidden">
+                            <button id="dropdownBtn">Select from List</button>
+                            <button id="addFormBtn">Add New Seller</button>
+                        </div>
+
+                        <div id="sellerDropdownSection" class="hidden">
+                            <select id="sellerList">
+                                <option value="">-- Select Seller --</option>
+                            </select>
+                        </div>
+
+                        <div id="addSellerForm" class="hidden">
+                            <input type="text" id="sellerName" placeholder="Name" required>
+                            <input type="email" id="sellerEmail" placeholder="Email" required>
+                            <input type="text" id="sellerPhone" placeholder="Phone" required>
+                            <input type="text" id="sellerAddress" placeholder="Address" required>
+                            <button id="saveSellerBtn">Save Seller</button>
+                        </div>
+
+                        <label for="quantity">Quantity</label>
+                        <input type="number" id="quantity">
+
+                        <label for="price">Price</label>
+                        <input type="number" id="price">
+
+                        <label for="total">Total Cost</label>
+                        <input type="text" id="total" readonly>
+
+                        <button id="payBtn">Pay</button>
+                        <p id="msg"></p>
                     </div>
                 </div>
                 
@@ -51,6 +92,12 @@
     <script src="../js/auth_check.js"></script>
     
     <script>
+        // Show POS section
+        function showPOSSection() {
+            const posSection = document.getElementById('posSection');
+            posSection.classList.toggle('hidden');
+        }
+
         // Test function to call protected API
         async function testProtectedAPI() {
             try {
@@ -88,6 +135,231 @@
                 `;
             }
         }
+
+        // POS System JavaScript
+        let selectedSellerId = null;
+
+        // API base URL - your server is running on Render
+        const API_BASE = "https://landahan-5.onrender.com/api";
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const qty = document.getElementById("quantity");
+            const price = document.getElementById("price");
+            const total = document.getElementById("total");
+            const msg = document.getElementById("msg");
+
+            const sellerBtn = document.getElementById("sellerBtn");
+            const sellerOptions = document.getElementById("sellerOptions");
+            const sellerDropdownSection = document.getElementById("sellerDropdownSection");
+            const addSellerForm = document.getElementById("addSellerForm");
+            const sellerList = document.getElementById("sellerList");
+
+            const saveSellerBtn = document.getElementById("saveSellerBtn");
+            const payBtn = document.getElementById("payBtn");
+
+            const sellerName = document.getElementById("sellerName");
+            const sellerEmail = document.getElementById("sellerEmail");
+            const sellerPhone = document.getElementById("sellerPhone");
+            const sellerAddress = document.getElementById("sellerAddress");
+
+            // Test server connection on load
+            testServerConnection();
+
+            // Show seller options
+            sellerBtn.addEventListener("click", () => {
+                sellerOptions.classList.toggle("hidden");
+            });
+
+            // Show dropdown
+            document.getElementById("dropdownBtn").addEventListener("click", async () => {
+                sellerDropdownSection.classList.remove("hidden");
+                addSellerForm.classList.add("hidden");
+                await loadSellers();
+            });
+
+            // Show add form
+            document.getElementById("addFormBtn").addEventListener("click", () => {
+                sellerDropdownSection.classList.add("hidden");
+                addSellerForm.classList.remove("hidden");
+            });
+
+            // Test server connection
+            async function testServerConnection() {
+                try {
+                    console.log("Testing server connection...");
+                    const res = await fetch(`${API_BASE}/test`, {
+                        credentials: 'include'
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        console.log("✅ Server connection successful:", data.message);
+                        msg.textContent = "✅ Connected to server successfully!";
+                        msg.style.color = "green";
+                    } else {
+                        throw new Error(`Server responded with status: ${res.status}`);
+                    }
+                } catch (err) {
+                    console.error("❌ Server connection failed:", err.message);
+                    msg.textContent = `❌ Cannot connect to server: ${err.message}`;
+                    msg.style.color = "red";
+                }
+            }
+
+            // Load seller list
+            async function loadSellers() {
+                try {
+                    console.log("Loading sellers...");
+                    const res = await fetch(`${API_BASE}/sellers`, {
+                        method: 'GET',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                    
+                    if (!res.ok) {
+                        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+                    }
+                    
+                    const sellers = await res.json();
+                    console.log("Sellers loaded:", sellers);
+                    
+                    sellerList.innerHTML = '<option value="">-- Select Seller --</option>' +
+                        sellers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                    
+                    msg.textContent = "✅ Sellers loaded successfully.";
+                    msg.style.color = "green";
+                } catch (err) {
+                    console.error("Error loading sellers:", err);
+                    msg.textContent = `❌ Error fetching seller list: ${err.message}`;
+                    msg.style.color = "red";
+                }
+            }
+
+            // Select from dropdown
+            sellerList.addEventListener("change", (e) => {
+                selectedSellerId = e.target.value;
+                if (selectedSellerId) {
+                    msg.textContent = `✅ Seller selected (ID: ${selectedSellerId})`;
+                    msg.style.color = "blue";
+                }
+            });
+
+            // Save new seller
+            saveSellerBtn.addEventListener("click", async () => {
+                const seller = {
+                    name: sellerName.value.trim(),
+                    email: sellerEmail.value.trim(),
+                    phone: sellerPhone.value.trim(),
+                    address: sellerAddress.value.trim(),
+                };
+
+                if (!seller.name || !seller.email || !seller.phone || !seller.address) {
+                    msg.textContent = "❌ Please fill all seller fields.";
+                    msg.style.color = "red";
+                    return;
+                }
+
+                try {
+                    console.log("Adding seller:", seller);
+                    const res = await fetch(`${API_BASE}/add-seller`, {
+                        method: "POST",
+                        credentials: 'include',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(seller)
+                    });
+
+                    const data = await res.json();
+                    console.log("Add seller response:", data);
+                    
+                    if (res.ok) {
+                        selectedSellerId = data.id;
+                        sellerName.value = sellerEmail.value = sellerPhone.value = sellerAddress.value = "";
+                        sellerOptions.classList.add("hidden");
+                        addSellerForm.classList.add("hidden");
+                        msg.textContent = `✅ ${data.message} (ID: ${data.id})`;
+                        msg.style.color = "green";
+                    } else {
+                        throw new Error(data.message || `HTTP ${res.status}`);
+                    }
+                } catch (err) {
+                    console.error("Error adding seller:", err);
+                    msg.textContent = `❌ Failed to add seller: ${err.message}`;
+                    msg.style.color = "red";
+                }
+            });
+
+            // Recalculate total
+            function calculateTotal() {
+                const q = parseFloat(qty.value);
+                const p = parseFloat(price.value);
+                total.value = (!isNaN(q) && !isNaN(p)) ? (q * p).toFixed(2) : '';
+            }
+
+            qty.addEventListener("input", calculateTotal);
+            price.addEventListener("input", calculateTotal);
+
+            // Submit POS
+            payBtn.addEventListener("click", async () => {
+                const quantity = parseInt(qty.value);
+                const priceVal = parseFloat(price.value);
+                const totalCost = parseFloat(total.value);
+
+                if (!selectedSellerId) {
+                    msg.textContent = "❌ Please select or add a seller first.";
+                    msg.style.color = "red";
+                    return;
+                }
+
+                if (isNaN(quantity) || isNaN(priceVal) || isNaN(totalCost)) {
+                    msg.textContent = "❌ Fill out quantity, price, and total correctly.";
+                    msg.style.color = "red";
+                    return;
+                }
+
+                if (quantity <= 0 || priceVal <= 0) {
+                    msg.textContent = "❌ Quantity and price must be greater than 0.";
+                    msg.style.color = "red";
+                    return;
+                }
+
+                try {
+                    console.log("Submitting transaction:", { quantity, priceVal, totalCost, selectedSellerId });
+                    const res = await fetch(`${API_BASE}/submit-pos`, {
+                        method: "POST",
+                        credentials: 'include',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            quantity,
+                            price: priceVal,
+                            total_cost: totalCost,
+                            seller_id: selectedSellerId
+                        })
+                    });
+
+                    const data = await res.json();
+                    console.log("Submit POS response:", data);
+                    
+                    if (res.ok) {
+                        qty.value = price.value = total.value = "";
+                        selectedSellerId = null;
+                        sellerList.selectedIndex = 0;
+                        msg.textContent = `✅ ${data.message}`;
+                        msg.style.color = "green";
+                    } else {
+                        throw new Error(data.message || `HTTP ${res.status}`);
+                    }
+                } catch (err) {
+                    console.error("Error submitting transaction:", err);
+                    msg.textContent = `❌ Failed to submit transaction: ${err.message}`;
+                    msg.style.color = "red";
+                }
+            });
+        });
     </script>
 
     <style>
@@ -168,6 +440,63 @@
         .test-btn:hover {
             background: #0056b3;
         }
+
+        /* POS Styles */
+        .pos-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid #007bff;
+        }
+
+        .pos-wrapper {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .pos-wrapper input, 
+        .pos-wrapper button, 
+        .pos-wrapper select {
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .pos-wrapper button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .pos-wrapper button:hover {
+            background: #0056b3;
+        }
+
+        .pos-wrapper label {
+            display: block;
+            margin: 15px 0 5px 0;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .pos-wrapper #msg {
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
         
         .success {
             background: #d4edda;
@@ -183,6 +512,10 @@
             padding: 15px;
             border-radius: 4px;
             border: 1px solid #f5c6cb;
+        }
+
+        .hidden {
+            display: none;
         }
     </style>
 </body>
