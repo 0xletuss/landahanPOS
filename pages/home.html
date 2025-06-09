@@ -1,140 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - LANDAHAN</title>
-    <link rel="stylesheet" href="../css/home.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>POS - LANDAHAN</title>
+    <link rel="stylesheet" href="../css/home.css" />
 </head>
 <body>
     <div class="container">
         <header>
             <div class="header-left">
                 <div class="logo">LANDAHAN</div>
-                <h1>Dashboard</h1>
+                <h1>Point of Sale</h1>
             </div>
             <div class="user-info">
                 <span>Hello, <span id="userName">User</span>! 🌴</span>
                 <button onclick="logout()" class="logout-btn">Logout</button>
             </div>
         </header>
-        
+
         <main class="main-content">
-            <div class="welcome-section">
-                <h2>Welcome to Your Natural Business Hub</h2>
-                <p>Manage your business operations with the fresh, intuitive approach of LANDAHAN. Everything you need, simplified and streamlined.</p>
-            </div>
-            
-            <div class="features">
-                <div class="feature-card">
-                    <span class="feature-icon">📊</span>
-                    <h3>Analytics Dashboard</h3>
-                    <p>Get crystal-clear insights into your business performance with our comprehensive analytics tools.</p>
+            <div class="pos-container">
+                <div class="pos-header">
+                    <h2>🥥 LANDAHAN POS</h2>
+                    <p>Complete your transactions naturally and efficiently</p>
                 </div>
-                
-                <div class="feature-card">
-                    <span class="feature-icon">👤</span>
-                    <h3>Profile Management</h3>
-                    <p>Manage your account settings and personal information with ease and security.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <span class="feature-icon">💰</span>
-                    <h3>POS System</h3>
-                    <p>Streamlined point-of-sale system for smooth transactions and efficient business operations.</p>
-                    <button onclick="showPOSSection()" class="open-pos-btn">Open POS System</button>
-                </div>
-            </div>
-            
-            <!-- POS Section -->
-            <div id="posSection" class="pos-section hidden">
-                <div class="pos-container">
-                    <div class="pos-header">
-                        <h2>🥥 LANDAHAN POS</h2>
-                        <p>Complete your transactions naturally and efficiently</p>
-                        <button onclick="hidePOSSection()" class="close-pos-btn">✕ Close POS</button>
-                    </div>
-                    
-                    <div class="pos-content">
-                        <!-- Seller Selection Card -->
-                        <div class="pos-card">
-                            <div class="pos-card-header">
-                                <h3>👥 Seller Selection</h3>
-                            </div>
-                            <div class="pos-card-body">
-                                <button id="sellerBtn" class="pos-action-btn">🧑‍💼 Select a Seller</button>
-                                
-                                <div id="sellerOptions" class="seller-options hidden">
-                                    <button id="dropdownBtn" class="pos-secondary-btn">📋 Select from List</button>
-                                    <button id="addFormBtn" class="pos-secondary-btn">➕ Add New Seller</button>
-                                </div>
 
-                                <div id="sellerDropdownSection" class="input-section hidden">
-                                    <label for="sellerList">Choose Seller:</label>
-                                    <select id="sellerList" class="pos-select">
-                                        <option value="">-- Select Seller --</option>
-                                    </select>
-                                </div>
-
-                                <div id="addSellerForm" class="form-section hidden">
-                                    <div class="form-grid">
-                                        <div class="input-group">
-                                            <label for="sellerName">Seller Name:</label>
-                                            <input type="text" id="sellerName" class="pos-input" placeholder="Enter seller name" required>
-                                        </div>
-                                        <div class="input-group">
-                                            <label for="sellerEmail">Email:</label>
-                                            <input type="email" id="sellerEmail" class="pos-input" placeholder="Enter email address" required>
-                                        </div>
-                                        <div class="input-group">
-                                            <label for="sellerPhone">Phone:</label>
-                                            <input type="text" id="sellerPhone" class="pos-input" placeholder="Enter phone number" required>
-                                        </div>
-                                        <div class="input-group">
-                                            <label for="sellerAddress">Address:</label>
-                                            <input type="text" id="sellerAddress" class="pos-input" placeholder="Enter address" required>
-                                        </div>
-                                    </div>
-                                    <button id="saveSellerBtn" class="pos-action-btn">💾 Save Seller</button>
-                                </div>
-                            </div>
+                <div class="pos-content">
+                    <!-- Seller Selection Card -->
+                    <div class="pos-card">
+                        <div class="pos-card-header">
+                            <h3>👥 Seller Selection</h3>
                         </div>
+                        <div class="pos-card-body">
+                            <button id="sellerBtn" class="pos-action-btn">🧑‍💼 Select a Seller</button>
 
-                        <!-- Transaction Card -->
-                        <div class="pos-card">
-                            <div class="pos-card-header">
-                                <h3>💳 Transaction Details</h3>
+                            <div id="sellerOptions" class="seller-options hidden">
+                                <button id="dropdownBtn" class="pos-secondary-btn">📋 Select from List</button>
+                                <button id="addFormBtn" class="pos-secondary-btn">➕ Add New Seller</button>
                             </div>
-                            <div class="pos-card-body">
-                                <div class="transaction-grid">
-                                    <div class="input-group">
-                                        <label for="quantity">Quantity:</label>
-                                        <input type="number" id="quantity" class="pos-input" placeholder="Enter quantity" min="1">
-                                    </div>
 
-                                    <div class="input-group">
-                                        <label for="price">Price per Unit:</label>
-                                        <input type="number" id="price" class="pos-input" placeholder="Enter price" step="0.01" min="0">
-                                    </div>
+                            <div id="sellerDropdownSection" class="input-section hidden">
+                                <label for="sellerList">Choose Seller:</label>
+                                <select id="sellerList" class="pos-select">
+                                    <option value="">-- Select Seller --</option>
+                                </select>
+                            </div>
 
-                                    <div class="input-group total-group">
-                                        <label for="total">Total Cost:</label>
-                                        <input type="text" id="total" class="pos-input total-input" placeholder="Calculated automatically" readonly>
+                            <div id="addSellerForm" class="form-section hidden">
+                                <div class="form-grid">
+                                    <div class="input-group">
+                                        <label for="sellerName">Seller Name:</label>
+                                        <input type="text" id="sellerName" class="pos-input" required />
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="sellerEmail">Email:</label>
+                                        <input type="email" id="sellerEmail" class="pos-input" required />
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="sellerPhone">Phone:</label>
+                                        <input type="text" id="sellerPhone" class="pos-input" required />
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="sellerAddress">Address:</label>
+                                        <input type="text" id="sellerAddress" class="pos-input" required />
                                     </div>
                                 </div>
-
-                                <button id="payBtn" class="pos-payment-btn">💳 Process Payment</button>
+                                <button id="saveSellerBtn" class="pos-action-btn">💾 Save Seller</button>
                             </div>
                         </div>
                     </div>
 
-                    <div id="msg" class="pos-message hidden"></div>
+                    <!-- Transaction Card -->
+                    <div class="pos-card">
+                        <div class="pos-card-header">
+                            <h3>💳 Transaction Details</h3>
+                        </div>
+                        <div class="pos-card-body">
+                            <div class="transaction-grid">
+                                <div class="input-group">
+                                    <label for="quantity">Quantity:</label>
+                                    <input type="number" id="quantity" class="pos-input" min="1" />
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="price">Price per Unit:</label>
+                                    <input type="number" id="price" class="pos-input" step="0.01" min="0" />
+                                </div>
+
+                                <div class="input-group total-group">
+                                    <label for="total">Total Cost:</label>
+                                    <input type="text" id="total" class="pos-input total-input" readonly />
+                                </div>
+                            </div>
+
+                            <button id="payBtn" class="pos-payment-btn">💳 Process Payment</button>
+                        </div>
+                    </div>
                 </div>
+
+                <div id="msg" class="pos-message hidden"></div>
             </div>
         </main>
     </div>
 
-    <!-- Auth check script -->
     <script src="../js/auth_check.js"></script>
     <script src="../js/home.js"></script>
 </body>
