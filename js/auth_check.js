@@ -61,7 +61,7 @@ async function logout() {
 document.addEventListener('DOMContentLoaded', function() {
     // Only check auth if we're not on public pages
     const currentPage = window.location.pathname;
-    const publicPages = ['/index.html', '/pages/register.html', '/pages/forgot_password.html'];
+    const publicPages = ['/index.html', '/pages/register.html', '/pages/login.html', '/pages/forgot_password.html'];
 
     
     const isPublicPage = publicPages.includes(currentPage);
