@@ -1,0 +1,531 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    color: #2d3748;
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 50%, #e2e8f0 100%);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Header Styles */
+header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 1.5rem 2rem;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2d3748;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo::before {
+    content: "🥥";
+    font-size: 2rem;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #2d3748 0%, #38a169 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: #f7fafc;
+    padding: 0.75rem 1.25rem;
+    border-radius: 20px;
+    border: 2px solid #e2e8f0;
+}
+
+.user-info span {
+    font-weight: 500;
+    color: #4a5568;
+}
+
+#userName {
+    color: #38a169;
+    font-weight: 600;
+}
+
+.logout-btn {
+    background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 16px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+}
+
+.logout-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(229, 62, 62, 0.4);
+}
+
+/* Main Content */
+.main-content {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 2.5rem;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.welcome-section {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.welcome-section h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.welcome-section p {
+    font-size: 1.1rem;
+    color: #4a5568;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Features Grid */
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin: 3rem 0;
+}
+
+.feature-card {
+    background: #f7fafc;
+    padding: 2rem;
+    border-radius: 20px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    border-color: #c7f52e;
+    background: #ffffff;
+}
+
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.feature-card h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.feature-card p {
+    color: #4a5568;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.open-pos-btn {
+    background: linear-gradient(135deg, #c7f52e 0%, #38a169 100%);
+    color: #1a202c;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 16px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(199, 245, 46, 0.3);
+    width: 100%;
+}
+
+.open-pos-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(199, 245, 46, 0.4);
+}
+
+/* POS Section */
+.pos-section {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    margin-top: 2rem;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 2px solid #c7f52e;
+    overflow: hidden;
+}
+
+.pos-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.pos-header {
+    background: linear-gradient(135deg, #c7f52e 0%, #38a169 100%);
+    color: #1a202c;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+}
+
+.pos-header h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pos-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 1rem;
+}
+
+.close-pos-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: #1a202c;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+}
+
+.close-pos-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.pos-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    padding: 2rem;
+}
+
+/* POS Cards */
+.pos-card {
+    background: #f8fafc;
+    border-radius: 20px;
+    border: 2px solid #e2e8f0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.pos-card:hover {
+    border-color: #c7f52e;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.pos-card-header {
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+    color: white;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.pos-card-header h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.pos-card-body {
+    padding: 2rem;
+}
+
+/* Form Elements */
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.pos-input, .pos-select {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 16px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background: #ffffff;
+    color: #1f2937;
+}
+
+.pos-input:focus, .pos-select:focus {
+    outline: none;
+    border-color: #c7f52e;
+    box-shadow: 0 0 0 3px rgba(199, 245, 46, 0.1);
+}
+
+.total-input {
+    background: #f0f9ff !important;
+    border-color: #0ea5e9 !important;
+    font-weight: 600;
+    color: #0369a1 !important;
+}
+
+/* Buttons */
+.pos-action-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #c7f52e 0%, #38a169 100%);
+    color: #1a202c;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 16px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(199, 245, 46, 0.3);
+    margin-bottom: 1rem;
+}
+
+.pos-action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(199, 245, 46, 0.4);
+}
+
+.pos-secondary-btn {
+    background: #f7fafc;
+    color: #2d3748;
+    border: 2px solid #e2e8f0;
+    padding: 0.8rem 1.2rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    margin-right: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.pos-secondary-btn:hover {
+    background: #edf2f7;
+    border-color: #c7f52e;
+}
+
+.pos-payment-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: white;
+    border: none;
+    padding: 1.2rem 1.5rem;
+    border-radius: 16px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+    margin-top: 1rem;
+}
+
+.pos-payment-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
+}
+
+.pos-payment-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Seller Options */
+.seller-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.input-section {
+    margin-top: 1rem;
+}
+
+.form-section {
+    margin-top: 1rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.transaction-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.total-group {
+    background: #f0f9ff;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 2px solid #0ea5e9;
+}
+
+/* Messages */
+.pos-message {
+    margin: 2rem;
+    padding: 1rem 1.5rem;
+    border-radius: 16px;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.pos-message.success {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 2px solid #bbf7d0;
+}
+
+.pos-message.error {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 2px solid #fecaca;
+}
+
+.pos-message.info {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 2px solid #bfdbfe;
+}
+
+/* Utility Classes */
+.hidden {
+    display: none;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .header-left {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    .features {
+        grid-template-columns: 1fr;
+    }
+    
+    .pos-content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .seller-options {
+        flex-direction: column;
+    }
+    
+    .pos-secondary-btn {
+        width: 100%;
+        margin-right: 0;
+    }
+    
+    .main-content, .pos-section {
+        padding: 1.5rem;
+    }
+    
+    .pos-header {
+        padding: 1.5rem;
+    }
+    
+    .close-pos-btn {
+        position: static;
+        margin-top: 1rem;
+        width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .welcome-section h2 {
+        font-size: 1.8rem;
+    }
+    
+    .pos-header h2 {
+        font-size: 1.8rem;
+    }
+    
+    .feature-card {
+        padding: 1.5rem;
+    }
+    
+    .pos-card-body {
+        padding: 1.5rem;
+    }
+}
