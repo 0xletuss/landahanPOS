@@ -173,10 +173,7 @@ const ui = {
             container.innerHTML += '<p class="no-transactions">You have no transactions yet.</p>';
         } else {
             const list = transactions.map(t => {
-                // ✅ **FIX INCORPORATED HERE**
-                // Convert total_cost to a number before calling .toFixed()
                 const totalCostAsNumber = parseFloat(t.total_cost) || 0;
-
                 return `
                     <li class="transaction-item">
                         <span class="date">🗓️ ${new Date(t.created_at).toLocaleDateString()}</span>
@@ -209,7 +206,6 @@ const handlers = {
             ]);
         } catch (error) {
             console.error("Initial page load failed:", error.message);
-            // Error message is already shown by the API service for session issues
         }
     },
 
@@ -324,7 +320,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Modal control listeners
     el.selectSellerBtn?.addEventListener("click", () => ui.show(el.sellerModal));
-    el.closeModalBtn?.addEventListener("click", () => ui.hide(el.sellerModal));
+    el.closeModalBtn?.addEventListener("click", () => {
+        ui.hide(el.sellerModal);
+        ui.resetForm(); // Also reset form state when closing modal
+    });
 
     // Modal section toggles
     el.dropdownBtn?.addEventListener("click", () => {
