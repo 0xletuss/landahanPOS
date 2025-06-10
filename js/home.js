@@ -12,15 +12,20 @@ function hidePOSSection() {
 
 function resetPOSForm() {
     ["quantity", "price", "total", "sellerName", "sellerEmail", "sellerPhone", "sellerAddress"].forEach(id => {
-        document.getElementById(id).value = "";
+        const el = document.getElementById(id);
+        if (el) el.value = "";
     });
     selectedSellerId = null;
-    document.getElementById("sellerList").selectedIndex = 0;
-    document.getElementById("sellerOptions").classList.add("hidden");
-    document.getElementById("sellerDropdownSection").classList.add("hidden");
-    document.getElementById("addSellerForm").classList.add("hidden");
-    document.getElementById("msg").classList.add("hidden");
-    document.getElementById("msg").textContent = "";
+    const sellerList = document.getElementById("sellerList");
+    if (sellerList) sellerList.selectedIndex = 0;
+    hide("sellerOptions");
+    hide("sellerDropdownSection");
+    hide("addSellerForm");
+    const msg = document.getElementById("msg");
+    if (msg) {
+        msg.classList.add("hidden");
+        msg.textContent = "";
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -89,7 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("sellerList").addEventListener("change", (e) => {
         selectedSellerId = e.target.value;
         const selectedOption = e.target.options[e.target.selectedIndex];
-        showMessage(`✅ Seller selected: ${selectedOption.text}`, "info");
+        if (selectedSellerId) {
+            showMessage(`✅ Seller selected: ${selectedOption.text}`, "info");
+        }
     });
 
     document.getElementById("payBtn").addEventListener("click", async () => {
@@ -130,9 +137,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(`${API_BASE}/sellers`, {
                 credentials: 'include',
             });
-            const sellers = await res.json();
+
+            const result = await res.json();
+
+            if (!Array.isArray(result)) {
+                throw new Error(result.message || "Invalid server response.");
+            }
+
             document.getElementById("sellerList").innerHTML = '<option value="">-- Select Seller --</option>' +
-                sellers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                result.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
         } catch (err) {
             showMessage("❌ Error loading sellers: " + err.message, "error");
         }
@@ -143,13 +156,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(`${API_BASE}/my-transactions`, { credentials: "include" });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message);
-            displayTransactions(data.transactions);
+            displayTransactions(data.transactions || []);
         } catch (err) {
             showMessage("❌ Could not load transactions: " + err.message, "error");
         }
     }
 
     function displayTransactions(transactions) {
+        const existing = document.querySelector(".transactions");
+        if (existing) existing.remove();
+
         const container = document.createElement("div");
         container.className = "transactions";
         container.innerHTML = `<h3>📋 Your Transactions</h3>`;
@@ -164,19 +180,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getVal(id) {
-        return document.getElementById(id).value.trim();
+        return document.getElementById(id)?.value.trim() || "";
     }
 
     function show(id) {
-        document.getElementById(id).classList.remove("hidden");
+        document.getElementById(id)?.classList.remove("hidden");
     }
 
     function hide(id) {
-        document.getElementById(id).classList.add("hidden");
+        document.getElementById(id)?.classList.add("hidden");
     }
 
     function toggle(id) {
-        document.getElementById(id).classList.toggle("hidden");
+        document.getElementById(id)?.classList.toggle("hidden");
     }
 
     function showMessage(text, type = "info") {
