@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>POS - LANDAHAN</title>
     <link rel="stylesheet" href="../css/home.css" />
+    <link rel="stylesheet" href="../css/modal.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -57,83 +58,13 @@
                 </div>
 
                 <div class="pos-content">
-                    <!-- Seller Selection Card -->
-                    <div class="pos-card seller-card">
-                        <div class="pos-card-header">
-                            <div class="card-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <h3>Seller Selection</h3>
-                            <div class="card-accent"></div>
-                        </div>
-                        <div class="pos-card-body">
-                            <button id="sellerBtn" class="pos-action-btn primary-btn">
-                                <i class="fas fa-user-tie"></i>
-                                <span>Select a Seller</span>
-                                <div class="btn-shine"></div>
-                            </button>
-
-                            <div id="sellerOptions" class="seller-options hidden">
-                                <button id="dropdownBtn" class="pos-secondary-btn">
-                                    <i class="fas fa-list"></i>
-                                    <span>Select from List</span>
-                                </button>
-                                <button id="addFormBtn" class="pos-secondary-btn">
-                                    <i class="fas fa-plus-circle"></i>
-                                    <span>Add New Seller</span>
-                                </button>
-                            </div>
-
-                            <div id="sellerDropdownSection" class="input-section hidden">
-                                <div class="input-group">
-                                    <label for="sellerList">
-                                        <i class="fas fa-hand-pointer"></i>
-                                        Choose Seller:
-                                    </label>
-                                    <select id="sellerList" class="pos-select">
-                                        <option value="">-- Select Seller --</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div id="addSellerForm" class="form-section hidden">
-                                <div class="form-grid">
-                                    <div class="input-group">
-                                        <label for="sellerName">
-                                            <i class="fas fa-user"></i>
-                                            Seller Name:
-                                        </label>
-                                        <input type="text" id="sellerName" class="pos-input" placeholder="Enter seller name" required />
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="sellerEmail">
-                                            <i class="fas fa-envelope"></i>
-                                            Email:
-                                        </label>
-                                        <input type="email" id="sellerEmail" class="pos-input" placeholder="seller@example.com" required />
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="sellerPhone">
-                                            <i class="fas fa-phone"></i>
-                                            Phone:
-                                        </label>
-                                        <input type="text" id="sellerPhone" class="pos-input" placeholder="+63 XXX XXX XXXX" required />
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="sellerAddress">
-                                            <i class="fas fa-map-marker-alt"></i>
-                                            Address:
-                                        </label>
-                                        <input type="text" id="sellerAddress" class="pos-input" placeholder="Complete address" required />
-                                    </div>
-                                </div>
-                                <button id="saveSellerBtn" class="pos-action-btn primary-btn">
-                                    <i class="fas fa-save"></i>
-                                    <span>Save Seller</span>
-                                    <div class="btn-shine"></div>
-                                </button>
-                            </div>
-                        </div>
+                    <!-- Select Seller Button -->
+                    <div class="seller-selection-section">
+                        <button id="selectSellerBtn" class="pos-action-btn seller-btn">
+                            <i class="fas fa-user-tie"></i>
+                            <span id="selectedSellerText">Select a Seller</span>
+                            <div class="btn-shine"></div>
+                        </button>
                     </div>
 
                     <!-- Transaction Card -->
@@ -201,7 +132,89 @@
         </main>
     </div>
 
+    <!-- Seller Selection Modal -->
+    <div id="sellerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-users"></i>
+                    Seller Selection
+                </h3>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="seller-options">
+                    <button id="dropdownBtn" class="modal-option-btn">
+                        <i class="fas fa-list"></i>
+                        <span>Select from List</span>
+                    </button>
+                    <button id="addFormBtn" class="modal-option-btn">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Add New Seller</span>
+                    </button>
+                </div>
+
+                <div id="sellerDropdownSection" class="modal-section hidden">
+                    <div class="input-group">
+                        <label for="sellerList">
+                            <i class="fas fa-hand-pointer"></i>
+                            Choose Seller:
+                        </label>
+                        <select id="sellerList" class="modal-select">
+                            <option value="">-- Select Seller --</option>
+                        </select>
+                    </div>
+                    <button id="confirmSellerBtn" class="modal-confirm-btn" disabled>
+                        <i class="fas fa-check"></i>
+                        <span>Confirm Selection</span>
+                    </button>
+                </div>
+
+                <div id="addSellerForm" class="modal-section hidden">
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="sellerName">
+                                <i class="fas fa-user"></i>
+                                Seller Name:
+                            </label>
+                            <input type="text" id="sellerName" class="modal-input" placeholder="Enter seller name" required />
+                        </div>
+                        <div class="input-group">
+                            <label for="sellerEmail">
+                                <i class="fas fa-envelope"></i>
+                                Email:
+                            </label>
+                            <input type="email" id="sellerEmail" class="modal-input" placeholder="seller@example.com" required />
+                        </div>
+                        <div class="input-group">
+                            <label for="sellerPhone">
+                                <i class="fas fa-phone"></i>
+                                Phone:
+                            </label>
+                            <input type="text" id="sellerPhone" class="modal-input" placeholder="+63 XXX XXX XXXX" required />
+                        </div>
+                        <div class="input-group">
+                            <label for="sellerAddress">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Address:
+                            </label>
+                            <input type="text" id="sellerAddress" class="modal-input" placeholder="Complete address" required />
+                        </div>
+                    </div>
+                    <button id="saveSellerBtn" class="modal-save-btn">
+                        <i class="fas fa-save"></i>
+                        <span>Save Seller</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="../js/auth_check.js"></script>
     <script src="../js/home.js"></script>
+    <script src="../js/seller_modal.js"></script>
 </body>
 </html>
