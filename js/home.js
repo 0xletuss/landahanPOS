@@ -1,6 +1,27 @@
 let selectedSellerId = null;
 const API_BASE = "https://landahan-5.onrender.com/api";
 
+// Force our showMessage function to be global and override any conflicts
+window.showMessage = function(text, type = "info") {
+    const msg = document.getElementById("msg");
+    if (msg) {
+        const messageContent = msg.querySelector('.message-content');
+        if (messageContent) {
+            messageContent.textContent = text;
+        } else {
+            msg.textContent = text;
+        }
+        msg.className = `pos-message ${type}`;
+        msg.classList.remove("hidden");
+        if (type === "success") {
+            setTimeout(() => msg.classList.add("hidden"), 5000);
+        }
+    } else {
+        console.error('Message element not found');
+        console.log('Available elements:', document.querySelectorAll('[id*="msg"]'));
+    }
+};
+
 // ✅ Move utility functions outside DOMContentLoaded
 function getVal(id) {
     return document.getElementById(id)?.value.trim() || "";
@@ -18,17 +39,7 @@ function toggle(id) {
     document.getElementById(id)?.classList.toggle("hidden");
 }
 
-function showMessage(text, type = "info") {
-    const msg = document.getElementById("msg");
-    if (msg) {
-        msg.textContent = text;
-        msg.className = `pos-message ${type}`;
-        msg.classList.remove("hidden");
-        if (type === "success") {
-            setTimeout(() => msg.classList.add("hidden"), 5000);
-        }
-    }
-}
+// showMessage function moved to top as window.showMessage
 
 function resetPOSForm() {
     ["quantity", "price", "total", "sellerName", "sellerEmail", "sellerPhone", "sellerAddress"].forEach(id => {
