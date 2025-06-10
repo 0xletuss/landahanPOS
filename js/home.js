@@ -166,19 +166,25 @@ const ui = {
         mainContent.querySelector(".transactions-container")?.remove();
         
         const container = document.createElement("div");
-        container.className = "transactions-container"; // Use a more specific class
+        container.className = "transactions-container";
         container.innerHTML = '<h3>📋 Your Recent Transactions</h3>';
 
         if (!transactions.length) {
             container.innerHTML += '<p class="no-transactions">You have no transactions yet.</p>';
         } else {
-            const list = transactions.map(t => `
-                <li class="transaction-item">
-                    <span class="date">🗓️ ${new Date(t.created_at).toLocaleDateString()}</span>
-                    <span class="seller">🧑‍💼 ${t.seller_name || 'N/A'}</span>
-                    <span class="details">Qty: ${t.quantity}, Total: ₱${t.total_cost.toFixed(2)}</span>
-                </li>
-            `).join("");
+            const list = transactions.map(t => {
+                // ✅ **FIX INCORPORATED HERE**
+                // Convert total_cost to a number before calling .toFixed()
+                const totalCostAsNumber = parseFloat(t.total_cost) || 0;
+
+                return `
+                    <li class="transaction-item">
+                        <span class="date">🗓️ ${new Date(t.created_at).toLocaleDateString()}</span>
+                        <span class="seller">🧑‍💼 ${t.seller_name || 'N/A'}</span>
+                        <span class="details">Qty: ${t.quantity}, Total: ₱${totalCostAsNumber.toFixed(2)}</span>
+                    </li>
+                `;
+            }).join("");
             container.innerHTML += `<ul class="transaction-list">${list}</ul>`;
         }
         mainContent.appendChild(container);
