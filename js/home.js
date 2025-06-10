@@ -30,15 +30,6 @@ function showMessage(text, type = "info") {
     }
 }
 
-function showPOSSection() {
-    document.getElementById('posSection').classList.remove('hidden');
-}
-
-function hidePOSSection() {
-    document.getElementById('posSection').classList.add('hidden');
-    resetPOSForm();
-}
-
 function resetPOSForm() {
     ["quantity", "price", "total", "sellerName", "sellerEmail", "sellerPhone", "sellerAddress"].forEach(id => {
         const el = document.getElementById(id);
@@ -47,7 +38,6 @@ function resetPOSForm() {
     selectedSellerId = null;
     const sellerList = document.getElementById("sellerList");
     if (sellerList) sellerList.selectedIndex = 0;
-    hide("sellerOptions");
     hide("sellerDropdownSection");
     hide("addSellerForm");
     const msg = document.getElementById("msg");
@@ -108,10 +98,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         total.value = (q * p).toFixed(2);
     }
 
-    document.getElementById("sellerBtn").addEventListener("click", () => {
-        toggle("sellerOptions");
-        hide("sellerDropdownSection");
-        hide("addSellerForm");
+    // ✅ FIXED: Changed from "sellerBtn" to "selectSellerBtn"
+    document.getElementById("selectSellerBtn").addEventListener("click", () => {
+        show("sellerModal"); // Show the modal instead
     });
 
     document.getElementById("dropdownBtn").addEventListener("click", async () => {
@@ -183,6 +172,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    // ✅ FIXED: Added null check for confirmSellerBtn
+    const confirmSellerBtn = document.getElementById("confirmSellerBtn");
+    if (confirmSellerBtn) {
+        confirmSellerBtn.addEventListener("click", () => {
+            const sellerList = document.getElementById("sellerList");
+            const selectedOption = sellerList.options[sellerList.selectedIndex];
+            
+            if (selectedSellerId && selectedOption) {
+                // Update the button text to show selected seller
+                document.getElementById("selectedSellerText").textContent = selectedOption.text;
+                hide("sellerModal");
+                showMessage(`✅ Seller selected: ${selectedOption.text}`, "success");
+            }
+        });
+    }
+
     document.getElementById("payBtn").addEventListener("click", async () => {
         // ENHANCED: Verify session before payment
         const sessionValid = await verifySession();
@@ -249,8 +254,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 throw new Error("Invalid server response.");
             }
 
-            document.getElementById("sellerList").innerHTML = '<option value="">-- Select Seller --</option>' +
-                result.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+            const sellerListElement = document.getElementById("sellerList");
+            if (sellerListElement) {
+                sellerListElement.innerHTML = '<option value="">-- Select Seller --</option>' +
+                    result.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                
+                // Enable/disable confirm button based on selection
+                const confirmBtn = document.getElementById("confirmSellerBtn");
+                if (confirmBtn) {
+                    sellerListElement.addEventListener("change", (e) => {
+                        confirmBtn.disabled = !e.target.value;
+                    });
+                }
+            }
         } catch (err) {
             console.error('Load sellers error:', err);
             showMessage("❌ Error loading sellers: " + err.message, "error");
