@@ -28,11 +28,47 @@ function resetPOSForm() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+// ENHANCED: Add session verification function
+async function verifySession() {
+    try {
+        const res = await fetch(`${API_BASE}/verify-session`, {
+            credentials: 'include'
+        });
+        const data = await res.json();
+        
+        if (!res.ok || !data.valid) {
+            console.error('Session verification failed:', data);
+            showMessage("❌ Session expired. Please log in again.", "error");
+            // Redirect to login after a delay
+            setTimeout(() => {
+                window.location.href = '/login.html';
+            }, 2000);
+            return false;
+        }
+        
+        console.log('Session verified:', data);
+        return true;
+    } catch (err) {
+        console.error('Session verification error:', err);
+        showMessage("❌ Authentication error. Please log in again.", "error");
+        setTimeout(() => {
+            window.location.href = '/login.html';
+        }, 2000);
+        return false;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
     const msg = document.getElementById("msg");
     const qty = document.getElementById("quantity");
     const price = document.getElementById("price");
     const total = document.getElementById("total");
+
+    // ENHANCED: Verify session before initializing
+    const sessionValid = await verifySession();
+    if (!sessionValid) {
+        return; // Stop execution if session is invalid
+    }
 
     qty.addEventListener("input", updateTotal);
     price.addEventListener("input", updateTotal);
@@ -61,6 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById("saveSellerBtn").addEventListener("click", async () => {
+        // ENHANCED: Verify session before adding seller
+        const sessionValid = await verifySession();
+        if (!sessionValid) return;
+
         const seller = {
             name: getVal("sellerName"),
             email: getVal("sellerEmail"),
@@ -81,8 +121,19 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const data = await res.json();
             
+            console.log('Add seller response:', { status: res.status, data });
+            
             if (!res.ok) {
-                console.error('Add seller error:', data);
+                // Handle specific errors
+                if (res.status === 401) {
+                    showMessage("❌ Session expired. Please log in again.", "error");
+                    setTimeout(() => window.location.href = '/login.html', 2000);
+                    return;
+                } else if (res.status === 404) {
+                    showMessage("❌ User account not found. Please log in again.", "error");
+                    setTimeout(() => window.location.href = '/login.html', 2000);
+                    return;
+                }
                 throw new Error(data.message || `Server error: ${res.status}`);
             }
             
@@ -104,6 +155,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById("payBtn").addEventListener("click", async () => {
+        // ENHANCED: Verify session before payment
+        const sessionValid = await verifySession();
+        if (!sessionValid) return;
+
         const transaction = {
             quantity: parseInt(getVal("quantity")),
             price: parseFloat(getVal("price")),
@@ -124,7 +179,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const data = await res.json();
             
-            if (!res.ok) throw new Error(data.message);
+            if (!res.ok) {
+                if (res.status === 401) {
+                    showMessage("❌ Session expired. Please log in again.", "error");
+                    setTimeout(() => window.location.href = '/login.html', 2000);
+                    return;
+                }
+                throw new Error(data.message);
+            }
             
             showMessage(`✅ ${data.message}`, "success");
             resetPOSForm();
@@ -135,8 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Initial load
-    loadSellers();
-    loadMyTransactions();
+    await loadSellers();
+    await loadMyTransactions();
 
     async function loadSellers() {
         try {
@@ -146,6 +208,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await res.json();
             
             if (!res.ok) {
+                if (res.status === 401) {
+                    showMessage("❌ Session expired. Please log in again.", "error");
+                    setTimeout(() => window.location.href = '/login.html', 2000);
+                    return;
+                }
                 throw new Error(result.message || "Failed to load sellers");
             }
             
@@ -161,7 +228,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // FIXED: Changed endpoint from '/my-transactions' to '/transactions'
     async function loadMyTransactions() {
         try {
             const res = await fetch(`${API_BASE}/transactions`, { 
@@ -170,6 +236,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await res.json();
             
             if (!res.ok) {
+                if (res.status === 401) {
+                    showMessage("❌ Session expired. Please log in again.", "error");
+                    setTimeout(() => window.location.href = '/login.html', 2000);
+                    return;
+                }
                 console.error('Load transactions error:', data);
                 throw new Error(data.message || "Failed to load transactions");
             }
