@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>POS - LANDAHAN</title>
-    <link rel="stylesheet" href="../css/home.css" />
+    <title>LANDAHAN POS - Improved</title>
+    <link rel="stylesheet" href="landahan-pos.css" />
 </head>
 <body>
     <div class="container">
         <header>
             <div class="header-left">
                 <div class="logo">LANDAHAN</div>
-                <h1>Point of Sale</h1>
+                <h1>Point of Sale System</h1>
             </div>
             <div class="user-info">
-                <span>Hello, <span id="userName">User</span>! 🌴</span>
+                <span>Hello, <span id="userName">Coconut Seller</span>! 🌴</span>
                 <button onclick="logout()" class="logout-btn">Logout</button>
             </div>
         </header>
@@ -23,78 +23,234 @@
             <div class="pos-container">
                 <div class="pos-header">
                     <h2>🥥 LANDAHAN POS</h2>
-                    <p>Complete your transactions naturally and efficiently</p>
+                    <p>Natural transactions, efficient business</p>
+                    <div class="pos-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">₱0.00</span>
+                            <span class="stat-label">Today's Sales</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">0</span>
+                            <span class="stat-label">Transactions</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="pos-content">
-                    <!-- Seller Selection Card -->
-                    <div class="pos-card">
+                    <!-- Seller Section -->
+                    <div class="pos-card seller-card">
                         <div class="pos-card-header">
-                            <h3>👥 Seller Selection</h3>
+                            <h3>👤 Active Seller</h3>
                         </div>
                         <div class="pos-card-body">
-                            <button id="sellerBtn" class="pos-action-btn">🧑‍💼 Select a Seller</button>
-
-                            <div id="sellerOptions" class="seller-options hidden">
-                                <button id="dropdownBtn" class="pos-secondary-btn">📋 Select from List</button>
-                                <button id="addFormBtn" class="pos-secondary-btn">➕ Add New Seller</button>
+                            <div id="selectedSellerInfo" class="seller-info hidden">
+                                <div class="seller-avatar">
+                                    <span class="avatar-icon">👤</span>
+                                </div>
+                                <div class="seller-details">
+                                    <h4 id="selectedSellerName">-</h4>
+                                    <p id="selectedSellerContact">-</p>
+                                </div>
+                                <button id="changeSellerBtn" class="change-seller-btn">Change</button>
                             </div>
 
-                            <div id="sellerDropdownSection" class="input-section hidden">
-                                <label for="sellerList">Choose Seller:</label>
-                                <select id="sellerList" class="pos-select">
-                                    <option value="">-- Select Seller --</option>
-                                </select>
-                            </div>
+                            <div id="sellerSelection" class="seller-selection">
+                                <div class="seller-options">
+                                    <button id="selectExistingBtn" class="pos-primary-btn">
+                                        <span class="btn-icon">📋</span>
+                                        Select Existing Seller
+                                    </button>
+                                    <button id="addNewSellerBtn" class="pos-secondary-btn">
+                                        <span class="btn-icon">➕</span>
+                                        Add New Seller
+                                    </button>
+                                </div>
 
-                            <div id="addSellerForm" class="form-section hidden">
-                                <div class="form-grid">
-                                    <div class="input-group">
-                                        <label for="sellerName">Seller Name:</label>
-                                        <input type="text" id="sellerName" class="pos-input" required />
+                                <div id="existingSellerSection" class="input-section hidden">
+                                    <div class="search-container">
+                                        <input type="text" id="sellerSearch" class="pos-input" placeholder="Search sellers..." />
+                                        <span class="search-icon">🔍</span>
                                     </div>
-                                    <div class="input-group">
-                                        <label for="sellerEmail">Email:</label>
-                                        <input type="email" id="sellerEmail" class="pos-input" required />
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="sellerPhone">Phone:</label>
-                                        <input type="text" id="sellerPhone" class="pos-input" required />
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="sellerAddress">Address:</label>
-                                        <input type="text" id="sellerAddress" class="pos-input" required />
+                                    <div id="sellerList" class="seller-list">
+                                        <!-- Sellers will be populated here -->
                                     </div>
                                 </div>
-                                <button id="saveSellerBtn" class="pos-action-btn">💾 Save Seller</button>
+
+                                <div id="newSellerForm" class="form-section hidden">
+                                    <div class="form-grid">
+                                        <div class="input-group">
+                                            <label for="sellerName">Full Name *</label>
+                                            <input type="text" id="sellerName" class="pos-input" required />
+                                        </div>
+                                        <div class="input-group">
+                                            <label for="sellerPhone">Phone Number *</label>
+                                            <input type="tel" id="sellerPhone" class="pos-input" required />
+                                        </div>
+                                        <div class="input-group full-width">
+                                            <label for="sellerEmail">Email (optional)</label>
+                                            <input type="email" id="sellerEmail" class="pos-input" />
+                                        </div>
+                                        <div class="input-group full-width">
+                                            <label for="sellerAddress">Address *</label>
+                                            <textarea id="sellerAddress" class="pos-textarea" rows="2" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button id="cancelSellerBtn" class="pos-secondary-btn">Cancel</button>
+                                        <button id="saveSellerBtn" class="pos-primary-btn">
+                                            <span class="btn-icon">💾</span>
+                                            Save Seller
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Transaction Card -->
-                    <div class="pos-card">
+                    <!-- Transaction Section -->
+                    <div class="pos-card transaction-card">
                         <div class="pos-card-header">
-                            <h3>💳 Transaction Details</h3>
+                            <h3>💳 New Transaction</h3>
                         </div>
                         <div class="pos-card-body">
-                            <div class="transaction-grid">
+                            <div class="product-section">
                                 <div class="input-group">
-                                    <label for="quantity">Quantity:</label>
-                                    <input type="number" id="quantity" class="pos-input" min="1" />
+                                    <label for="productName">Product/Service</label>
+                                    <input type="text" id="productName" class="pos-input" placeholder="e.g., Fresh Coconuts" />
+                                </div>
+                                
+                                <div class="transaction-grid">
+                                    <div class="input-group">
+                                        <label for="quantity">Quantity</label>
+                                        <input type="number" id="quantity" class="pos-input" min="1" value="1" />
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="price">Price per Unit (₱)</label>
+                                        <input type="number" id="price" class="pos-input" step="0.01" min="0" placeholder="0.00" />
+                                    </div>
                                 </div>
 
-                                <div class="input-group">
-                                    <label for="price">Price per Unit:</label>
-                                    <input type="number" id="price" class="pos-input" step="0.01" min="0" />
+                                <div class="payment-method">
+                                    <label>Payment Method</label>
+                                    <div class="payment-options">
+                                        <label class="payment-option">
+                                            <input type="radio" name="paymentMethod" value="cash" checked />
+                                            <span class="payment-icon">💵</span>
+                                            Cash
+                                        </label>
+                                        <label class="payment-option">
+                                            <input type="radio" name="paymentMethod" value="card" />
+                                            <span class="payment-icon">💳</span>
+                                            Card
+                                        </label>
+                                        <label class="payment-option">
+                                            <input type="radio" name="paymentMethod" value="gcash" />
+                                            <span class="payment-icon">📱</span>
+                                            GCash
+                                        </label>
+                                    </div>
                                 </div>
 
-                                <div class="input-group total-group">
-                                    <label for="total">Total Cost:</label>
-                                    <input type="text" id="total" class="pos-input total-input" readonly />
+                                <div class="total-section">
+                                    <div class="calculation-row">
+                                        <span>Subtotal:</span>
+                                        <span id="subtotal">₱0.00</span>
+                                    </div>
+                                    <div class="calculation-row">
+                                        <span>Tax (12%):</span>
+                                        <span id="tax">₱0.00</span>
+                                    </div>
+                                    <div class="total-row">
+                                        <span>Total Amount:</span>
+                                        <span id="total">₱0.00</span>
+                                    </div>
+                                </div>
+
+                                <div class="transaction-actions">
+                                    <button id="clearBtn" class="pos-secondary-btn">
+                                        <span class="btn-icon">🗑️</span>
+                                        Clear
+                                    </button>
+                                    <button id="processPaymentBtn" class="pos-payment-btn" disabled>
+                                        <span class="btn-icon">💳</span>
+                                        Process Payment
+                                    </button>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
 
-                            <button id="payBtn" class="pos-payment-btn">💳 Process Payment</button>
+                <!-- Recent Transactions -->
+                <div class="pos-card transactions-history">
+                    <div class="pos-card-header">
+                        <h3>📊 Recent Transactions</h3>
+                        <button id="viewAllBtn" class="view-all-btn">View All</button>
+                    </div>
+                    <div class="pos-card-body">
+                        <div id="transactionsList" class="transactions-list">
+                            <div class="no-transactions">
+                                <span class="empty-icon">📝</span>
+                                <p>No transactions yet today</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Modal -->
+                <div id="successModal" class="modal hidden">
+                    <div class="modal-content">
+                        <div class="modal-header success">
+                            <span class="modal-icon">✅</span>
+                            <h3>Transaction Successful!</h3>
+                        </div>
+                        <div class="modal-body">
+                            <div class="receipt-preview">
+                                <div class="receipt-header">
+                                    <h4>🥥 LANDAHAN</h4>
+                                    <p>Transaction Receipt</p>
+                                </div>
+                                <div class="receipt-details">
+                                    <div class="receipt-row">
+                                        <span>Seller:</span>
+                                        <span id="receiptSeller">-</span>
+                                    </div>
+                                    <div class="receipt-row">
+                                        <span>Product:</span>
+                                        <span id="receiptProduct">-</span>
+                                    </div>
+                                    <div class="receipt-row">
+                                        <span>Quantity:</span>
+                                        <span id="receiptQuantity">-</span>
+                                    </div>
+                                    <div class="receipt-row">
+                                        <span>Amount:</span>
+                                        <span id="receiptAmount">-</span>
+                                    </div>
+                                    <div class="receipt-row">
+                                        <span>Payment:</span>
+                                        <span id="receiptPayment">-</span>
+                                    </div>
+                                    <div class="receipt-row total">
+                                        <span>Total:</span>
+                                        <span id="receiptTotal">-</span>
+                                    </div>
+                                </div>
+                                <div class="receipt-footer">
+                                    <p>Thank you for your business!</p>
+                                    <small>Transaction ID: <span id="transactionId">-</span></small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-actions">
+                            <button id="printReceiptBtn" class="pos-secondary-btn">
+                                <span class="btn-icon">🖨️</span>
+                                Print Receipt
+                            </button>
+                            <button id="newTransactionBtn" class="pos-primary-btn">
+                                <span class="btn-icon">➕</span>
+                                New Transaction
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -104,7 +260,6 @@
         </main>
     </div>
 
-    <script src="../js/auth_check.js"></script>
-    <script src="../js/home.js"></script>
+    <script src="landahan-pos.js"></script>
 </body>
 </html>
