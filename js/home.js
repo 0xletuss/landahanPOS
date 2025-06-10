@@ -30,7 +30,6 @@ function resetPOSForm() {
 
 document.addEventListener('DOMContentLoaded', () => {
     const msg = document.getElementById("msg");
-
     const qty = document.getElementById("quantity");
     const price = document.getElementById("price");
     const total = document.getElementById("total");
@@ -80,13 +79,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(seller),
             });
-
             const data = await res.json();
-            if (!res.ok) throw new Error(data.message);
+            
+            if (!res.ok) {
+                console.error('Add seller error:', data);
+                throw new Error(data.message || `Server error: ${res.status}`);
+            }
+            
             showMessage(`✅ ${data.message}`, "success");
             resetPOSForm();
             await loadSellers();
         } catch (err) {
+            console.error('Add seller failed:', err);
             showMessage(`❌ Failed to add seller: ${err.message}`, "error");
         }
     });
@@ -118,9 +122,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(transaction),
             });
-
             const data = await res.json();
+            
             if (!res.ok) throw new Error(data.message);
+            
             showMessage(`✅ ${data.message}`, "success");
             resetPOSForm();
             await loadMyTransactions();
@@ -129,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Initial load
     loadSellers();
     loadMyTransactions();
 
@@ -137,27 +143,40 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(`${API_BASE}/sellers`, {
                 credentials: 'include',
             });
-
             const result = await res.json();
-
+            
+            if (!res.ok) {
+                throw new Error(result.message || "Failed to load sellers");
+            }
+            
             if (!Array.isArray(result)) {
-                throw new Error(result.message || "Invalid server response.");
+                throw new Error("Invalid server response.");
             }
 
             document.getElementById("sellerList").innerHTML = '<option value="">-- Select Seller --</option>' +
                 result.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
         } catch (err) {
+            console.error('Load sellers error:', err);
             showMessage("❌ Error loading sellers: " + err.message, "error");
         }
     }
 
+    // FIXED: Changed endpoint from '/my-transactions' to '/transactions'
     async function loadMyTransactions() {
         try {
-            const res = await fetch(`${API_BASE}/my-transactions`, { credentials: "include" });
+            const res = await fetch(`${API_BASE}/transactions`, { 
+                credentials: "include" 
+            });
             const data = await res.json();
-            if (!res.ok) throw new Error(data.message);
+            
+            if (!res.ok) {
+                console.error('Load transactions error:', data);
+                throw new Error(data.message || "Failed to load transactions");
+            }
+            
             displayTransactions(data.transactions || []);
         } catch (err) {
+            console.error('Load transactions failed:', err);
             showMessage("❌ Could not load transactions: " + err.message, "error");
         }
     }
@@ -169,13 +188,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.createElement("div");
         container.className = "transactions";
         container.innerHTML = `<h3>📋 Your Transactions</h3>`;
+
         if (!transactions.length) {
             container.innerHTML += "<p>No transactions yet.</p>";
         } else {
             container.innerHTML += `<ul>${transactions.map(t =>
-                `<li>🗓 ${t.created_at} — Qty: ${t.quantity}, Price: ₱${t.price}, Total: ₱${t.total_cost}</li>`
+                `<li>🗓 ${t.created_at} — ${t.seller_name || 'Unknown Seller'} — Qty: ${t.quantity}, Price: ₱${t.price}, Total: ₱${t.total_cost}</li>`
             ).join("")}</ul>`;
         }
+
         document.querySelector(".main-content").appendChild(container);
     }
 
