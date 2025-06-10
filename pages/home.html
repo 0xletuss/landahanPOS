@@ -5,101 +5,198 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>POS - LANDAHAN</title>
     <link rel="stylesheet" href="../css/home.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <div class="background-gradient"></div>
+    <div class="floating-elements">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+    
     <div class="container">
-        <header>
+        <header class="glassmorphism">
             <div class="header-left">
-                <div class="logo">LANDAHAN</div>
+                <div class="logo">
+                    <i class="fas fa-seedling"></i>
+                    <span>LANDAHAN</span>
+                </div>
                 <h1>Point of Sale</h1>
             </div>
             <div class="user-info">
-                <span>Hello, <span id="userName">User</span>! 🌴</span>
-                <button onclick="logout()" class="logout-btn">Logout</button>
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-details">
+                    <span class="greeting">Hello,</span>
+                    <span id="userName" class="user-name">User</span>
+                </div>
+                <button onclick="logout()" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
             </div>
         </header>
 
-        <main class="main-content">
+        <main class="main-content glassmorphism">
             <div class="pos-container">
                 <div class="pos-header">
-                    <h2>🥥 LANDAHAN POS</h2>
+                    <div class="pos-title">
+                        <i class="fas fa-coconut pos-icon"></i>
+                        <h2>LANDAHAN POS</h2>
+                    </div>
                     <p>Complete your transactions naturally and efficiently</p>
+                    <div class="header-decoration">
+                        <div class="decoration-dot"></div>
+                        <div class="decoration-dot"></div>
+                        <div class="decoration-dot"></div>
+                    </div>
                 </div>
 
                 <div class="pos-content">
                     <!-- Seller Selection Card -->
-                    <div class="pos-card">
+                    <div class="pos-card seller-card">
                         <div class="pos-card-header">
-                            <h3>👥 Seller Selection</h3>
+                            <div class="card-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h3>Seller Selection</h3>
+                            <div class="card-accent"></div>
                         </div>
                         <div class="pos-card-body">
-                            <button id="sellerBtn" class="pos-action-btn">🧑‍💼 Select a Seller</button>
+                            <button id="sellerBtn" class="pos-action-btn primary-btn">
+                                <i class="fas fa-user-tie"></i>
+                                <span>Select a Seller</span>
+                                <div class="btn-shine"></div>
+                            </button>
 
                             <div id="sellerOptions" class="seller-options hidden">
-                                <button id="dropdownBtn" class="pos-secondary-btn">📋 Select from List</button>
-                                <button id="addFormBtn" class="pos-secondary-btn">➕ Add New Seller</button>
+                                <button id="dropdownBtn" class="pos-secondary-btn">
+                                    <i class="fas fa-list"></i>
+                                    <span>Select from List</span>
+                                </button>
+                                <button id="addFormBtn" class="pos-secondary-btn">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <span>Add New Seller</span>
+                                </button>
                             </div>
 
                             <div id="sellerDropdownSection" class="input-section hidden">
-                                <label for="sellerList">Choose Seller:</label>
-                                <select id="sellerList" class="pos-select">
-                                    <option value="">-- Select Seller --</option>
-                                </select>
+                                <div class="input-group">
+                                    <label for="sellerList">
+                                        <i class="fas fa-hand-pointer"></i>
+                                        Choose Seller:
+                                    </label>
+                                    <select id="sellerList" class="pos-select">
+                                        <option value="">-- Select Seller --</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <div id="addSellerForm" class="form-section hidden">
                                 <div class="form-grid">
                                     <div class="input-group">
-                                        <label for="sellerName">Seller Name:</label>
-                                        <input type="text" id="sellerName" class="pos-input" required />
+                                        <label for="sellerName">
+                                            <i class="fas fa-user"></i>
+                                            Seller Name:
+                                        </label>
+                                        <input type="text" id="sellerName" class="pos-input" placeholder="Enter seller name" required />
                                     </div>
                                     <div class="input-group">
-                                        <label for="sellerEmail">Email:</label>
-                                        <input type="email" id="sellerEmail" class="pos-input" required />
+                                        <label for="sellerEmail">
+                                            <i class="fas fa-envelope"></i>
+                                            Email:
+                                        </label>
+                                        <input type="email" id="sellerEmail" class="pos-input" placeholder="seller@example.com" required />
                                     </div>
                                     <div class="input-group">
-                                        <label for="sellerPhone">Phone:</label>
-                                        <input type="text" id="sellerPhone" class="pos-input" required />
+                                        <label for="sellerPhone">
+                                            <i class="fas fa-phone"></i>
+                                            Phone:
+                                        </label>
+                                        <input type="text" id="sellerPhone" class="pos-input" placeholder="+63 XXX XXX XXXX" required />
                                     </div>
                                     <div class="input-group">
-                                        <label for="sellerAddress">Address:</label>
-                                        <input type="text" id="sellerAddress" class="pos-input" required />
+                                        <label for="sellerAddress">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            Address:
+                                        </label>
+                                        <input type="text" id="sellerAddress" class="pos-input" placeholder="Complete address" required />
                                     </div>
                                 </div>
-                                <button id="saveSellerBtn" class="pos-action-btn">💾 Save Seller</button>
+                                <button id="saveSellerBtn" class="pos-action-btn primary-btn">
+                                    <i class="fas fa-save"></i>
+                                    <span>Save Seller</span>
+                                    <div class="btn-shine"></div>
+                                </button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Transaction Card -->
-                    <div class="pos-card">
+                    <div class="pos-card transaction-card">
                         <div class="pos-card-header">
-                            <h3>💳 Transaction Details</h3>
+                            <div class="card-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <h3>Transaction Details</h3>
+                            <div class="card-accent"></div>
                         </div>
                         <div class="pos-card-body">
                             <div class="transaction-grid">
                                 <div class="input-group">
-                                    <label for="quantity">Quantity:</label>
-                                    <input type="number" id="quantity" class="pos-input" min="1" />
+                                    <label for="quantity">
+                                        <i class="fas fa-boxes"></i>
+                                        Quantity:
+                                    </label>
+                                    <input type="number" id="quantity" class="pos-input" min="1" placeholder="0" />
+                                    <div class="input-decoration"></div>
                                 </div>
 
                                 <div class="input-group">
-                                    <label for="price">Price per Unit:</label>
-                                    <input type="number" id="price" class="pos-input" step="0.01" min="0" />
+                                    <label for="price">
+                                        <i class="fas fa-peso-sign"></i>
+                                        Price per Unit:
+                                    </label>
+                                    <input type="number" id="price" class="pos-input" step="0.01" min="0" placeholder="0.00" />
+                                    <div class="input-decoration"></div>
                                 </div>
 
                                 <div class="input-group total-group">
-                                    <label for="total">Total Cost:</label>
-                                    <input type="text" id="total" class="pos-input total-input" readonly />
+                                    <label for="total">
+                                        <i class="fas fa-calculator"></i>
+                                        Total Cost:
+                                    </label>
+                                    <input type="text" id="total" class="pos-input total-input" readonly placeholder="₱0.00" />
+                                    <div class="total-decoration">
+                                        <i class="fas fa-coins"></i>
+                                    </div>
                                 </div>
                             </div>
 
-                            <button id="payBtn" class="pos-payment-btn">💳 Process Payment</button>
+                            <button id="payBtn" class="pos-payment-btn">
+                                <div class="btn-content">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span>Process Payment</span>
+                                </div>
+                                <div class="btn-ripple"></div>
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <div id="msg" class="pos-message hidden"></div>
+                <div id="msg" class="pos-message hidden">
+                    <div class="message-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div class="message-content"></div>
+                    <button class="message-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
         </main>
     </div>
