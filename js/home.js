@@ -1,6 +1,35 @@
 let selectedSellerId = null;
 const API_BASE = "https://landahan-5.onrender.com/api";
 
+// ✅ Move utility functions outside DOMContentLoaded
+function getVal(id) {
+    return document.getElementById(id)?.value.trim() || "";
+}
+
+function show(id) {
+    document.getElementById(id)?.classList.remove("hidden");
+}
+
+function hide(id) {
+    document.getElementById(id)?.classList.add("hidden");
+}
+
+function toggle(id) {
+    document.getElementById(id)?.classList.toggle("hidden");
+}
+
+function showMessage(text, type = "info") {
+    const msg = document.getElementById("msg");
+    if (msg) {
+        msg.textContent = text;
+        msg.className = `pos-message ${type}`;
+        msg.classList.remove("hidden");
+        if (type === "success") {
+            setTimeout(() => msg.classList.add("hidden"), 5000);
+        }
+    }
+}
+
 function showPOSSection() {
     document.getElementById('posSection').classList.remove('hidden');
 }
@@ -269,30 +298,5 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         document.querySelector(".main-content").appendChild(container);
-    }
-
-    function getVal(id) {
-        return document.getElementById(id)?.value.trim() || "";
-    }
-
-    function show(id) {
-        document.getElementById(id)?.classList.remove("hidden");
-    }
-
-    function hide(id) {
-        document.getElementById(id)?.classList.add("hidden");
-    }
-
-    function toggle(id) {
-        document.getElementById(id)?.classList.toggle("hidden");
-    }
-
-    function showMessage(text, type = "info") {
-        msg.textContent = text;
-        msg.className = `pos-message ${type}`;
-        msg.classList.remove("hidden");
-        if (type === "success") {
-            setTimeout(() => msg.classList.add("hidden"), 5000);
-        }
     }
 });
