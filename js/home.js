@@ -1,329 +1,341 @@
-let selectedSellerId = null;
-const API_BASE = "https://landahan-5.onrender.com/api";
+// --- CONFIGURATION & STATE ---
+const API_BASE_URL = "https://landahan-5.onrender.com/api";
+const state = {
+    selectedSellerId: null,
+};
 
-// Force our showMessage function to be global and override any conflicts
-window.showMessage = function(text, type = "info") {
-    const msg = document.getElementById("msg");
-    if (msg) {
-        const messageContent = msg.querySelector('.message-content');
-        if (messageContent) {
-            messageContent.textContent = text;
-        } else {
-            msg.textContent = text;
+/**
+ * =================================================================
+ * API SERVICE 🚀
+ * Handles all communication with the backend. Centralizes fetch logic,
+ * error handling, and session checks.
+ * =================================================================
+ */
+const api = {
+    async _fetch(endpoint, options = {}) {
+        // Default options for every request
+        const defaultOptions = {
+            method: "GET",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+        };
+
+        const res = await fetch(`${API_BASE_URL}${endpoint}`, { ...defaultOptions, ...options });
+
+        // Centralized session expiration check
+        if (res.status === 401) {
+            ui.showMessage("❌ Session expired. Redirecting to login...", "error");
+            setTimeout(() => (window.location.href = "/login.html"), 2000);
+            // Throw an error to stop further execution in the calling function
+            throw new Error("Session expired");
         }
-        msg.className = `pos-message ${type}`;
-        msg.classList.remove("hidden");
+        
+        const data = await res.json();
+
+        if (!res.ok) {
+            // Throw an error with the message from the server's response
+            throw new Error(data.message || `An unknown server error occurred.`);
+        }
+
+        return data; // Return the JSON data on success
+    },
+
+    verifySession() {
+        return this._fetch("/verify-session");
+    },
+    getSellers() {
+        return this._fetch("/sellers");
+    },
+    getTransactions() {
+        // The API returns { transactions: [...] }
+        return this._fetch("/transactions");
+    },
+    addSeller(sellerData) {
+        return this._fetch("/add-seller", {
+            method: "POST",
+            body: JSON.stringify(sellerData),
+        });
+    },
+    submitTransaction(transactionData) {
+        return this._fetch("/submit-pos", {
+            method: "POST",
+            body: JSON.stringify(transactionData),
+        });
+    },
+};
+
+/**
+ * =================================================================
+ * UI MANAGEMENT 🎨
+ * Handles all direct manipulation of the DOM (showing/hiding,
+ * updating text, creating elements, etc.).
+ * =================================================================
+ */
+const ui = {
+    elements: {}, // To be filled by cacheElements
+
+    // Find all needed elements once and store them
+    cacheElements() {
+        this.elements = {
+            // Main POS form
+            quantityInput: document.getElementById("quantity"),
+            priceInput: document.getElementById("price"),
+            totalInput: document.getElementById("total"),
+            payBtn: document.getElementById("payBtn"),
+            // Message box
+            messageBox: document.getElementById("msg"),
+            messageContent: document.querySelector("#msg .message-content"),
+            // Modal and its controls
+            sellerModal: document.getElementById("sellerModal"),
+            selectSellerBtn: document.getElementById("selectSellerBtn"),
+            closeModalBtn: document.getElementById("closeModal"),
+            confirmSellerBtn: document.getElementById("confirmSellerBtn"),
+            // Modal sections
+            dropdownBtn: document.getElementById("dropdownBtn"),
+            addFormBtn: document.getElementById("addFormBtn"),
+            sellerDropdownSection: document.getElementById("sellerDropdownSection"),
+            addSellerFormSection: document.getElementById("addSellerForm"),
+            // Seller selection
+            sellerList: document.getElementById("sellerList"),
+            selectedSellerText: document.getElementById("selectedSellerText"),
+            // Add Seller form
+            saveSellerBtn: document.getElementById("saveSellerBtn"),
+            sellerNameInput: document.getElementById("sellerName"),
+            sellerEmailInput: document.getElementById("sellerEmail"),
+            sellerPhoneInput: document.getElementById("sellerPhone"),
+            sellerAddressInput: document.getElementById("sellerAddress"),
+            // Transactions container
+            mainContent: document.querySelector(".main-content"),
+        };
+    },
+
+    show(element) { element?.classList.remove("hidden"); },
+    hide(element) { element?.classList.add("hidden"); },
+
+    showMessage(text, type = "info") {
+        const { messageBox, messageContent } = this.elements;
+        if (!messageBox || !messageContent) return;
+        
+        messageContent.textContent = text;
+        messageBox.className = `pos-message ${type}`;
+        this.show(messageBox);
+
         if (type === "success") {
-            setTimeout(() => msg.classList.add("hidden"), 5000);
+            setTimeout(() => this.hide(messageBox), 4000);
         }
-    } else {
-        console.error('Message element not found');
-        console.log('Available elements:', document.querySelectorAll('[id*="msg"]'));
+    },
+    
+    resetForm() {
+        const { elements } = this;
+        // Reset all inputs
+        [
+            elements.quantityInput, elements.priceInput, elements.totalInput,
+            elements.sellerNameInput, elements.sellerEmailInput,
+            elements.sellerPhoneInput, elements.sellerAddressInput
+        ].forEach(input => { if (input) input.value = ""; });
+        
+        // Reset seller selection
+        if (elements.sellerList) elements.sellerList.selectedIndex = 0;
+        if (elements.selectedSellerText) elements.selectedSellerText.textContent = "Select a Seller";
+        if (elements.confirmSellerBtn) elements.confirmSellerBtn.disabled = true;
+        
+        state.selectedSellerId = null;
+        
+        // Hide modal sections
+        this.hide(elements.sellerDropdownSection);
+        this.hide(elements.addSellerFormSection);
+    },
+
+    populateSellerList(sellers = []) {
+        const { sellerList } = this.elements;
+        if (!sellerList) return;
+        // Clear existing options and add a default
+        sellerList.innerHTML = '<option value="">-- Select Seller --</option>';
+        // Create and append new options
+        sellers.forEach(seller => {
+            const option = new Option(seller.name, seller.id);
+            sellerList.add(option);
+        });
+    },
+
+    displayTransactions(transactions = []) {
+        const { mainContent } = this.elements;
+        if (!mainContent) return;
+        
+        // Remove old transaction list if it exists
+        mainContent.querySelector(".transactions-container")?.remove();
+        
+        const container = document.createElement("div");
+        container.className = "transactions-container"; // Use a more specific class
+        container.innerHTML = '<h3>📋 Your Recent Transactions</h3>';
+
+        if (!transactions.length) {
+            container.innerHTML += '<p class="no-transactions">You have no transactions yet.</p>';
+        } else {
+            const list = transactions.map(t => `
+                <li class="transaction-item">
+                    <span class="date">🗓️ ${new Date(t.created_at).toLocaleDateString()}</span>
+                    <span class="seller">🧑‍💼 ${t.seller_name || 'N/A'}</span>
+                    <span class="details">Qty: ${t.quantity}, Total: ₱${t.total_cost.toFixed(2)}</span>
+                </li>
+            `).join("");
+            container.innerHTML += `<ul class="transaction-list">${list}</ul>`;
+        }
+        mainContent.appendChild(container);
     }
 };
 
-// ✅ Move utility functions outside DOMContentLoaded
-function getVal(id) {
-    return document.getElementById(id)?.value.trim() || "";
-}
-
-function show(id) {
-    document.getElementById(id)?.classList.remove("hidden");
-}
-
-function hide(id) {
-    document.getElementById(id)?.classList.add("hidden");
-}
-
-function toggle(id) {
-    document.getElementById(id)?.classList.toggle("hidden");
-}
-
-// showMessage function moved to top as window.showMessage
-
-function resetPOSForm() {
-    ["quantity", "price", "total", "sellerName", "sellerEmail", "sellerPhone", "sellerAddress"].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = "";
-    });
-    selectedSellerId = null;
-    const sellerList = document.getElementById("sellerList");
-    if (sellerList) sellerList.selectedIndex = 0;
-    hide("sellerDropdownSection");
-    hide("addSellerForm");
-    const msg = document.getElementById("msg");
-    if (msg) {
-        msg.classList.add("hidden");
-        msg.textContent = "";
-    }
-}
-
-// ENHANCED: Add session verification function
-async function verifySession() {
-    try {
-        const res = await fetch(`${API_BASE}/verify-session`, {
-            credentials: 'include'
-        });
-        const data = await res.json();
-        
-        if (!res.ok || !data.valid) {
-            console.error('Session verification failed:', data);
-            showMessage("❌ Session expired. Please log in again.", "error");
-            // Redirect to login after a delay
-            setTimeout(() => {
-                window.location.href = '/login.html';
-            }, 2000);
-            return false;
+/**
+ * =================================================================
+ * EVENT HANDLERS ⚡
+ * Contains the core logic that runs in response to user actions.
+ * Connects the API service with the UI management.
+ * =================================================================
+ */
+const handlers = {
+    async initialPageLoad() {
+        try {
+            await api.verifySession();
+            // Fetch initial data in parallel for speed
+            await Promise.all([
+                this.loadSellers(),
+                this.loadTransactions()
+            ]);
+        } catch (error) {
+            console.error("Initial page load failed:", error.message);
+            // Error message is already shown by the API service for session issues
         }
-        
-        console.log('Session verified:', data);
-        return true;
-    } catch (err) {
-        console.error('Session verification error:', err);
-        showMessage("❌ Authentication error. Please log in again.", "error");
-        setTimeout(() => {
-            window.location.href = '/login.html';
-        }, 2000);
-        return false;
-    }
-}
+    },
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const msg = document.getElementById("msg");
-    const qty = document.getElementById("quantity");
-    const price = document.getElementById("price");
-    const total = document.getElementById("total");
+    async loadSellers() {
+        try {
+            const { sellers } = await api.getSellers();
+            ui.populateSellerList(sellers);
+        } catch (error) {
+            console.error("Failed to load sellers:", error);
+            ui.showMessage(`❌ Could not load sellers: ${error.message}`, "error");
+        }
+    },
 
-    // ENHANCED: Verify session before initializing
-    const sessionValid = await verifySession();
-    if (!sessionValid) {
-        return; // Stop execution if session is invalid
-    }
+    async loadTransactions() {
+        try {
+            const { transactions } = await api.getTransactions();
+            ui.displayTransactions(transactions);
+        } catch (error) {
+            console.error("Failed to load transactions:", error);
+            ui.showMessage(`❌ Could not load transactions: ${error.message}`, "error");
+        }
+    },
 
-    qty.addEventListener("input", updateTotal);
-    price.addEventListener("input", updateTotal);
-
-    function updateTotal() {
-        const q = parseFloat(qty.value) || 0;
-        const p = parseFloat(price.value) || 0;
-        total.value = (q * p).toFixed(2);
-    }
-
-    // ✅ FIXED: Changed from "sellerBtn" to "selectSellerBtn"
-    document.getElementById("selectSellerBtn").addEventListener("click", () => {
-        show("sellerModal"); // Show the modal instead
-    });
-
-    document.getElementById("dropdownBtn").addEventListener("click", async () => {
-        show("sellerDropdownSection");
-        hide("addSellerForm");
-        await loadSellers();
-    });
-
-    document.getElementById("addFormBtn").addEventListener("click", () => {
-        show("addSellerForm");
-        hide("sellerDropdownSection");
-    });
-
-    document.getElementById("saveSellerBtn").addEventListener("click", async () => {
-        // ENHANCED: Verify session before adding seller
-        const sessionValid = await verifySession();
-        if (!sessionValid) return;
-
-        const seller = {
-            name: getVal("sellerName"),
-            email: getVal("sellerEmail"),
-            phone: getVal("sellerPhone"),
-            address: getVal("sellerAddress"),
+    async handleSaveSeller() {
+        const { sellerNameInput, sellerEmailInput, sellerPhoneInput, sellerAddressInput } = ui.elements;
+        const sellerData = {
+            name: sellerNameInput.value.trim(),
+            email: sellerEmailInput.value.trim(),
+            phone: sellerPhoneInput.value.trim(),
+            address: sellerAddressInput.value.trim(),
         };
 
-        if (Object.values(seller).some(v => !v)) {
-            return showMessage("❌ All fields are required", "error");
+        if (Object.values(sellerData).some(val => !val)) {
+            return ui.showMessage("❌ All seller fields are required.", "error");
         }
-
+        
         try {
-            const res = await fetch(`${API_BASE}/add-seller`, {
-                method: "POST",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(seller),
-            });
-            const data = await res.json();
-            
-            console.log('Add seller response:', { status: res.status, data });
-            
-            if (!res.ok) {
-                // Handle specific errors
-                if (res.status === 401) {
-                    showMessage("❌ Session expired. Please log in again.", "error");
-                    setTimeout(() => window.location.href = '/login.html', 2000);
-                    return;
-                } else if (res.status === 404) {
-                    showMessage("❌ User account not found. Please log in again.", "error");
-                    setTimeout(() => window.location.href = '/login.html', 2000);
-                    return;
-                }
-                throw new Error(data.message || `Server error: ${res.status}`);
-            }
-            
-            showMessage(`✅ ${data.message}`, "success");
-            resetPOSForm();
-            await loadSellers();
-        } catch (err) {
-            console.error('Add seller failed:', err);
-            showMessage(`❌ Failed to add seller: ${err.message}`, "error");
+            const data = await api.addSeller(sellerData);
+            ui.showMessage(`✅ ${data.message || 'Seller added successfully!'}`, "success");
+            ui.hide(ui.elements.sellerModal);
+            ui.resetForm();
+            await this.loadSellers(); // Refresh seller list
+        } catch (error) {
+            console.error("Save seller failed:", error);
+            ui.showMessage(`❌ Failed to save seller: ${error.message}`, "error");
         }
-    });
+    },
 
-    document.getElementById("sellerList").addEventListener("change", (e) => {
-        selectedSellerId = e.target.value;
-        const selectedOption = e.target.options[e.target.selectedIndex];
-        if (selectedSellerId) {
-            showMessage(`✅ Seller selected: ${selectedOption.text}`, "info");
-        }
-    });
-
-    // ✅ FIXED: Added null check for confirmSellerBtn
-    const confirmSellerBtn = document.getElementById("confirmSellerBtn");
-    if (confirmSellerBtn) {
-        confirmSellerBtn.addEventListener("click", () => {
-            const sellerList = document.getElementById("sellerList");
-            const selectedOption = sellerList.options[sellerList.selectedIndex];
-            
-            if (selectedSellerId && selectedOption) {
-                // Update the button text to show selected seller
-                document.getElementById("selectedSellerText").textContent = selectedOption.text;
-                hide("sellerModal");
-                showMessage(`✅ Seller selected: ${selectedOption.text}`, "success");
-            }
-        });
-    }
-
-    document.getElementById("payBtn").addEventListener("click", async () => {
-        // ENHANCED: Verify session before payment
-        const sessionValid = await verifySession();
-        if (!sessionValid) return;
-
-        const transaction = {
-            quantity: parseInt(getVal("quantity")),
-            price: parseFloat(getVal("price")),
-            total_cost: parseFloat(getVal("total")),
-            seller_id: selectedSellerId,
+    async handlePayment() {
+        const { quantityInput, priceInput, totalInput } = ui.elements;
+        const transactionData = {
+            seller_id: state.selectedSellerId,
+            quantity: parseInt(quantityInput.value, 10),
+            price: parseFloat(priceInput.value),
+            total_cost: parseFloat(totalInput.value.replace('₱','')),
         };
 
-        if (!transaction.seller_id || !transaction.quantity || !transaction.price) {
-            return showMessage("❌ Complete all fields before payment", "error");
+        if (!transactionData.seller_id || !transactionData.quantity || !transactionData.price) {
+            return ui.showMessage("❌ Please select a seller and enter quantity/price.", "error");
         }
-
+        
         try {
-            const res = await fetch(`${API_BASE}/submit-pos`, {
-                method: "POST",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(transaction),
-            });
-            const data = await res.json();
-            
-            if (!res.ok) {
-                if (res.status === 401) {
-                    showMessage("❌ Session expired. Please log in again.", "error");
-                    setTimeout(() => window.location.href = '/login.html', 2000);
-                    return;
-                }
-                throw new Error(data.message);
-            }
-            
-            showMessage(`✅ ${data.message}`, "success");
-            resetPOSForm();
-            await loadMyTransactions();
-        } catch (err) {
-            showMessage(`❌ Payment failed: ${err.message}`, "error");
+            const data = await api.submitTransaction(transactionData);
+            ui.showMessage(`✅ ${data.message || 'Transaction successful!'}`, "success");
+            ui.resetForm();
+            await this.loadTransactions(); // Refresh transaction list
+        } catch (error) {
+            console.error("Payment failed:", error);
+            ui.showMessage(`❌ Payment failed: ${error.message}`, "error");
         }
+    },
+
+    updateTotal() {
+        const quantity = parseFloat(ui.elements.quantityInput.value) || 0;
+        const price = parseFloat(ui.elements.priceInput.value) || 0;
+        ui.elements.totalInput.value = `₱${(quantity * price).toFixed(2)}`;
+    },
+
+    handleSellerSelection(event) {
+        state.selectedSellerId = event.target.value;
+        ui.elements.confirmSellerBtn.disabled = !state.selectedSellerId;
+    },
+
+    confirmSellerSelection() {
+        const { sellerList, selectedSellerText } = ui.elements;
+        const selectedOption = sellerList.options[sellerList.selectedIndex];
+        if (state.selectedSellerId && selectedOption.value) {
+            selectedSellerText.textContent = selectedOption.text;
+            ui.hide(ui.elements.sellerModal);
+            ui.showMessage(`✅ Seller confirmed: ${selectedOption.text}`, "success");
+        } else {
+            ui.showMessage("❌ Please select a valid seller.", "error");
+        }
+    }
+};
+
+
+/**
+ * =================================================================
+ * INITIALIZATION 🚀
+ * Caches elements and attaches all event listeners.
+ * =================================================================
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    ui.cacheElements();
+    const { elements: el } = ui; // Use a shorthand for easier access
+
+    // Main POS form listeners
+    el.quantityInput?.addEventListener("input", handlers.updateTotal);
+    el.priceInput?.addEventListener("input", handlers.updateTotal);
+    el.payBtn?.addEventListener("click", handlers.handlePayment);
+
+    // Modal control listeners
+    el.selectSellerBtn?.addEventListener("click", () => ui.show(el.sellerModal));
+    el.closeModalBtn?.addEventListener("click", () => ui.hide(el.sellerModal));
+
+    // Modal section toggles
+    el.dropdownBtn?.addEventListener("click", () => {
+        ui.show(el.sellerDropdownSection);
+        ui.hide(el.addSellerFormSection);
+        handlers.loadSellers();
     });
+    el.addFormBtn?.addEventListener("click", () => {
+        ui.show(el.addSellerFormSection);
+        ui.hide(el.sellerDropdownSection);
+    });
+
+    // Action listeners inside the modal
+    el.sellerList?.addEventListener("change", handlers.handleSellerSelection);
+    el.confirmSellerBtn?.addEventListener("click", handlers.confirmSellerSelection);
+    el.saveSellerBtn?.addEventListener("click", handlers.handleSaveSeller);
 
     // Initial load
-    await loadSellers();
-    await loadMyTransactions();
-
-    async function loadSellers() {
-        try {
-            const res = await fetch(`${API_BASE}/sellers`, {
-                credentials: 'include',
-            });
-            const result = await res.json();
-            
-            if (!res.ok) {
-                if (res.status === 401) {
-                    showMessage("❌ Session expired. Please log in again.", "error");
-                    setTimeout(() => window.location.href = '/login.html', 2000);
-                    return;
-                }
-                throw new Error(result.message || "Failed to load sellers");
-            }
-            
-            if (!Array.isArray(result)) {
-                throw new Error("Invalid server response.");
-            }
-
-            const sellerListElement = document.getElementById("sellerList");
-            if (sellerListElement) {
-                sellerListElement.innerHTML = '<option value="">-- Select Seller --</option>' +
-                    result.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-                
-                // Enable/disable confirm button based on selection
-                const confirmBtn = document.getElementById("confirmSellerBtn");
-                if (confirmBtn) {
-                    sellerListElement.addEventListener("change", (e) => {
-                        confirmBtn.disabled = !e.target.value;
-                    });
-                }
-            }
-        } catch (err) {
-            console.error('Load sellers error:', err);
-            showMessage("❌ Error loading sellers: " + err.message, "error");
-        }
-    }
-
-    async function loadMyTransactions() {
-        try {
-            const res = await fetch(`${API_BASE}/transactions`, { 
-                credentials: "include" 
-            });
-            const data = await res.json();
-            
-            if (!res.ok) {
-                if (res.status === 401) {
-                    showMessage("❌ Session expired. Please log in again.", "error");
-                    setTimeout(() => window.location.href = '/login.html', 2000);
-                    return;
-                }
-                console.error('Load transactions error:', data);
-                throw new Error(data.message || "Failed to load transactions");
-            }
-            
-            displayTransactions(data.transactions || []);
-        } catch (err) {
-            console.error('Load transactions failed:', err);
-            showMessage("❌ Could not load transactions: " + err.message, "error");
-        }
-    }
-
-    function displayTransactions(transactions) {
-        const existing = document.querySelector(".transactions");
-        if (existing) existing.remove();
-
-        const container = document.createElement("div");
-        container.className = "transactions";
-        container.innerHTML = `<h3>📋 Your Transactions</h3>`;
-
-        if (!transactions.length) {
-            container.innerHTML += "<p>No transactions yet.</p>";
-        } else {
-            container.innerHTML += `<ul>${transactions.map(t =>
-                `<li>🗓 ${t.created_at} — ${t.seller_name || 'Unknown Seller'} — Qty: ${t.quantity}, Price: ₱${t.price}, Total: ₱${t.total_cost}</li>`
-            ).join("")}</ul>`;
-        }
-
-        document.querySelector(".main-content").appendChild(container);
-    }
+    handlers.initialPageLoad();
 });
