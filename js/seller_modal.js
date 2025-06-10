@@ -1,3 +1,7 @@
+const openModalBtn = document.getElementById("selectSellerBtn");
+const closeModalBtn = document.getElementById("closeModal");
+const modal = document.getElementById("sellerModal");
+
 const dropdownBtn = document.getElementById("dropdownBtn");
 const addFormBtn = document.getElementById("addFormBtn");
 
@@ -55,7 +59,18 @@ saveSellerBtn.addEventListener("click", () => {
     const address = document.getElementById("sellerAddress").value.trim();
 
     if (!name || !email || !phone || !address) {
-        alert("Please fill in all seller details.");
+        showMessage("Please fill in all seller details.");
+        return;
+    }
+
+    if (!isValidEmail(email)) {
+        showMessage("Invalid email format.");
+        return;
+    }
+
+    const exists = [...sellerList.options].some(opt => opt.value === name);
+    if (exists) {
+        showMessage("Seller already exists.");
         return;
     }
 
@@ -69,9 +84,10 @@ saveSellerBtn.addEventListener("click", () => {
     modal.classList.remove("show");
     resetModalSections();
     clearFormFields();
+    showMessage("Seller saved successfully!");
 });
 
-// Helper Functions
+// Helpers
 function resetModalSections() {
     dropdownSection.classList.add("hidden");
     addSellerForm.classList.add("hidden");
@@ -83,4 +99,17 @@ function clearFormFields() {
     document.getElementById("sellerEmail").value = "";
     document.getElementById("sellerPhone").value = "";
     document.getElementById("sellerAddress").value = "";
+}
+
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function showMessage(text) {
+    const msgBox = document.getElementById("msg");
+    const msgContent = msgBox.querySelector(".message-content");
+    msgContent.textContent = text;
+    msgBox.classList.remove("hidden");
+
+    setTimeout(() => msgBox.classList.add("hidden"), 3000);
 }
