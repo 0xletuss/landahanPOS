@@ -3,18 +3,634 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>LANDAHAN POS - Improved</title>
-    <link rel="stylesheet" href="../css/home.css" />
+    <title>POS - LANDAHAN</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #2d3748;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 50%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header Styles */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem 2rem;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(199, 245, 46, 0.2);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        .logo::before {
+            content: "🥥";
+            font-size: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #2d3748 0%, #38a169 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: #f7fafc;
+            padding: 0.75rem 1.25rem;
+            border-radius: 20px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .user-info:hover {
+            border-color: rgba(199, 245, 46, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .user-info span {
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        #userName {
+            color: #38a169;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(229, 62, 62, 0.4);
+        }
+
+        /* Main Content */
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(199, 245, 46, 0.2);
+        }
+
+        .pos-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .pos-header {
+            background: linear-gradient(135deg, #c7f52e 0%, #38a169 100%);
+            color: #1a202c;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .pos-header h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .pos-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .pos-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        /* Enhanced POS Cards */
+        .pos-card {
+            background: #f8fafc;
+            border-radius: 20px;
+            border: 2px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pos-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #c7f52e 0%, #38a169 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .pos-card:hover {
+            border-color: #c7f52e;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .pos-card:hover::before {
+            opacity: 1;
+        }
+
+        .pos-card-header {
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pos-card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .pos-card:hover .pos-card-header::before {
+            left: 100%;
+        }
+
+        .pos-card-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .pos-card-body {
+            padding: 2rem;
+        }
+
+        /* Enhanced Form Elements */
+        .input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .pos-input, .pos-select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #ffffff;
+            color: #1f2937;
+            position: relative;
+        }
+
+        .pos-input:focus, .pos-select:focus {
+            outline: none;
+            border-color: #c7f52e;
+            box-shadow: 0 0 0 3px rgba(199, 245, 46, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .pos-input:focus + label, .pos-select:focus + label {
+            color: #38a169;
+        }
+
+        .total-input {
+            background: #f0f9ff !important;
+            border-color: #0ea5e9 !important;
+            font-weight: 600;
+            color: #0369a1 !important;
+            font-size: 1.1rem !important;
+        }
+
+        /* Enhanced Buttons */
+        .pos-action-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #c7f52e 0%, #38a169 100%);
+            color: #1a202c;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(199, 245, 46, 0.3);
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pos-action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .pos-action-btn:hover::before {
+            left: 100%;
+        }
+
+        .pos-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(199, 245, 46, 0.4);
+        }
+
+        .pos-secondary-btn {
+            background: #f7fafc;
+            color: #2d3748;
+            border: 2px solid #e2e8f0;
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-right: 1rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pos-secondary-btn:hover {
+            background: #edf2f7;
+            border-color: #c7f52e;
+            transform: translateY(-1px);
+        }
+
+        .pos-payment-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            border: none;
+            padding: 1.2rem 1.5rem;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pos-payment-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .pos-payment-btn:hover::before {
+            left: 100%;
+        }
+
+        .pos-payment-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
+        }
+
+        .pos-payment-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Enhanced Seller Options */
+        .seller-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-section {
+            margin-top: 1rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .form-section {
+            margin-top: 1rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .transaction-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .total-group {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 2px solid #0ea5e9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .total-group::before {
+            content: '💰';
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            font-size: 1.2rem;
+            opacity: 0.3;
+        }
+
+        /* Enhanced Messages */
+        .pos-message {
+            margin: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pos-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: currentColor;
+            opacity: 0.3;
+        }
+
+        .pos-message.success {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 2px solid #bbf7d0;
+            animation: slideInSuccess 0.5s ease-out;
+        }
+
+        .pos-message.error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 2px solid #fecaca;
+            animation: slideInError 0.5s ease-out;
+        }
+
+        .pos-message.info {
+            background: #eff6ff;
+            color: #2563eb;
+            border: 2px solid #bfdbfe;
+            animation: slideInInfo 0.5s ease-out;
+        }
+
+        @keyframes slideInSuccess {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+                background: #dcfce7;
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+                background: #f0fdf4;
+            }
+        }
+
+        @keyframes slideInError {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+                background: #fee2e2;
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+                background: #fef2f2;
+            }
+        }
+
+        @keyframes slideInInfo {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+                background: #dbeafe;
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+                background: #eff6ff;
+            }
+        }
+
+        /* Loading States */
+        .pos-action-btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .pos-action-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid #1a202c;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .header-left {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .pos-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .seller-options {
+                flex-direction: column;
+            }
+            
+            .pos-secondary-btn {
+                width: 100%;
+                margin-right: 0;
+            }
+            
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            .pos-header {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pos-header h2 {
+                font-size: 1.8rem;
+            }
+            
+            .pos-card-body {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Focus indicators for accessibility */
+        .pos-action-btn:focus,
+        .pos-secondary-btn:focus,
+        .pos-payment-btn:focus {
+            outline: 2px solid #c7f52e;
+            outline-offset: 2px;
+        }
+
+        /* Smooth transitions for better UX */
+        * {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
             <div class="header-left">
                 <div class="logo">LANDAHAN</div>
-                <h1>Point of Sale System</h1>
+                <h1>Point of Sale</h1>
             </div>
             <div class="user-info">
-                <span>Hello, <span id="userName">Coconut Seller</span>! 🌴</span>
+                <span>Hello, <span id="userName">User</span>! 🌴</span>
                 <button onclick="logout()" class="logout-btn">Logout</button>
             </div>
         </header>
@@ -23,234 +639,78 @@
             <div class="pos-container">
                 <div class="pos-header">
                     <h2>🥥 LANDAHAN POS</h2>
-                    <p>Natural transactions, efficient business</p>
-                    <div class="pos-stats">
-                        <div class="stat-item">
-                            <span class="stat-number">₱0.00</span>
-                            <span class="stat-label">Today's Sales</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">0</span>
-                            <span class="stat-label">Transactions</span>
-                        </div>
-                    </div>
+                    <p>Complete your transactions naturally and efficiently</p>
                 </div>
 
                 <div class="pos-content">
-                    <!-- Seller Section -->
-                    <div class="pos-card seller-card">
+                    <!-- Seller Selection Card -->
+                    <div class="pos-card">
                         <div class="pos-card-header">
-                            <h3>👤 Active Seller</h3>
+                            <h3>👥 Seller Selection</h3>
                         </div>
                         <div class="pos-card-body">
-                            <div id="selectedSellerInfo" class="seller-info hidden">
-                                <div class="seller-avatar">
-                                    <span class="avatar-icon">👤</span>
-                                </div>
-                                <div class="seller-details">
-                                    <h4 id="selectedSellerName">-</h4>
-                                    <p id="selectedSellerContact">-</p>
-                                </div>
-                                <button id="changeSellerBtn" class="change-seller-btn">Change</button>
+                            <button id="sellerBtn" class="pos-action-btn">🧑‍💼 Select a Seller</button>
+
+                            <div id="sellerOptions" class="seller-options hidden">
+                                <button id="dropdownBtn" class="pos-secondary-btn">📋 Select from List</button>
+                                <button id="addFormBtn" class="pos-secondary-btn">➕ Add New Seller</button>
                             </div>
 
-                            <div id="sellerSelection" class="seller-selection">
-                                <div class="seller-options">
-                                    <button id="selectExistingBtn" class="pos-primary-btn">
-                                        <span class="btn-icon">📋</span>
-                                        Select Existing Seller
-                                    </button>
-                                    <button id="addNewSellerBtn" class="pos-secondary-btn">
-                                        <span class="btn-icon">➕</span>
-                                        Add New Seller
-                                    </button>
-                                </div>
+                            <div id="sellerDropdownSection" class="input-section hidden">
+                                <label for="sellerList">Choose Seller:</label>
+                                <select id="sellerList" class="pos-select">
+                                    <option value="">-- Select Seller --</option>
+                                </select>
+                            </div>
 
-                                <div id="existingSellerSection" class="input-section hidden">
-                                    <div class="search-container">
-                                        <input type="text" id="sellerSearch" class="pos-input" placeholder="Search sellers..." />
-                                        <span class="search-icon">🔍</span>
+                            <div id="addSellerForm" class="form-section hidden">
+                                <div class="form-grid">
+                                    <div class="input-group">
+                                        <label for="sellerName">Seller Name:</label>
+                                        <input type="text" id="sellerName" class="pos-input" required />
                                     </div>
-                                    <div id="sellerList" class="seller-list">
-                                        <!-- Sellers will be populated here -->
+                                    <div class="input-group">
+                                        <label for="sellerEmail">Email:</label>
+                                        <input type="email" id="sellerEmail" class="pos-input" required />
                                     </div>
-                                </div>
-
-                                <div id="newSellerForm" class="form-section hidden">
-                                    <div class="form-grid">
-                                        <div class="input-group">
-                                            <label for="sellerName">Full Name *</label>
-                                            <input type="text" id="sellerName" class="pos-input" required />
-                                        </div>
-                                        <div class="input-group">
-                                            <label for="sellerPhone">Phone Number *</label>
-                                            <input type="tel" id="sellerPhone" class="pos-input" required />
-                                        </div>
-                                        <div class="input-group full-width">
-                                            <label for="sellerEmail">Email (optional)</label>
-                                            <input type="email" id="sellerEmail" class="pos-input" />
-                                        </div>
-                                        <div class="input-group full-width">
-                                            <label for="sellerAddress">Address *</label>
-                                            <textarea id="sellerAddress" class="pos-textarea" rows="2" required></textarea>
-                                        </div>
+                                    <div class="input-group">
+                                        <label for="sellerPhone">Phone:</label>
+                                        <input type="text" id="sellerPhone" class="pos-input" required />
                                     </div>
-                                    <div class="form-actions">
-                                        <button id="cancelSellerBtn" class="pos-secondary-btn">Cancel</button>
-                                        <button id="saveSellerBtn" class="pos-primary-btn">
-                                            <span class="btn-icon">💾</span>
-                                            Save Seller
-                                        </button>
+                                    <div class="input-group">
+                                        <label for="sellerAddress">Address:</label>
+                                        <input type="text" id="sellerAddress" class="pos-input" required />
                                     </div>
                                 </div>
+                                <button id="saveSellerBtn" class="pos-action-btn">💾 Save Seller</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Transaction Section -->
-                    <div class="pos-card transaction-card">
+                    <!-- Transaction Card -->
+                    <div class="pos-card">
                         <div class="pos-card-header">
-                            <h3>💳 New Transaction</h3>
+                            <h3>💳 Transaction Details</h3>
                         </div>
                         <div class="pos-card-body">
-                            <div class="product-section">
+                            <div class="transaction-grid">
                                 <div class="input-group">
-                                    <label for="productName">Product/Service</label>
-                                    <input type="text" id="productName" class="pos-input" placeholder="e.g., Fresh Coconuts" />
-                                </div>
-                                
-                                <div class="transaction-grid">
-                                    <div class="input-group">
-                                        <label for="quantity">Quantity</label>
-                                        <input type="number" id="quantity" class="pos-input" min="1" value="1" />
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="price">Price per Unit (₱)</label>
-                                        <input type="number" id="price" class="pos-input" step="0.01" min="0" placeholder="0.00" />
-                                    </div>
+                                    <label for="quantity">Quantity:</label>
+                                    <input type="number" id="quantity" class="pos-input" min="1" />
                                 </div>
 
-                                <div class="payment-method">
-                                    <label>Payment Method</label>
-                                    <div class="payment-options">
-                                        <label class="payment-option">
-                                            <input type="radio" name="paymentMethod" value="cash" checked />
-                                            <span class="payment-icon">💵</span>
-                                            Cash
-                                        </label>
-                                        <label class="payment-option">
-                                            <input type="radio" name="paymentMethod" value="card" />
-                                            <span class="payment-icon">💳</span>
-                                            Card
-                                        </label>
-                                        <label class="payment-option">
-                                            <input type="radio" name="paymentMethod" value="gcash" />
-                                            <span class="payment-icon">📱</span>
-                                            GCash
-                                        </label>
-                                    </div>
+                                <div class="input-group">
+                                    <label for="price">Price per Unit:</label>
+                                    <input type="number" id="price" class="pos-input" step="0.01" min="0" />
                                 </div>
 
-                                <div class="total-section">
-                                    <div class="calculation-row">
-                                        <span>Subtotal:</span>
-                                        <span id="subtotal">₱0.00</span>
-                                    </div>
-                                    <div class="calculation-row">
-                                        <span>Tax (12%):</span>
-                                        <span id="tax">₱0.00</span>
-                                    </div>
-                                    <div class="total-row">
-                                        <span>Total Amount:</span>
-                                        <span id="total">₱0.00</span>
-                                    </div>
-                                </div>
-
-                                <div class="transaction-actions">
-                                    <button id="clearBtn" class="pos-secondary-btn">
-                                        <span class="btn-icon">🗑️</span>
-                                        Clear
-                                    </button>
-                                    <button id="processPaymentBtn" class="pos-payment-btn" disabled>
-                                        <span class="btn-icon">💳</span>
-                                        Process Payment
-                                    </button>
+                                <div class="input-group total-group">
+                                    <label for="total">Total Cost:</label>
+                                    <input type="text" id="total" class="pos-input total-input" readonly />
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Recent Transactions -->
-                <div class="pos-card transactions-history">
-                    <div class="pos-card-header">
-                        <h3>📊 Recent Transactions</h3>
-                        <button id="viewAllBtn" class="view-all-btn">View All</button>
-                    </div>
-                    <div class="pos-card-body">
-                        <div id="transactionsList" class="transactions-list">
-                            <div class="no-transactions">
-                                <span class="empty-icon">📝</span>
-                                <p>No transactions yet today</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Success Modal -->
-                <div id="successModal" class="modal hidden">
-                    <div class="modal-content">
-                        <div class="modal-header success">
-                            <span class="modal-icon">✅</span>
-                            <h3>Transaction Successful!</h3>
-                        </div>
-                        <div class="modal-body">
-                            <div class="receipt-preview">
-                                <div class="receipt-header">
-                                    <h4>🥥 LANDAHAN</h4>
-                                    <p>Transaction Receipt</p>
-                                </div>
-                                <div class="receipt-details">
-                                    <div class="receipt-row">
-                                        <span>Seller:</span>
-                                        <span id="receiptSeller">-</span>
-                                    </div>
-                                    <div class="receipt-row">
-                                        <span>Product:</span>
-                                        <span id="receiptProduct">-</span>
-                                    </div>
-                                    <div class="receipt-row">
-                                        <span>Quantity:</span>
-                                        <span id="receiptQuantity">-</span>
-                                    </div>
-                                    <div class="receipt-row">
-                                        <span>Amount:</span>
-                                        <span id="receiptAmount">-</span>
-                                    </div>
-                                    <div class="receipt-row">
-                                        <span>Payment:</span>
-                                        <span id="receiptPayment">-</span>
-                                    </div>
-                                    <div class="receipt-row total">
-                                        <span>Total:</span>
-                                        <span id="receiptTotal">-</span>
-                                    </div>
-                                </div>
-                                <div class="receipt-footer">
-                                    <p>Thank you for your business!</p>
-                                    <small>Transaction ID: <span id="transactionId">-</span></small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-actions">
-                            <button id="printReceiptBtn" class="pos-secondary-btn">
-                                <span class="btn-icon">🖨️</span>
-                                Print Receipt
-                            </button>
-                            <button id="newTransactionBtn" class="pos-primary-btn">
-                                <span class="btn-icon">➕</span>
-                                New Transaction
-                            </button>
+                            <button id="payBtn" class="pos-payment-btn">💳 Process Payment</button>
                         </div>
                     </div>
                 </div>
@@ -260,6 +720,105 @@
         </main>
     </div>
 
-    <script src="landahan-pos.js"></script>
+    <script>
+        // Demo functionality for the enhanced POS system
+        document.addEventListener('DOMContentLoaded', function() {
+            const sellerBtn = document.getElementById('sellerBtn');
+            const sellerOptions = document.getElementById('sellerOptions');
+            const dropdownBtn = document.getElementById('dropdownBtn');
+            const addFormBtn = document.getElementById('addFormBtn');
+            const sellerDropdownSection = document.getElementById('sellerDropdownSection');
+            const addSellerForm = document.getElementById('addSellerForm');
+            const saveSellerBtn = document.getElementById('saveSellerBtn');
+            const payBtn = document.getElementById('payBtn');
+            const quantityInput = document.getElementById('quantity');
+            const priceInput = document.getElementById('price');
+            const totalInput = document.getElementById('total');
+            const msgDiv = document.getElementById('msg');
+
+            // Calculate total automatically
+            function calculateTotal() {
+                const quantity = parseFloat(quantityInput.value) || 0;
+                const price = parseFloat(priceInput.value) || 0;
+                const total = quantity * price;
+                totalInput.value = total > 0 ? `₱${total.toFixed(2)}` : '';
+            }
+
+            quantityInput.addEventListener('input', calculateTotal);
+            priceInput.addEventListener('input', calculateTotal);
+
+            // Show seller options
+            sellerBtn.addEventListener('click', function() {
+                sellerOptions.classList.toggle('hidden');
+                sellerDropdownSection.classList.add('hidden');
+                addSellerForm.classList.add('hidden');
+            });
+
+            // Show dropdown section
+            dropdownBtn.addEventListener('click', function() {
+                sellerDropdownSection.classList.toggle('hidden');
+                addSellerForm.classList.add('hidden');
+            });
+
+            // Show add form section
+            addFormBtn.addEventListener('click', function() {
+                addSellerForm.classList.toggle('hidden');
+                sellerDropdownSection.classList.add('hidden');
+            });
+
+            // Save seller with loading state
+            saveSellerBtn.addEventListener('click', function() {
+                saveSellerBtn.classList.add('loading');
+                saveSellerBtn.textContent = '';
+                
+                setTimeout(() => {
+                    saveSellerBtn.classList.remove('loading');
+                    saveSellerBtn.textContent = '💾 Save Seller';
+                    showMessage('Seller saved successfully!', 'success');
+                }, 1500);
+            });
+
+            // Process payment with loading state
+            payBtn.addEventListener('click', function() {
+                if (!quantityInput.value || !priceInput.value) {
+                    showMessage('Please fill in quantity and price fields.', 'error');
+                    return;
+                }
+
+                payBtn.classList.add('loading');
+                payBtn.textContent = '';
+                
+                setTimeout(() => {
+                    payBtn.classList.remove('loading');
+                    payBtn.textContent = '💳 Process Payment';
+                    showMessage('Payment processed successfully!', 'success');
+                    
+                    // Reset form
+                    quantityInput.value = '';
+                    priceInput.value = '';
+                    totalInput.value = '';
+                }, 2000);
+            });
+
+            // Show message function
+            function showMessage(text, type) {
+                msgDiv.textContent = text;
+                msgDiv.className = `pos-message ${type}`;
+                msgDiv.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    msgDiv.classList.add('hidden');
+                }, 4000);
+            }
+
+            // Demo logout function
+            window.logout = function() {
+                showMessage('Logging out...', 'info');
+                setTimeout(() => {
+                    alert('Logout functionality would redirect to login page');
+                }, 1000);
+            };
+        });
+    </script>
 </body>
 </html>
