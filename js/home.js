@@ -1,209 +1,151 @@
 let selectedSellerId = null;
-
-// API base URL
 const API_BASE = "https://landahan-5.onrender.com/api";
 
-// Show/Hide POS Section
 function showPOSSection() {
-    const posSection = document.getElementById('posSection');
-    posSection.classList.remove('hidden');
-    posSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('posSection').classList.remove('hidden');
 }
 
 function hidePOSSection() {
-    const posSection = document.getElementById('posSection');
-    posSection.classList.add('hidden');
+    document.getElementById('posSection').classList.add('hidden');
     resetPOSForm();
 }
 
 function resetPOSForm() {
-    document.getElementById("quantity").value = "";
-    document.getElementById("price").value = "";
-    document.getElementById("total").value = "";
-    document.getElementById("sellerName").value = "";
-    document.getElementById("sellerEmail").value = "";
-    document.getElementById("sellerPhone").value = "";
-    document.getElementById("sellerAddress").value = "";
-
+    ["quantity", "price", "total", "sellerName", "sellerEmail", "sellerPhone", "sellerAddress"].forEach(id => {
+        document.getElementById(id).value = "";
+    });
     selectedSellerId = null;
     document.getElementById("sellerList").selectedIndex = 0;
     document.getElementById("sellerOptions").classList.add("hidden");
     document.getElementById("sellerDropdownSection").classList.add("hidden");
     document.getElementById("addSellerForm").classList.add("hidden");
-
-    const msg = document.getElementById("msg");
-    msg.classList.add("hidden");
-    msg.textContent = "";
+    document.getElementById("msg").classList.add("hidden");
+    document.getElementById("msg").textContent = "";
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    const msg = document.getElementById("msg");
+
     const qty = document.getElementById("quantity");
     const price = document.getElementById("price");
     const total = document.getElementById("total");
-    const msg = document.getElementById("msg");
 
-    const sellerBtn = document.getElementById("sellerBtn");
-    const sellerOptions = document.getElementById("sellerOptions");
-    const sellerDropdownSection = document.getElementById("sellerDropdownSection");
-    const addSellerForm = document.getElementById("addSellerForm");
-    const sellerList = document.getElementById("sellerList");
+    qty.addEventListener("input", updateTotal);
+    price.addEventListener("input", updateTotal);
 
-    const saveSellerBtn = document.getElementById("saveSellerBtn");
-    const payBtn = document.getElementById("payBtn");
+    function updateTotal() {
+        const q = parseFloat(qty.value) || 0;
+        const p = parseFloat(price.value) || 0;
+        total.value = (q * p).toFixed(2);
+    }
 
-    const sellerName = document.getElementById("sellerName");
-    const sellerEmail = document.getElementById("sellerEmail");
-    const sellerPhone = document.getElementById("sellerPhone");
-    const sellerAddress = document.getElementById("sellerAddress");
-
-    // Test server connection
-    testServerConnection();
-    loadMyTransactions();
-
-    // Show seller options
-    sellerBtn.addEventListener("click", () => {
-        sellerOptions.classList.toggle("hidden");
-        sellerDropdownSection.classList.add("hidden");
-        addSellerForm.classList.add("hidden");
+    document.getElementById("sellerBtn").addEventListener("click", () => {
+        toggle("sellerOptions");
+        hide("sellerDropdownSection");
+        hide("addSellerForm");
     });
 
     document.getElementById("dropdownBtn").addEventListener("click", async () => {
-        sellerDropdownSection.classList.remove("hidden");
-        addSellerForm.classList.add("hidden");
+        show("sellerDropdownSection");
+        hide("addSellerForm");
         await loadSellers();
     });
 
     document.getElementById("addFormBtn").addEventListener("click", () => {
-        sellerDropdownSection.classList.add("hidden");
-        addSellerForm.classList.remove("hidden");
+        show("addSellerForm");
+        hide("sellerDropdownSection");
     });
 
-    async function testServerConnection() {
-        try {
-            console.log("Testing server connection...");
-            const res = await fetch(`${API_BASE}/test`, { credentials: 'include' });
-            if (res.ok) {
-                const data = await res.json();
-                console.log("✅ Server connection successful:", data.message);
-                showMessage("✅ Connected to server successfully!", "success");
-            } else {
-                throw new Error(`Server responded with status: ${res.status}`);
-            }
-        } catch (err) {
-            console.error("❌ Server connection failed:", err.message);
-            showMessage(`❌ Cannot connect to server: ${err.message}`, "error");
-        }
-    }
-
-    function showMessage(text, type = "info") {
-        msg.textContent = text;
-        msg.className = `pos-message ${type}`;
-        msg.classList.remove("hidden");
-
-        if (type === "success") {
-            setTimeout(() => {
-                msg.classList.add("hidden");
-            }, 5000);
-        }
-    }
-
-    async function loadSellers() {
-        try {
-            console.log("Loading sellers...");
-            const res = await fetch(`${API_BASE}/sellers`, {
-                method: 'GET',
-                credentials: 'include',
-                headers: { 'Content-Type': 'application/json' }
-            });
-
-            if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-            
-            const sellers = await res.json();
-            console.log("Sellers loaded:", sellers);
-
-            sellerList.innerHTML = '<option value="">-- Select Seller --</option>' +
-                sellers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-
-            showMessage("✅ Sellers loaded successfully.", "success");
-        } catch (err) {
-            console.error("Error loading sellers:", err);
-            showMessage(`❌ Error fetching seller list: ${err.message}`, "error");
-        }
-    }
-
-    sellerList.addEventListener("change", (e) => {
-        selectedSellerId = e.target.value;
-        if (selectedSellerId) {
-            const selectedOption = sellerList.options[sellerList.selectedIndex];
-            showMessage(`✅ Seller selected: ${selectedOption.text}`, "info");
-        }
-    });
-
-    saveSellerBtn.addEventListener("click", async () => {
+    document.getElementById("saveSellerBtn").addEventListener("click", async () => {
         const seller = {
-            name: sellerName.value.trim(),
-            email: sellerEmail.value.trim(),
-            phone: sellerPhone.value.trim(),
-            address: sellerAddress.value.trim()
+            name: getVal("sellerName"),
+            email: getVal("sellerEmail"),
+            phone: getVal("sellerPhone"),
+            address: getVal("sellerAddress"),
         };
 
-        if (!seller.name || !seller.email || !seller.phone || !seller.address) {
-            showMessage("❌ Please fill all seller fields.", "error");
-            return;
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(seller.email)) {
-            showMessage("❌ Please enter a valid email address.", "error");
-            return;
+        if (Object.values(seller).some(v => !v)) {
+            return showMessage("❌ All fields are required", "error");
         }
 
         try {
-            console.log("Adding seller:", seller);
             const res = await fetch(`${API_BASE}/add-seller`, {
                 method: "POST",
-                credentials: 'include',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(seller)
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(seller),
             });
 
             const data = await res.json();
-            console.log("Add seller response:", data);
-
-            if (res.ok) {
-                selectedSellerId = data.id;
-                sellerName.value = sellerEmail.value = sellerPhone.value = sellerAddress.value = "";
-                sellerOptions.classList.add("hidden");
-                addSellerForm.classList.add("hidden");
-                showMessage(`✅ ${data.message} - Seller: ${seller.name}`, "success");
-                await loadSellers(); // reload list
-            } else {
-                throw new Error(data.message || `HTTP ${res.status}`);
-            }
+            if (!res.ok) throw new Error(data.message);
+            showMessage(`✅ ${data.message}`, "success");
+            resetPOSForm();
+            await loadSellers();
         } catch (err) {
-            console.error("Error adding seller:", err);
             showMessage(`❌ Failed to add seller: ${err.message}`, "error");
         }
     });
 
-    async function loadMyTransactions() {
+    document.getElementById("sellerList").addEventListener("change", (e) => {
+        selectedSellerId = e.target.value;
+        const selectedOption = e.target.options[e.target.selectedIndex];
+        showMessage(`✅ Seller selected: ${selectedOption.text}`, "info");
+    });
+
+    document.getElementById("payBtn").addEventListener("click", async () => {
+        const transaction = {
+            quantity: parseInt(getVal("quantity")),
+            price: parseFloat(getVal("price")),
+            total_cost: parseFloat(getVal("total")),
+            seller_id: selectedSellerId,
+        };
+
+        if (!transaction.seller_id || !transaction.quantity || !transaction.price) {
+            return showMessage("❌ Complete all fields before payment", "error");
+        }
+
         try {
-            const res = await fetch(`${API_BASE}/my-transactions`, {
-                method: 'GET',
-                credentials: 'include'
+            const res = await fetch(`${API_BASE}/submit-pos`, {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(transaction),
             });
 
             const data = await res.json();
+            if (!res.ok) throw new Error(data.message);
+            showMessage(`✅ ${data.message}`, "success");
+            resetPOSForm();
+            await loadMyTransactions();
+        } catch (err) {
+            showMessage(`❌ Payment failed: ${err.message}`, "error");
+        }
+    });
 
-            if (!res.ok) {
-                showMessage(`❌ ${data.message || 'Failed to load transactions'}`, "error");
-                return;
-            }
+    loadSellers();
+    loadMyTransactions();
 
+    async function loadSellers() {
+        try {
+            const res = await fetch(`${API_BASE}/sellers`, {
+                credentials: 'include',
+            });
+            const sellers = await res.json();
+            document.getElementById("sellerList").innerHTML = '<option value="">-- Select Seller --</option>' +
+                sellers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+        } catch (err) {
+            showMessage("❌ Error loading sellers: " + err.message, "error");
+        }
+    }
+
+    async function loadMyTransactions() {
+        try {
+            const res = await fetch(`${API_BASE}/my-transactions`, { credentials: "include" });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message);
             displayTransactions(data.transactions);
         } catch (err) {
-            console.error("Error fetching transactions:", err);
-            showMessage("❌ Error fetching transactions: " + err.message, "error");
+            showMessage("❌ Could not load transactions: " + err.message, "error");
         }
     }
 
@@ -211,17 +153,38 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.createElement("div");
         container.className = "transactions";
         container.innerHTML = `<h3>📋 Your Transactions</h3>`;
-
         if (!transactions.length) {
-            container.innerHTML += "<p>No transactions found.</p>";
+            container.innerHTML += "<p>No transactions yet.</p>";
         } else {
-            const list = transactions.map(t => `
-                <li>🗓 ${t.created_at} — Qty: ${t.quantity}, Price: ₱${t.price}, Total: ₱${t.total_cost}</li>
-            `).join('');
-
-            container.innerHTML += `<ul>${list}</ul>`;
+            container.innerHTML += `<ul>${transactions.map(t =>
+                `<li>🗓 ${t.created_at} — Qty: ${t.quantity}, Price: ₱${t.price}, Total: ₱${t.total_cost}</li>`
+            ).join("")}</ul>`;
         }
-
         document.querySelector(".main-content").appendChild(container);
+    }
+
+    function getVal(id) {
+        return document.getElementById(id).value.trim();
+    }
+
+    function show(id) {
+        document.getElementById(id).classList.remove("hidden");
+    }
+
+    function hide(id) {
+        document.getElementById(id).classList.add("hidden");
+    }
+
+    function toggle(id) {
+        document.getElementById(id).classList.toggle("hidden");
+    }
+
+    function showMessage(text, type = "info") {
+        msg.textContent = text;
+        msg.className = `pos-message ${type}`;
+        msg.classList.remove("hidden");
+        if (type === "success") {
+            setTimeout(() => msg.classList.add("hidden"), 5000);
+        }
     }
 });
