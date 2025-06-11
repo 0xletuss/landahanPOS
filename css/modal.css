@@ -263,6 +263,8 @@
 }
 
 
+
+
 /* --- NEW STYLES END HERE --- */
 
 /* Responsive */
@@ -284,4 +286,21 @@
 
 .hidden {
     display: none !important;
+}
+/*
+=================================
+FIX FOR DROPDOWN OPTION VISIBILITY
+=================================
+*/
+
+/* This targets the dropdown menu itself */
+.modal-select {
+    color: white; /* Ensures the selected item text is white when the dropdown is closed */
+}
+
+/* This targets the individual options in the dropdown list */
+.modal-select option {
+    background-color: white; /* Keeps the standard white background */
+    color: #1f2937;          /* Sets the font color to a dark gray for readability */
+    padding: 5px;            /* Adds a little spacing */
 }
