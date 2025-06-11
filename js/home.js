@@ -9,49 +9,30 @@ const state = {
 /**
  * =================================================================
  * API SERVICE 🚀
- * Handles all communication with the backend. Centralizes fetch logic,
- * error handling, and session checks.
  * =================================================================
  */
 const api = {
     async _fetch(endpoint, options = {}) {
-        // Default options for every request
         const defaultOptions = {
             method: "GET",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
         };
-
         const res = await fetch(`${API_BASE_URL}${endpoint}`, { ...defaultOptions, ...options });
-
-        // Centralized session expiration check
         if (res.status === 401) {
             ui.showMessage("❌ Session expired. Redirecting to login...", "error");
             setTimeout(() => (window.location.href = "/login.html"), 2000);
-            // Throw an error to stop further execution in the calling function
             throw new Error("Session expired");
         }
-
         const data = await res.json();
-
         if (!res.ok) {
-            // Throw an error with the message from the server's response
             throw new Error(data.message || `An unknown server error occurred.`);
         }
-
-        return data; // Return the JSON data on success
+        return data;
     },
-
-    verifySession() {
-        return this._fetch("/verify-session");
-    },
-    getSellers() {
-        return this._fetch("/sellers");
-    },
-    getTransactions() {
-        // The API returns { transactions: [...] }
-        return this._fetch("/transactions");
-    },
+    verifySession() { return this._fetch("/verify-session"); },
+    getSellers() { return this._fetch("/sellers"); },
+    getTransactions() { return this._fetch("/transactions"); },
     addSeller(sellerData) {
         return this._fetch("/add-seller", {
             method: "POST",
@@ -69,133 +50,91 @@ const api = {
 /**
  * =================================================================
  * UI MANAGEMENT 🎨
- * Handles all direct manipulation of the DOM (showing/hiding,
- * updating text, creating elements, etc.).
  * =================================================================
  */
 const ui = {
-    elements: {}, // To be filled by cacheElements
-
-    // Find all needed elements once and store them
+    elements: {},
     cacheElements() {
         this.elements = {
-            // Main POS form
             quantityInput: document.getElementById("quantity"),
             priceInput: document.getElementById("price"),
             totalInput: document.getElementById("total"),
             payBtn: document.getElementById("payBtn"),
-            // Message box
             messageBox: document.getElementById("msg"),
             messageContent: document.querySelector("#msg .message-content"),
-            // Modal and its controls
             sellerModal: document.getElementById("sellerModal"),
             selectSellerBtn: document.getElementById("selectSellerBtn"),
             closeModalBtn: document.getElementById("closeModal"),
             confirmSellerBtn: document.getElementById("confirmSellerBtn"),
-            // Modal sections
             dropdownBtn: document.getElementById("dropdownBtn"),
             addFormBtn: document.getElementById("addFormBtn"),
             sellerDropdownSection: document.getElementById("sellerDropdownSection"),
             addSellerFormSection: document.getElementById("addSellerForm"),
-            // Seller selection
             sellerList: document.getElementById("sellerList"),
             selectedSellerText: document.getElementById("selectedSellerText"),
-            // Add Seller form
             saveSellerBtn: document.getElementById("saveSellerBtn"),
             sellerNameInput: document.getElementById("sellerName"),
             sellerEmailInput: document.getElementById("sellerEmail"),
             sellerPhoneInput: document.getElementById("sellerPhone"),
             sellerAddressInput: document.getElementById("sellerAddress"),
-            // Transactions container
             mainContent: document.querySelector(".main-content"),
         };
     },
-
-    // These functions now add/remove the `.show` class to match your CSS.
-    show(element) {
-        element?.classList.add("show");
-    },
-    hide(element) {
-        element?.classList.remove("show");
-    },
-
+    show(element) { element?.classList.add("show"); },
+    hide(element) { element?.classList.remove("show"); },
     showMessage(text, type = "info") {
         const { messageBox, messageContent } = this.elements;
         if (!messageBox || !messageContent) return;
-
         messageContent.textContent = text;
-        // This is a special case for the message box, which uses .hidden
         messageBox.className = `pos-message ${type}`;
-        messageBox.classList.remove("hidden"); // Directly remove hidden class for message box
-
-        if (type === "success" || type === "info") { // Auto-hide for success and info
-             setTimeout(() => messageBox.classList.add("hidden"), 4000);
+        messageBox.classList.remove("hidden");
+        if (type === "success" || type === "info") {
+            setTimeout(() => messageBox.classList.add("hidden"), 4000);
         }
     },
-
+    resetSellerFormInputs() {
+        const { sellerNameInput, sellerEmailInput, sellerPhoneInput, sellerAddressInput } = this.elements;
+        if (sellerNameInput) sellerNameInput.value = "";
+        if (sellerEmailInput) sellerEmailInput.value = "";
+        if (sellerPhoneInput) sellerPhoneInput.value = "";
+        if (sellerAddressInput) sellerAddressInput.value = "";
+    },
     resetForm() {
         const { elements } = this;
-        // Reset all inputs
-        [
-            elements.quantityInput,
-            elements.priceInput,
-            elements.totalInput,
-            elements.sellerNameInput,
-            elements.sellerEmailInput,
-            elements.sellerPhoneInput,
-            elements.sellerAddressInput,
-        ].forEach((input) => {
-            if (input) input.value = "";
-        });
-
-        // Reset seller selection
+        if (elements.quantityInput) elements.quantityInput.value = "";
+        if (elements.priceInput) elements.priceInput.value = "";
+        if (elements.totalInput) elements.totalInput.value = "";
+        this.resetSellerFormInputs();
         if (elements.sellerList) elements.sellerList.selectedIndex = 0;
         if (elements.selectedSellerText) elements.selectedSellerText.textContent = "Select a Seller";
         if (elements.confirmSellerBtn) elements.confirmSellerBtn.disabled = true;
-
         state.selectedSellerId = null;
-
-        // Hide modal sections by adding the 'hidden' class, which they are designed to use.
         elements.sellerDropdownSection?.classList.add("hidden");
         elements.addSellerFormSection?.classList.add("hidden");
     },
-
     populateSellerList(sellers = []) {
         const { sellerList } = this.elements;
         if (!sellerList) return;
-        // Clear existing options and add a default
         sellerList.innerHTML = '<option value="">-- Select Seller --</option>';
-        // Create and append new options
         sellers.forEach((seller) => {
             const option = new Option(seller.name, seller.id);
             sellerList.add(option);
         });
     },
-
     displayTransactions(transactions = []) {
         const { mainContent } = this.elements;
         if (!mainContent) return;
-
-        // Remove old transaction list if it exists
         mainContent.querySelector(".transactions-container")?.remove();
-
         const container = document.createElement("div");
         container.className = "transactions-container";
         container.innerHTML = "<h3>📋 Your Recent Transactions</h3>";
-
         if (!transactions.length) {
             container.innerHTML += '<p class="no-transactions">You have no transactions yet.</p>';
         } else {
             const list = transactions
                 .map((t) => {
                     const totalCostAsNumber = parseFloat(t.total_cost) || 0;
-                    return `
-                        <li class="transaction-item">
-                            <span class="date">🗓️ ${new Date(t.created_at).toLocaleDateString()}</span>
-                            <span class="seller">🧑‍💼 ${t.seller_name || "N/A"}</span>
-                            <span class="details">Qty: ${t.quantity}, Total: ₱${totalCostAsNumber.toFixed(2)}</span>
-                        </li>
-                    `;
+                    return `<li class="transaction-item"><span class="date">🗓️ ${new Date(t.created_at).toLocaleDateString()}</span><span class="seller">🧑‍💼 ${t.seller_name || "N/A"}</span><span class="details">Qty: ${t.quantity}, Total: ₱${totalCostAsNumber.toFixed(2)}</span></li>`;
                 })
                 .join("");
             container.innerHTML += `<ul class="transaction-list">${list}</ul>`;
@@ -207,34 +146,28 @@ const ui = {
 /**
  * =================================================================
  * EVENT HANDLERS ⚡
- * Contains the core logic that runs in response to user actions.
- * Connects the API service with the UI management.
  * =================================================================
  */
 const handlers = {
     async initialPageLoad() {
         try {
             await api.verifySession();
-            // Fetch initial data in parallel for speed
-            await Promise.all([this.loadSellers(), this.loadTransactions()]);
+            await Promise.all([handlers.loadSellers(), handlers.loadTransactions()]);
         } catch (error) {
             console.error("Initial page load failed:", error.message);
         }
     },
-
     async loadSellers() {
         try {
-            // --- EDITED LINE START ---
-            // Removed the {} to correctly handle the direct array response from the API.
             const sellers = await api.getSellers();
-            // --- EDITED LINE END ---
             ui.populateSellerList(sellers);
+            return sellers; // Return the sellers for the workaround
         } catch (error) {
             console.error("Failed to load sellers:", error);
             ui.showMessage(`❌ Could not load sellers: ${error.message}`, "error");
+            return []; // Return empty array on error
         }
     },
-
     async loadTransactions() {
         try {
             const { transactions } = await api.getTransactions();
@@ -244,12 +177,11 @@ const handlers = {
             ui.showMessage(`❌ Could not load transactions: ${error.message}`, "error");
         }
     },
-
+    
+    // --- REWRITTEN handleSaveSeller WITH FRONTEND WORKAROUND ---
     async handleSaveSeller(event) {
-        // Prevent the default form submission which causes a page reload
         event.preventDefault();
-
-        const { sellerNameInput, sellerEmailInput, sellerPhoneInput, sellerAddressInput } = ui.elements;
+        const { sellerNameInput, sellerEmailInput, sellerPhoneInput, sellerAddressInput, selectedSellerText, sellerList } = ui.elements;
         const sellerData = {
             name: sellerNameInput.value.trim(),
             email: sellerEmailInput.value.trim(),
@@ -262,16 +194,38 @@ const handlers = {
         }
 
         try {
-            const data = await api.addSeller(sellerData);
-            ui.showMessage(`✅ ${data.message || "Seller added successfully!"}`, "success");
+            // Step 1: Save the name of the seller we are about to create.
+            const newSellerName = sellerData.name;
+
+            // Step 2: Add the seller via the API.
+            const response = await api.addSeller(sellerData);
+            ui.showMessage(response.message || "Seller added successfully!", "success");
+            
+            // Step 3: Clear the input fields.
+            ui.resetSellerFormInputs();
+            
+            // Step 4: Reload all sellers from the server and get the updated list.
+            const allSellers = await handlers.loadSellers();
+
+            // Step 5: Search the newly loaded list for the seller we just created.
+            const newSeller = allSellers.find(seller => seller.name === newSellerName);
+
+            // Step 6: If we found them, update the UI to select them.
+            if (newSeller) {
+                state.selectedSellerId = newSeller.id;
+                selectedSellerText.textContent = newSeller.name;
+                sellerList.value = newSeller.id;
+            }
+            
+            // Step 7: Hide the modal.
             ui.hide(ui.elements.sellerModal);
-            ui.resetForm();
-            await this.loadSellers(); // Refresh seller list
+
         } catch (error) {
             console.error("Save seller failed:", error);
             ui.showMessage(`❌ Failed to save seller: ${error.message}`, "error");
         }
     },
+    // --- END OF REWRITTEN FUNCTION ---
 
     async handlePayment() {
         const { quantityInput, priceInput, totalInput } = ui.elements;
@@ -281,33 +235,28 @@ const handlers = {
             price: parseFloat(priceInput.value),
             total_cost: parseFloat(totalInput.value.replace("₱", "")),
         };
-
         if (!transactionData.seller_id || !transactionData.quantity || !transactionData.price) {
             return ui.showMessage("❌ Please select a seller and enter quantity/price.", "error");
         }
-
         try {
             const data = await api.submitTransaction(transactionData);
             ui.showMessage(`✅ ${data.message || "Transaction successful!"}`, "success");
             ui.resetForm();
-            await this.loadTransactions(); // Refresh transaction list
+            await handlers.loadTransactions();
         } catch (error) {
             console.error("Payment failed:", error);
             ui.showMessage(`❌ Payment failed: ${error.message}`, "error");
         }
     },
-
     updateTotal() {
         const quantity = parseFloat(ui.elements.quantityInput.value) || 0;
         const price = parseFloat(ui.elements.priceInput.value) || 0;
         ui.elements.totalInput.value = `₱${(quantity * price).toFixed(2)}`;
     },
-
     handleSellerSelection(event) {
         state.selectedSellerId = event.target.value;
         ui.elements.confirmSellerBtn.disabled = !state.selectedSellerId;
     },
-
     confirmSellerSelection() {
         const { sellerList, selectedSellerText } = ui.elements;
         const selectedOption = sellerList.options[sellerList.selectedIndex];
@@ -324,26 +273,19 @@ const handlers = {
 /**
  * =================================================================
  * INITIALIZATION 🚀
- * Caches elements and attaches all event listeners.
  * =================================================================
  */
 document.addEventListener("DOMContentLoaded", () => {
     ui.cacheElements();
-    const { elements: el } = ui; // Use a shorthand for easier access
-
-    // Main POS form listeners
+    const { elements: el } = ui;
     el.quantityInput?.addEventListener("input", handlers.updateTotal);
     el.priceInput?.addEventListener("input", handlers.updateTotal);
     el.payBtn?.addEventListener("click", handlers.handlePayment);
-
-    // Modal control listeners
     el.selectSellerBtn?.addEventListener("click", () => ui.show(el.sellerModal));
     el.closeModalBtn?.addEventListener("click", () => {
         ui.hide(el.sellerModal);
-        ui.resetForm(); // Also reset form state when closing modal
+        ui.resetForm();
     });
-
-    // Modal section toggles
     el.dropdownBtn?.addEventListener("click", () => {
         el.sellerDropdownSection.classList.remove("hidden");
         el.addSellerFormSection.classList.add("hidden");
@@ -353,14 +295,8 @@ document.addEventListener("DOMContentLoaded", () => {
         el.addSellerFormSection.classList.remove("hidden");
         el.sellerDropdownSection.classList.add("hidden");
     });
-
-    // Action listeners inside the modal
     el.sellerList?.addEventListener("change", handlers.handleSellerSelection);
     el.confirmSellerBtn?.addEventListener("click", handlers.confirmSellerSelection);
-    
-    // Pass the event object to the handler to prevent form submission
     el.saveSellerBtn?.addEventListener("click", (event) => handlers.handleSaveSeller(event));
-
-    // Initial load
     handlers.initialPageLoad();
 });
