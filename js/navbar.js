@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <nav class="navbar">
         <ul class="nav-items">
             <li class="nav-item" data-page="home">
-                <a href="Arima.html"><i class="fa-analytics"></i><span>Analyze</span></a>
+                <a href="Arima.html"><i class="fas fa-search"></i><span>Analyze</span></a>
             </li>
             <li class="nav-item" data-page="price">
                 <a href="price.html"><i class="fas fa-chart-line"></i><span>Prices</span></a>
