@@ -121,25 +121,61 @@ const ui = {
             sellerList.add(option);
         });
     },
+    
     displayTransactions(transactions = []) {
-        const { mainContent } = this.elements;
-        if (!mainContent) return;
-        mainContent.querySelector(".transactions-container")?.remove();
-        const container = document.createElement("div");
-        container.className = "transactions-container";
-        container.innerHTML = "<h3>📋 Your Recent Transactions</h3>";
-        if (!transactions.length) {
-            container.innerHTML += '<p class="no-transactions">You have no transactions yet.</p>';
-        } else {
-            const list = transactions
-                .map((t) => {
-                    const totalCostAsNumber = parseFloat(t.total_cost) || 0;
-                    return `<li class="transaction-item"><span class="date">🗓️ ${new Date(t.created_at).toLocaleDateString()}</span><span class="seller">🧑‍💼 ${t.seller_name || "N/A"}</span><span class="details">Qty: ${t.quantity}, Total: ₱${totalCostAsNumber.toFixed(2)}</span></li>`;
-                })
-                .join("");
-            container.innerHTML += `<ul class="transaction-list">${list}</ul>`;
-        }
-        mainContent.appendChild(container);
+    const { mainContent } = this.elements;
+    if (!mainContent) return;
+    
+    mainContent.querySelector(".transactions-container")?.remove();
+    
+    const container = document.createElement("div");
+    container.className = "transactions-container";
+    container.innerHTML = "<h3>📋 Your Recent Transactions</h3>";
+    
+    if (!transactions.length) {
+        container.innerHTML += '<p class="no-transactions">You have no transactions yet.</p>';
+    } else {
+        const tableContainer = document.createElement("div");
+        tableContainer.className = "table-container";
+        
+        const table = document.createElement("table");
+        table.className = "transactions-table";
+        
+        // Create table header
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th class="date-col">🗓️ Date</th>
+                    <th class="seller-col">🧑‍💼 Seller</th>
+                    <th class="quantity-col">📦 Qty</th>
+                    <th class="total-col">💰 Total</th>
+                </tr>
+            </thead>
+        `;
+        
+        // Create table body
+        const tbody = document.createElement("tbody");
+        const rows = transactions
+            .map((t) => {
+                const totalCostAsNumber = parseFloat(t.total_cost) || 0;
+                return `
+                    <tr>
+                        <td class="date-col">${new Date(t.created_at).toLocaleDateString()}</td>
+                        <td class="seller-col">${t.seller_name || "N/A"}</td>
+                        <td class="quantity-col">${t.quantity}</td>
+                        <td class="total-col">₱${totalCostAsNumber.toFixed(2)}</td>
+                    </tr>
+                `;
+            })
+            .join("");
+        
+        tbody.innerHTML = rows;
+        table.appendChild(tbody);
+        tableContainer.appendChild(table);
+        container.appendChild(tableContainer);
+    }
+    
+    mainContent.appendChild(container);
     },
 };
 
