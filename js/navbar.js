@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <a href="home.html"><i class="fas fa-calculator"></i><span>POS</span></a>
             </li>
             <li class="nav-item" data-page="sellers">
-                <a href="sellers.html"><i class="fas fa-users"></i><span>Sellers</span></a>
+                <a href="seller_management.html"><i class="fas fa-users"></i><span>Sellers</span></a>
             </li>
             <li class="nav-item" data-page="inventory">
                 <a href="inventory.html"><i class="fas fa-boxes"></i><span>Inventory</span></a>
