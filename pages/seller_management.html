@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Management</title>
+    <link rel="stylesheet" href="../css/seller.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/background.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+     <div class="coconut-container">
+    <!-- Floating Coconuts -->
+    <div class="floating-coconut">
+        <div class="coconut"></div>
+    </div>
+    <div class="floating-coconut">
+        <div class="coconut"></div>
+    </div>
+    <div class="floating-coconut">
+        <div class="coconut"></div>
+    </div>
+    <div class="floating-coconut">
+        <div class="coconut"></div>
+    </div>
+    <div class="floating-coconut">
+        <div class="coconut"></div>
+    </div>
+    <div class="floating-coconut">
+        <div class="coconut"></div>
+    </div>
+    <div class="floating-coconut">
+        <div class="coconut"></div>
+    </div>
+    <div class="floating-coconut">
+        <div class="coconut"></div>
+    </div>
+    <div class="floating-coconut">
+        <div class="coconut"></div>
+    </div>
+    <div class="floating-coconut">
+        <div class="coconut"></div>
+    </div>
+    
+    <!-- Falling Palm Leaves -->
+    <div class="palm-leaf"></div>
+    <div class="palm-leaf"></div>
+    <div class="palm-leaf"></div>
+</div>
+    <div class="container">
+        <header class="header">
+            <h1 class="page-title">
+                <i class="fas fa-store"></i>
+                SUKI - Seller Management
+            </h1>
+            <div class="header-actions">
+                <button class="btn btn-primary" id="addSellerBtn">
+                    <i class="fas fa-plus"></i>
+                    Add New Seller
+                </button>
+                <button class="btn btn-secondary" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh
+                </button>
+            </div>
+        </header>
+
+        <div class="filters-section">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search sellers by name, email, or phone...">
+            </div>
+            <div class="filter-controls">
+                <select id="statusFilter" class="filter-select">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+                <select id="sortBy" class="filter-select">
+                    <option value="name">Sort by Name</option>
+                    <option value="revenue">Sort by Revenue</option>
+                    <option value="transactions">Sort by Transactions</option>
+                    <option value="quantity">Sort by Quantity</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="sellers-grid">
+            <!-- Content will be loaded here -->
+        </div>
+
+        <div class="pagination">
+            <button class="pagination-btn" disabled>
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <span class="pagination-info">Page 1 of 1</span>
+            <button class="pagination-btn" disabled>
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+    <div id="nav-placeholder"></div>
+    
+    <!-- Include the seller management JavaScript as module -->
+    <script type="module" src="../js/seller_management.js"></script>
+    <script src="../js/navbar.js"></script>
+</body>
+</html>
