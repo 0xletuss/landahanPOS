@@ -179,63 +179,72 @@ class SellerManagement {
     }
 
     createSellerCard(seller) {
-        // Simulate status based on revenue
-        const status = seller.total_revenue > 0 ? 'active' : 'inactive';
-        const statusClass = status;
+    // Determine status: inactive if last transaction > 6 months ago or none
+    let status = 'inactive';
+    if (seller.last_transaction_date) {
+        const lastTransaction = new Date(seller.last_transaction_date);
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+        if (lastTransaction >= sixMonthsAgo) {
+            status = 'active';
+        }
+    }
+    const statusClass = status;
 
-        // Format revenue
-        const formattedRevenue = new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }).format(seller.total_revenue);
+    // Format revenue
+    const formattedRevenue = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'PHP',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    }).format(seller.total_revenue);
 
-        // Generate initials for avatar placeholder
-        const initials = seller.name.split(' ').map(n => n[0]).join('').toUpperCase();
+    // Generate initials for avatar placeholder
+    const initials = seller.name.split(' ').map(n => n[0]).join('').toUpperCase();
 
-        return `
-            <div class="seller-card" data-seller-id="${seller.id}">
-                <div class="seller-avatar">
-                    <div class="avatar-placeholder">
-                        <span class="avatar-initials">${initials}</span>
-                    </div>
-                    <span class="status-badge ${statusClass}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+    return `
+        <div class="seller-card" data-seller-id="${seller.id}">
+            <div class="seller-avatar">
+                <div class="avatar-placeholder">
+                    <span class="avatar-initials">${initials}</span>
                 </div>
-                <div class="seller-info">
-                    <h3 class="seller-name">${seller.name}</h3>
-                    <p class="seller-email">${seller.email}</p>
-                    <p class="seller-phone">${seller.phone || 'No phone provided'}</p>
-                    <p class="seller-address">${seller.address || 'No address provided'}</p>
-                    <div class="seller-stats">
-                        <div class="stat">
-                            <span class="stat-value">${seller.total_quantity}</span>
-                            <span class="stat-label">Total Quantity</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-value">${formattedRevenue}</span>
-                            <span class="stat-label">Revenue</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-value">${seller.transactions_count}</span>
-                            <span class="stat-label">Transactions</span>
-                        </div>
+                <span class="status-badge ${statusClass}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+            </div>
+            <div class="seller-info">
+                <h3 class="seller-name">${seller.name}</h3>
+                <p class="seller-email">${seller.email}</p>
+                <p class="seller-phone">${seller.phone || 'No phone provided'}</p>
+                <p class="seller-address">${seller.address || 'No address provided'}</p>
+                <div class="seller-stats">
+                    <div class="stat">
+                        <span class="stat-value">${seller.total_quantity}</span>
+                        <span class="stat-label">Total Quantity</span>
                     </div>
-                    <div class="seller-actions">
-                        <button class="btn-icon view-btn" title="View Details" data-seller-id="${seller.id}">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn-icon edit-btn" title="Edit" data-seller-id="${seller.id}">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn-icon delete-btn" title="Delete" data-seller-id="${seller.id}">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                    <div class="stat">
+                        <span class="stat-value">${formattedRevenue}</span>
+                        <span class="stat-label">Revenue</span>
                     </div>
+                    <div class="stat">
+                        <span class="stat-value">${seller.transactions_count}</span>
+                        <span class="stat-label">Transactions</span>
+                    </div>
+                </div>
+                <div class="seller-actions">
+                    <button class="btn-icon view-btn" title="View Details" data-seller-id="${seller.id}">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn-icon edit-btn" title="Edit" data-seller-id="${seller.id}">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn-icon delete-btn" title="Delete" data-seller-id="${seller.id}">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </div>
             </div>
-        `;
-    }
+        </div>
+    `;
+}
+
 
     setupSellerActions() {
         // View buttons
