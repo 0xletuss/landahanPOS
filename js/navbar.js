@@ -3,10 +3,10 @@ document.addEventListener("DOMContentLoaded", () => {
     <nav class="navbar">
         <ul class="nav-items">
             <li class="nav-item" data-page="home">
-                <a href="Arima.html"><i class="fas fa-search"></i><span>Analyze</span></a>
+                   <a href="Arima.html"><i class="fas fa-chart-line"></i><span>Analyze</span></a>
             </li>
             <li class="nav-item" data-page="price">
-                <a href="price.html"><i class="fas fa-chart-line"></i><span>Prices</span></a>
+                <a href="Arima.html"><i class="fas fa-peso-sign"></i><span>Profit</span></a>
             </li>
             <li class="nav-item main-pos" data-page="pos">
                 <a href="home.html"><i class="fas fa-calculator"></i><span>POS</span></a>
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <a href="seller_management.html"><i class="fas fa-users"></i><span>Sellers</span></a>
             </li>
             <li class="nav-item" data-page="inventory">
-                <a href="inventory.html"><i class="fas fa-boxes"></i><span>Inventory</span></a>
+                <a href="Arima.html"><i class="fas fa-boxes"></i><span>Inventory</span></a>
             </li>
         </ul>
     </nav>`;
