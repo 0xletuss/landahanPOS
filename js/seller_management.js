@@ -9,6 +9,7 @@ class SellerManagement {
         this.currentPage = 1;
         this.sellersPerPage = 6;
         this.apiUrl = 'https://landahan-5.onrender.com/api/sellers';
+        this.apiBaseUrl = 'https://landahan-5.onrender.com'; // Base URL for constructing photo paths
 
         this.init();
     }
@@ -121,8 +122,8 @@ class SellerManagement {
         });
     }
     
-    // ✅ MODIFIED: The delete-btn now calls the confirmation modal
     setupActionListeners() {
+        // For the view, edit, and delete icon buttons
         document.querySelectorAll('.view-btn').forEach(btn => btn.addEventListener('click', (e) => {
             const sellerId = e.currentTarget.dataset.sellerId;
             this.showViewSellerModal(sellerId);
@@ -133,7 +134,13 @@ class SellerManagement {
         }));
         document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => {
             const sellerId = e.currentTarget.dataset.sellerId;
-            this.showDeleteConfirmModal(sellerId); // Changed this line
+            this.showDeleteConfirmModal(sellerId);
+        }));
+
+        // For the avatars themselves
+        document.querySelectorAll('.clickable-avatar').forEach(avatar => avatar.addEventListener('click', (e) => {
+            const sellerId = e.currentTarget.dataset.sellerId;
+            this.showViewSellerModal(sellerId);
         }));
     }
 
@@ -142,7 +149,7 @@ class SellerManagement {
         const sellersGrid = document.querySelector('.sellers-grid');
         if (!sellersGrid) return;
         
-        hideLoader(); // Ensure loader is hidden
+        hideLoader();
 
         if (this.filteredSellers.length === 0) {
             sellersGrid.innerHTML = `
@@ -168,19 +175,20 @@ class SellerManagement {
         const formattedRevenue = this.formatCurrency(seller.total_revenue);
         const initials = seller.name.split(' ').map(n => n[0]).join('').toUpperCase();
 
+        const avatarHTML = seller.photo_url ?
+            `<img src="${this.apiBaseUrl}${seller.photo_url}" alt="${seller.name}" class="avatar-image clickable-avatar" data-seller-id="${seller.id}" title="View Details">` :
+            `<div class="avatar-placeholder clickable-avatar" data-seller-id="${seller.id}" title="View Details"><span class="avatar-initials">${initials}</span></div>`;
+
         return `
             <div class="seller-card" data-seller-id="${seller.id}">
                 <div class="seller-avatar">
-                    <div class="avatar-placeholder">
-                        <span class="avatar-initials">${initials}</span>
-                    </div>
-                     <div class="seller-header-info">
+                    ${avatarHTML}
+                    <div class="seller-header-info">
                         <h3 class="seller-name">${seller.name}</h3>
                         <p class="seller-email">${seller.email}</p>
                     </div>
                     <span class="status-badge ${status}">${status}</span>
                 </div>
-
                 <div class="seller-info">
                     <p class="seller-phone">${seller.phone || 'No phone provided'}</p>
                     <p class="seller-address">${seller.address || 'No address provided'}</p>
@@ -247,11 +255,17 @@ class SellerManagement {
     }
 
     // --- MODAL CONTENT AND ACTIONS ---
+    // ✅ MODIFIED: To display the seller's photo at the top of the modal
     showViewSellerModal(sellerId) {
         const seller = this.sellers.find(s => s.id == sellerId);
         if (!seller) return;
         
         const status = this.getSellerStatus(seller);
+        const initials = seller.name.split(' ').map(n => n[0]).join('').toUpperCase();
+
+        const avatarHTML = seller.photo_url ?
+            `<img src="${this.apiBaseUrl}${seller.photo_url}" alt="${seller.name}" class="avatar-image-large">` :
+            `<div class="avatar-placeholder-large"><span class="avatar-initials">${initials}</span></div>`;
 
         const phoneDetailHTML = seller.phone ? `
             <div class="copy-wrapper">
@@ -263,9 +277,16 @@ class SellerManagement {
         ` : `<span>N/A</span>`;
 
         const body = `
+            <div class="view-modal-profile-header">
+                <div class="view-modal-avatar">
+                    ${avatarHTML}
+                </div>
+                <div class="view-modal-info">
+                    <h3>${seller.name}</h3>
+                    <p>${seller.email}</p>
+                </div>
+            </div>
             <div class="seller-details-grid">
-                <div class="detail-item"><label>Name</label><span>${seller.name}</span></div>
-                <div class="detail-item"><label>Email</label><span>${seller.email}</span></div>
                 <div class="detail-item"><label>Phone</label>${phoneDetailHTML}</div>
                 <div class="detail-item"><label>Address</label><span>${seller.address || 'N/A'}</span></div>
                 <div class="detail-item"><label>Status</label><div><span class="status-badge ${status}">${status}</span></div></div>
@@ -287,7 +308,6 @@ class SellerManagement {
                     const originalIcon = copyBtn.innerHTML;
                     copyBtn.innerHTML = '<span class="copied-feedback">Copied!</span>';
                     copyBtn.disabled = true;
-
                     setTimeout(() => {
                         copyBtn.innerHTML = originalIcon;
                         copyBtn.disabled = false;
@@ -298,20 +318,35 @@ class SellerManagement {
                 });
             });
         }
-
         document.getElementById('modalCloseBtnFooter').addEventListener('click', () => this.closeModal());
     }
 
     showEditSellerModal(sellerId) {
         const seller = this.sellers.find(s => s.id == sellerId);
         if (!seller) return;
-
+    
         const body = this.getSellerFormHTML(seller);
         const footer = `
             <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
             <button class="btn btn-primary" id="modalSaveBtn">Save Changes</button>`;
         
         this.openModal('Edit Seller', body, footer);
+        
+        const photoInput = document.getElementById('sellerPhotoInput');
+        const photoPreviewContainer = document.querySelector('.photo-preview');
+    
+        if (photoInput) {
+            photoInput.addEventListener('change', () => {
+                const file = photoInput.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        photoPreviewContainer.innerHTML = `<img src="${e.target.result}" id="photoPreview" alt="Photo preview">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
         
         document.getElementById('modalCancelBtn').addEventListener('click', () => this.closeModal());
         document.getElementById('modalSaveBtn').addEventListener('click', (event) => this.handleUpdateSeller(event, sellerId));
@@ -329,7 +364,6 @@ class SellerManagement {
         document.getElementById('modalAddBtn').addEventListener('click', (event) => this.handleCreateSeller(event));
     }
     
-    // ✅ NEW: Function to show the delete confirmation modal
     showDeleteConfirmModal(sellerId) {
         const seller = this.sellers.find(s => s.id == sellerId);
         if (!seller) return;
@@ -358,7 +392,10 @@ class SellerManagement {
     // --- CRUD OPERATIONS ---
     async handleUpdateSeller(event, sellerId) {
         event.preventDefault();
-
+        const saveBtn = document.getElementById('modalSaveBtn');
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Saving...`;
+    
         const form = document.getElementById('sellerForm');
         const updatedData = {
             name: form.querySelector('#sellerName').value,
@@ -366,27 +403,40 @@ class SellerManagement {
             phone: form.querySelector('#sellerPhone').value,
             address: form.querySelector('#sellerAddress').value,
         };
-
+    
         try {
-            const response = await fetch(`${this.apiUrl}/${sellerId}`, {
+            const textResponse = await fetch(`${this.apiUrl}/${sellerId}`, {
                 method: 'PUT',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedData),
             });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to update seller.');
+            if (!textResponse.ok) throw new Error('Failed to update seller details.');
+    
+            const photoInput = document.getElementById('sellerPhotoInput');
+            if (photoInput && photoInput.files.length > 0) {
+                const photoFile = photoInput.files[0];
+                const formData = new FormData();
+                formData.append('photo', photoFile);
+    
+                const photoResponse = await fetch(`${this.apiUrl}/${sellerId}/photo`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData,
+                });
+                if (!photoResponse.ok) throw new Error('Failed to upload photo.');
             }
             
             this.showNotification('Seller updated successfully!', 'success');
             this.closeModal();
             await this.refreshSellers();
-
+    
         } catch (error) {
             console.error('Update failed:', error);
             this.showNotification(`Update failed: ${error.message}`, 'error');
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = 'Save Changes';
         }
     }
     
@@ -424,12 +474,10 @@ class SellerManagement {
         }
     }
     
-    // ✅ MODIFIED: This function now only performs the delete action
     async handleDeleteSeller(sellerId) {
         const seller = this.sellers.find(s => s.id == sellerId);
         if (!seller) return;
         
-        // The confirm() call is removed. We close the modal first.
         this.closeModal();
 
         try {
@@ -465,21 +513,41 @@ class SellerManagement {
     }
     
     getSellerFormHTML(seller = {}) {
+        const photoUrl = seller.photo_url ? `${this.apiBaseUrl}${seller.photo_url}` : '';
+        
+        let photoUploaderHTML = '';
+        if (seller.id) {
+            photoUploaderHTML = `
+                <div class="form-group full-width photo-uploader">
+                    <label>Profile Photo</label>
+                    <div class="photo-preview">
+                        ${photoUrl ? 
+                            `<img src="${photoUrl}" id="photoPreview" alt="Photo preview">` : 
+                            `<div class="avatar-placeholder-large" id="photoPreview"><i class="fas fa-camera"></i></div>`
+                        }
+                    </div>
+                    <input type="file" id="sellerPhotoInput" accept="image/png, image/jpeg, image/gif">
+                    <label for="sellerPhotoInput" class="btn btn-secondary upload-btn">Choose Photo</label>
+                </div>
+            `;
+        }
+
         return `
             <form id="sellerForm" class="form-grid" onsubmit="return false;">
-                <div class="form-group">
+                ${photoUploaderHTML}
+                <div class="form-group ${!seller.id ? 'full-width' : ''}">
                     <label for="sellerName">Full Name</label>
                     <input type="text" id="sellerName" value="${seller.name || ''}" required>
                 </div>
-                <div class="form-group">
+                <div class="form-group ${!seller.id ? 'full-width' : ''}">
                     <label for="sellerEmail">Email Address</label>
                     <input type="email" id="sellerEmail" value="${seller.email || ''}" required>
                 </div>
-                <div class="form-group">
+                <div class="form-group full-width">
                     <label for="sellerPhone">Phone Number</label>
                     <input type="tel" id="sellerPhone" value="${seller.phone || ''}">
                 </div>
-                <div class="form-group">
+                <div class="form-group full-width">
                     <label for="sellerAddress">Address</label>
                     <input type="text" id="sellerAddress" value="${seller.address || ''}">
                 </div>
@@ -502,14 +570,20 @@ class SellerManagement {
         const container = document.getElementById('notification-container');
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
-        notification.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i><span>${message}</span>`;
+
+        const icons = {
+            success: 'fa-check-circle',
+            error: 'fa-exclamation-triangle',
+            info: 'fa-info-circle'
+        };
+        const iconClass = icons[type] || 'fa-info-circle';
+        
+        notification.innerHTML = `<i class="fas ${iconClass}"></i><span>${message}</span>`;
         
         container.appendChild(notification);
         
-        // Trigger the animation
         setTimeout(() => notification.classList.add('show'), 10);
         
-        // Remove the notification after a delay
         setTimeout(() => {
             notification.classList.remove('show');
             setTimeout(() => notification.remove(), 500);
