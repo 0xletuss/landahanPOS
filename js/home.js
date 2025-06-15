@@ -21,7 +21,7 @@ const api = {
         const res = await fetch(`${API_BASE_URL}${endpoint}`, { ...defaultOptions, ...options });
         if (res.status === 401) {
             ui.showMessage("❌ Session expired. Redirecting to login...", "error");
-            setTimeout(() => (window.location.href = "/login.html"), 2000);
+            setTimeout(() => (window.location.href = "../index.html"), 2000);
             throw new Error("Session expired");
         }
         const data = await res.json();
@@ -56,6 +56,8 @@ const ui = {
     elements: {},
     cacheElements() {
         this.elements = {
+            // Add userName to the cached elements
+            userName: document.getElementById("userName"),
             quantityInput: document.getElementById("quantity"),
             priceInput: document.getElementById("price"),
             totalInput: document.getElementById("total"),
@@ -141,7 +143,6 @@ const ui = {
         const table = document.createElement("table");
         table.className = "transactions-table";
         
-        // Create table header
         table.innerHTML = `
             <thead>
                 <tr>
@@ -153,7 +154,6 @@ const ui = {
             </thead>
         `;
         
-        // Create table body
         const tbody = document.createElement("tbody");
         const rows = transactions
             .map((t) => {
@@ -185,23 +185,42 @@ const ui = {
  * =================================================================
  */
 const handlers = {
+    // ✅ START: MODIFIED FUNCTION
     async initialPageLoad() {
         try {
-            await api.verifySession();
+            // Step 1: Verify the session and get user data
+            const sessionData = await api.verifySession();
+            
+            // Step 2: Update the UI with the user's name
+            if (sessionData && sessionData.user && sessionData.user.name) {
+                const fullName = sessionData.user.name;
+                // Get the first name by splitting the string and taking the first part
+                const firstName = fullName.split(' ')[0];
+                if (ui.elements.userName) {
+                    ui.elements.userName.textContent = firstName;
+                }
+            }
+            
+            // Step 3: Load the rest of the page data
             await Promise.all([handlers.loadSellers(), handlers.loadTransactions()]);
+
         } catch (error) {
+            // This will trigger if verifySession fails (e.g., user not logged in)
+            // The api._fetch function already handles the redirect.
             console.error("Initial page load failed:", error.message);
         }
     },
+    // ✅ END: MODIFIED FUNCTION
+
     async loadSellers() {
         try {
             const sellers = await api.getSellers();
             ui.populateSellerList(sellers);
-            return sellers; // Return the sellers for the workaround
+            return sellers;
         } catch (error) {
             console.error("Failed to load sellers:", error);
             ui.showMessage(`❌ Could not load sellers: ${error.message}`, "error");
-            return []; // Return empty array on error
+            return [];
         }
     },
     async loadTransactions() {
@@ -214,7 +233,6 @@ const handlers = {
         }
     },
     
-    // --- REWRITTEN handleSaveSeller WITH FRONTEND WORKAROUND ---
     async handleSaveSeller(event) {
         event.preventDefault();
         const { sellerNameInput, sellerEmailInput, sellerPhoneInput, sellerAddressInput, selectedSellerText, sellerList } = ui.elements;
@@ -230,30 +248,17 @@ const handlers = {
         }
 
         try {
-            // Step 1: Save the name of the seller we are about to create.
             const newSellerName = sellerData.name;
-
-            // Step 2: Add the seller via the API.
             const response = await api.addSeller(sellerData);
             ui.showMessage(response.message || "Seller added successfully!", "success");
-            
-            // Step 3: Clear the input fields.
             ui.resetSellerFormInputs();
-            
-            // Step 4: Reload all sellers from the server and get the updated list.
             const allSellers = await handlers.loadSellers();
-
-            // Step 5: Search the newly loaded list for the seller we just created.
             const newSeller = allSellers.find(seller => seller.name === newSellerName);
-
-            // Step 6: If we found them, update the UI to select them.
             if (newSeller) {
                 state.selectedSellerId = newSeller.id;
                 selectedSellerText.textContent = newSeller.name;
                 sellerList.value = newSeller.id;
             }
-            
-            // Step 7: Hide the modal.
             ui.hide(ui.elements.sellerModal);
 
         } catch (error) {
@@ -261,7 +266,6 @@ const handlers = {
             ui.showMessage(`❌ Failed to save seller: ${error.message}`, "error");
         }
     },
-    // --- END OF REWRITTEN FUNCTION ---
 
     async handlePayment() {
         const { quantityInput, priceInput, totalInput } = ui.elements;
@@ -334,5 +338,7 @@ document.addEventListener("DOMContentLoaded", () => {
     el.sellerList?.addEventListener("change", handlers.handleSellerSelection);
     el.confirmSellerBtn?.addEventListener("click", handlers.confirmSellerSelection);
     el.saveSellerBtn?.addEventListener("click", (event) => handlers.handleSaveSeller(event));
+    
+    // This now handles everything
     handlers.initialPageLoad();
 });
