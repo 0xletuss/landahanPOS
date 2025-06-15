@@ -1,73 +1,73 @@
 // frontend/js/auth_check.js
-// 🔐 This file protects your frontend pages
+// 🔐 This file protects your frontend pages by verifying the session with the database.
 
-async function checkAuthentication() {
+// This function now runs immediately to protect the page as fast as possible.
+(async function protectPage() {
+    // Determine the path to the root from the current page.
+    const path = window.location.pathname;
+    // Goes up one level for each '/' in the path after the initial one.
+    const depth = (path.match(/\//g) || []).length - 1;
+    const rootPath = depth > 0 ? '../'.repeat(depth) : './';
+    const loginPage = `${rootPath}index.html`;
+
+    // We don't need to check on the login page itself.
+    if (path.endsWith('/') || path.endsWith('/index.html')) {
+        return;
+    }
+
     try {
-        const response = await fetch('https://landahan-5.onrender.com/api/auth-status', {
+        const response = await fetch('https://landahan-5.onrender.com/api/verify-session', {
             method: 'GET',
-            credentials: 'include'  // Include cookies/sessions
+            credentials: 'include' // This is crucial for sending the session cookie
         });
         
+        // If the server says the session is not valid (e.g., 401, 404), redirect.
+        if (!response.ok) {
+            console.error('Session verification failed. Redirecting to login.');
+            alert('Your session has expired or is invalid. Please log in again.');
+            window.location.href = loginPage;
+            return;
+        }
+
         const data = await response.json();
         
-        if (!data.authenticated) {
-            // Redirect to login if not authenticated
-            alert('Please log in to access this page');
-            window.location.href = '../index.html'; // index.html is your login page
+        // The /verify-session route returns { "valid": true, ... }
+        if (!data.valid) {
+            console.error('Session data invalid. Redirecting to login.');
+            alert('Your session is invalid. Please log in again.');
+            window.location.href = loginPage;
+            return;
+        }
+        
+        // If we reach here, the user is authenticated and valid.
+        console.log('Session verified for user:', data.user.name);
 
-            return false;
-        }
-        
-        // Optional: Display user info
-        if (data.user_name) {
-            const userNameElement = document.getElementById('userName');
-            if (userNameElement) {
-                userNameElement.textContent = data.user_name;
-            }
-        }
-        
-        return data;
     } catch (error) {
-        console.error('Auth check failed:', error);
-        alert('Authentication check failed. Please log in.');
-        window.location.href = '../index.html'; // index.html is your login page
-
-        return false;
+        console.error('Critical auth check failed:', error);
+        alert('Could not verify authentication. Please log in.');
+        window.location.href = loginPage;
     }
-}
+})();
 
-// Logout function
+
+// You can keep a separate logout function if you call it from a button
 async function logout() {
+    // Determine the path to the root from the current page.
+    const path = window.location.pathname;
+    const depth = (path.match(/\//g) || []).length - 1;
+    const rootPath = depth > 0 ? '../'.repeat(depth) : './';
+    const loginPage = `${rootPath}index.html`;
+
     try {
-        const response = await fetch('https://landahan-5.onrender.com/api/logout', {
+        await fetch('https://landahan-5.onrender.com/api/logout', {
             method: 'POST',
             credentials: 'include'
         });
-        
-        if (response.ok) {
-            alert('Logged out successfully');
-           window.location.href = '../index.html'; // index.html is your login page
-
-        } else {
-            alert('Logout failed');
-        }
     } catch (error) {
-        console.error('Logout failed:', error);
-        alert('Logout failed');
+        console.error('Logout request failed but proceeding with redirect:', error);
+    } finally {
+        // Always redirect after attempting logout
+        alert('You have been logged out.');
+        window.location.href = loginPage;
     }
 }
-
-// Check authentication when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    // Only check auth if we're not on public pages
-    const currentPage = window.location.pathname;
-    const publicPages = ['/index.html', '/pages/register.html', '/pages/login.html', '/pages/forgot_password.html'];
-
-    
-    const isPublicPage = publicPages.includes(currentPage);
-
-    
-    if (!isPublicPage) {
-        checkAuthentication();
-    }
-});
