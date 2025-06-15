@@ -1,14 +1,15 @@
 // Import your loader functions
 import { showLoader, hideLoader } from './loader.js';
 
-// Seller Management JavaScript
+// --- MAIN CLASS FOR SELLER MANAGEMENT ---
 class SellerManagement {
     constructor() {
         this.sellers = [];
         this.filteredSellers = [];
         this.currentPage = 1;
         this.sellersPerPage = 6;
-        this.apiUrl = 'https://landahan-5.onrender.com/api/sellers/overview';
+        this.apiUrl = 'https://landahan-5.onrender.com/api/sellers';
+
         this.init();
     }
 
@@ -18,21 +19,16 @@ class SellerManagement {
         this.renderSellers();
     }
 
+    // --- DATA FETCHING AND STATE MANAGEMENT ---
     async loadSellers() {
+        const sellersGrid = document.querySelector('.sellers-grid');
         try {
-            // Clear the grid and show your custom loader
-            const sellersGrid = document.querySelector('.sellers-grid');
-            if (sellersGrid) {
-                sellersGrid.innerHTML = '<div id="sellers-loader"></div>';
-                showLoader('sellers-loader');
-            }
-            
-            const response = await fetch(this.apiUrl, {
+            sellersGrid.innerHTML = '<div id="sellers-loader"></div>';
+            showLoader('sellers-loader');
+
+            const response = await fetch(`${this.apiUrl}/overview`, {
                 method: 'GET',
-                credentials: 'include', // Include cookies for session
-                headers: {
-                    'Content-Type': 'application/json',
-                }
+                credentials: 'include',
             });
 
             if (!response.ok) {
@@ -41,116 +37,112 @@ class SellerManagement {
 
             const data = await response.json();
             this.sellers = data.sellers || [];
-            this.filteredSellers = [...this.sellers];
-            
-            console.log('Sellers loaded:', this.sellers);
-            
-            // Hide loader after successful load
-            hideLoader();
-            
+            this.applyFilters(); // Apply current filters to new data
+
         } catch (error) {
             console.error('Error loading sellers:', error);
-            hideLoader(); // Hide loader even on error
             this.showError('Failed to load sellers. Please try again later.');
+        } finally {
+            hideLoader();
+            this.renderSellers();
         }
     }
 
-    setupEventListeners() {
-        // Search functionality
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                this.filterSellers(e.target.value);
-            });
-        }
+    applyFilters() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const status = document.getElementById('statusFilter').value;
+        const sortBy = document.getElementById('sortBy').value;
 
-        // Status filter
-        const statusFilter = document.getElementById('statusFilter');
-        if (statusFilter) {
-            statusFilter.addEventListener('change', (e) => {
-                this.filterByStatus(e.target.value);
-            });
-        }
+        // Filter by search and status
+        this.filteredSellers = this.sellers.filter(seller => {
+            const searchMatch = !searchTerm ||
+                seller.name.toLowerCase().includes(searchTerm) ||
+                seller.email.toLowerCase().includes(searchTerm) ||
+                (seller.phone && seller.phone.toLowerCase().includes(searchTerm));
 
-        // Sort functionality
-        const sortBy = document.getElementById('sortBy');
-        if (sortBy) {
-            sortBy.addEventListener('change', (e) => {
-                this.sortSellers(e.target.value);
-            });
-        }
+            const statusMatch = !status || this.getSellerStatus(seller) === status;
+            
+            return searchMatch && statusMatch;
+        });
 
-        // Add seller button
-        const addSellerBtn = document.getElementById('addSellerBtn');
-        if (addSellerBtn) {
-            addSellerBtn.addEventListener('click', () => {
-                this.showAddSellerModal();
-            });
-        }
-
-        // Refresh button
-        const refreshBtn = document.getElementById('refreshBtn');
-        if (refreshBtn) {
-            refreshBtn.addEventListener('click', () => {
-                this.refreshSellers();
-            });
-        }
+        // Sort
+        this.sortSellers(sortBy);
     }
-
-    filterSellers(searchTerm) {
-        if (!searchTerm.trim()) {
-            this.filteredSellers = [...this.sellers];
-        } else {
-            const term = searchTerm.toLowerCase();
-            this.filteredSellers = this.sellers.filter(seller => 
-                seller.name.toLowerCase().includes(term) ||
-                seller.email.toLowerCase().includes(term) ||
-                (seller.phone && seller.phone.toLowerCase().includes(term))
-            );
-        }
-        this.currentPage = 1;
-        this.renderSellers();
-    }
-
-    filterByStatus(status) {
-        if (!status) {
-            this.filteredSellers = [...this.sellers];
-        } else {
-            // Since we don't have status in the database yet, we'll simulate it
-            // You can modify this when you add status to your database
-            this.filteredSellers = this.sellers.filter(seller => {
-                // For now, we'll consider sellers with revenue > 0 as active
-                const simulatedStatus = seller.total_revenue > 0 ? 'active' : 'inactive';
-                return simulatedStatus === status;
-            });
-        }
-        this.currentPage = 1;
-        this.renderSellers();
-    }
-
+    
     sortSellers(sortBy) {
-        switch (sortBy) {
-            case 'name':
-                this.filteredSellers.sort((a, b) => a.name.localeCompare(b.name));
-                break;
-            case 'revenue':
-                this.filteredSellers.sort((a, b) => b.total_revenue - a.total_revenue);
-                break;
-            case 'transactions':
-                this.filteredSellers.sort((a, b) => b.transactions_count - a.transactions_count);
-                break;
-            case 'quantity':
-                this.filteredSellers.sort((a, b) => b.total_quantity - a.total_quantity);
-                break;
-            default:
-                break;
-        }
-        this.renderSellers();
+        this.filteredSellers.sort((a, b) => {
+            switch (sortBy) {
+                case 'name': return a.name.localeCompare(b.name);
+                case 'revenue': return b.total_revenue - a.total_revenue;
+                case 'transactions': return b.transactions_count - a.transactions_count;
+                case 'quantity': return b.total_quantity - a.total_quantity;
+                default: return 0;
+            }
+        });
     }
 
+    async refreshSellers() {
+        this.showNotification('Refreshing sellers...', 'info');
+        await this.loadSellers();
+    }
+    
+    // --- EVENT LISTENERS ---
+    setupEventListeners() {
+        // Filter and Sort controls
+        document.getElementById('searchInput').addEventListener('input', () => {
+            this.currentPage = 1;
+            this.applyFilters();
+            this.renderSellers();
+        });
+        document.getElementById('statusFilter').addEventListener('change', () => {
+            this.currentPage = 1;
+            this.applyFilters();
+            this.renderSellers();
+        });
+        document.getElementById('sortBy').addEventListener('change', () => {
+            this.applyFilters();
+            this.renderSellers();
+        });
+
+        // Header buttons
+        document.getElementById('refreshBtn').addEventListener('click', () => this.refreshSellers());
+        document.getElementById('addSellerBtn').addEventListener('click', () => this.showAddSellerModal());
+
+        // Pagination buttons
+        document.getElementById('prevPageBtn').addEventListener('click', () => this.changePage(this.currentPage - 1));
+        document.getElementById('nextPageBtn').addEventListener('click', () => this.changePage(this.currentPage + 1));
+        
+        // Modal close button
+        document.getElementById('modalCloseBtn').addEventListener('click', () => this.closeModal());
+        document.getElementById('sellerModal').addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-overlay')) {
+                this.closeModal();
+            }
+        });
+    }
+    
+    // ✅ MODIFIED: The delete-btn now calls the confirmation modal
+    setupActionListeners() {
+        document.querySelectorAll('.view-btn').forEach(btn => btn.addEventListener('click', (e) => {
+            const sellerId = e.currentTarget.dataset.sellerId;
+            this.showViewSellerModal(sellerId);
+        }));
+        document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', (e) => {
+            const sellerId = e.currentTarget.dataset.sellerId;
+            this.showEditSellerModal(sellerId);
+        }));
+        document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => {
+            const sellerId = e.currentTarget.dataset.sellerId;
+            this.showDeleteConfirmModal(sellerId); // Changed this line
+        }));
+    }
+
+    // --- RENDERING ---
     renderSellers() {
         const sellersGrid = document.querySelector('.sellers-grid');
         if (!sellersGrid) return;
+        
+        hideLoader(); // Ensure loader is hidden
 
         if (this.filteredSellers.length === 0) {
             sellersGrid.innerHTML = `
@@ -160,137 +152,72 @@ class SellerManagement {
                     <p>Try adjusting your search criteria or add a new seller.</p>
                 </div>
             `;
+            this.updatePagination();
             return;
         }
 
-        // Calculate pagination
-        const startIndex = (this.currentPage - 1) * this.sellersPerPage;
-        const endIndex = startIndex + this.sellersPerPage;
-        const paginatedSellers = this.filteredSellers.slice(startIndex, endIndex);
-
-        // Render seller cards
+        const paginatedSellers = this.paginate(this.filteredSellers, this.currentPage, this.sellersPerPage);
         sellersGrid.innerHTML = paginatedSellers.map(seller => this.createSellerCard(seller)).join('');
-
-        // Update pagination
+        
         this.updatePagination();
-
-        // Add event listeners to action buttons
-        this.setupSellerActions();
+        this.setupActionListeners();
     }
 
     createSellerCard(seller) {
-    // Determine status: inactive if last transaction > 6 months ago or none
-    let status = 'inactive';
-    if (seller.last_transaction_date) {
-        const lastTransaction = new Date(seller.last_transaction_date);
-        const sixMonthsAgo = new Date();
-        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-        if (lastTransaction >= sixMonthsAgo) {
-            status = 'active';
-        }
-    }
-    const statusClass = status;
+        const status = this.getSellerStatus(seller);
+        const formattedRevenue = this.formatCurrency(seller.total_revenue);
+        const initials = seller.name.split(' ').map(n => n[0]).join('').toUpperCase();
 
-    // Format revenue
-    const formattedRevenue = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'PHP',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-    }).format(seller.total_revenue);
-
-    // Generate initials for avatar placeholder
-    const initials = seller.name.split(' ').map(n => n[0]).join('').toUpperCase();
-
-    return `
-        <div class="seller-card" data-seller-id="${seller.id}">
-            <div class="seller-avatar">
-                <div class="avatar-placeholder">
-                    <span class="avatar-initials">${initials}</span>
+        return `
+            <div class="seller-card" data-seller-id="${seller.id}">
+                <div class="seller-avatar">
+                    <div class="avatar-placeholder">
+                        <span class="avatar-initials">${initials}</span>
+                    </div>
+                     <div class="seller-header-info">
+                        <h3 class="seller-name">${seller.name}</h3>
+                        <p class="seller-email">${seller.email}</p>
+                    </div>
+                    <span class="status-badge ${status}">${status}</span>
                 </div>
-                <span class="status-badge ${statusClass}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
-            </div>
-            <div class="seller-info">
-                <h3 class="seller-name">${seller.name}</h3>
-                <p class="seller-email">${seller.email}</p>
-                <p class="seller-phone">${seller.phone || 'No phone provided'}</p>
-                <p class="seller-address">${seller.address || 'No address provided'}</p>
-                <div class="seller-stats">
-                    <div class="stat">
-                        <span class="stat-value">${seller.total_quantity}</span>
-                        <span class="stat-label">Total Quantity</span>
+
+                <div class="seller-info">
+                    <p class="seller-phone">${seller.phone || 'No phone provided'}</p>
+                    <p class="seller-address">${seller.address || 'No address provided'}</p>
+                    <div class="seller-stats">
+                        <div class="stat">
+                            <span class="stat-value">${seller.total_quantity}</span>
+                            <span class="stat-label">Quantity</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">${formattedRevenue}</span>
+                            <span class="stat-label">Revenue</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">${seller.transactions_count}</span>
+                            <span class="stat-label">Transactions</span>
+                        </div>
                     </div>
-                    <div class="stat">
-                        <span class="stat-value">${formattedRevenue}</span>
-                        <span class="stat-label">Revenue</span>
+                    <div class="seller-actions">
+                        <button class="btn-icon view-btn" title="View Details" data-seller-id="${seller.id}"><i class="fas fa-eye"></i></button>
+                        <button class="btn-icon edit-btn" title="Edit" data-seller-id="${seller.id}"><i class="fas fa-edit"></i></button>
+                        <button class="btn-icon delete-btn" title="Delete" data-seller-id="${seller.id}"><i class="fas fa-trash"></i></button>
                     </div>
-                    <div class="stat">
-                        <span class="stat-value">${seller.transactions_count}</span>
-                        <span class="stat-label">Transactions</span>
-                    </div>
-                </div>
-                <div class="seller-actions">
-                    <button class="btn-icon view-btn" title="View Details" data-seller-id="${seller.id}">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="btn-icon edit-btn" title="Edit" data-seller-id="${seller.id}">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn-icon delete-btn" title="Delete" data-seller-id="${seller.id}">
-                        <i class="fas fa-trash"></i>
-                    </button>
                 </div>
             </div>
-        </div>
-    `;
-}
-
-
-    setupSellerActions() {
-        // View buttons
-        document.querySelectorAll('.view-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const sellerId = e.currentTarget.dataset.sellerId;
-                this.viewSeller(sellerId);
-            });
-        });
-
-        // Edit buttons
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const sellerId = e.currentTarget.dataset.sellerId;
-                this.editSeller(sellerId);
-            });
-        });
-
-        // Delete buttons
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const sellerId = e.currentTarget.dataset.sellerId;
-                this.deleteSeller(sellerId);
-            });
-        });
+        `;
     }
 
+    // --- PAGINATION ---
     updatePagination() {
         const totalPages = Math.ceil(this.filteredSellers.length / this.sellersPerPage);
         const paginationInfo = document.querySelector('.pagination-info');
-        const prevBtn = document.querySelector('.pagination-btn:first-child');
-        const nextBtn = document.querySelector('.pagination-btn:last-child');
+        const prevBtn = document.getElementById('prevPageBtn');
+        const nextBtn = document.getElementById('nextPageBtn');
 
-        if (paginationInfo) {
-            paginationInfo.textContent = `Page ${this.currentPage} of ${totalPages}`;
-        }
-
-        if (prevBtn) {
-            prevBtn.disabled = this.currentPage === 1;
-            prevBtn.onclick = () => this.changePage(this.currentPage - 1);
-        }
-
-        if (nextBtn) {
-            nextBtn.disabled = this.currentPage === totalPages;
-            nextBtn.onclick = () => this.changePage(this.currentPage + 1);
-        }
+        paginationInfo.textContent = totalPages > 0 ? `Page ${this.currentPage} of ${totalPages}` : 'Page 1 of 1';
+        prevBtn.disabled = this.currentPage === 1;
+        nextBtn.disabled = this.currentPage === totalPages || totalPages === 0;
     }
 
     changePage(page) {
@@ -300,55 +227,293 @@ class SellerManagement {
             this.renderSellers();
         }
     }
-
-    viewSeller(sellerId) {
-        const seller = this.sellers.find(s => s.id == sellerId);
-        if (seller) {
-            alert(`Viewing seller: ${seller.name}\nEmail: ${seller.email}\nRevenue: $${seller.total_revenue}`);
-            // You can implement a proper modal or navigation here
-        }
+    
+    paginate(array, page_number, page_size) {
+        return array.slice((page_number - 1) * page_size, page_number * page_size);
+    }
+    
+    // --- MODAL MANAGEMENT ---
+    openModal(title, body, footer) {
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalBody').innerHTML = body;
+        document.getElementById('modalFooter').innerHTML = footer;
+        document.getElementById('sellerModal').classList.add('active');
+        document.body.classList.add('modal-is-open');
     }
 
-    editSeller(sellerId) {
-        const seller = this.sellers.find(s => s.id == sellerId);
-        if (seller) {
-            // You can implement edit functionality here
-            console.log('Edit seller:', seller);
-            alert('Edit functionality to be implemented');
-        }
+    closeModal() {
+        document.getElementById('sellerModal').classList.remove('active');
+        document.body.classList.remove('modal-is-open');
     }
 
-    deleteSeller(sellerId) {
+    // --- MODAL CONTENT AND ACTIONS ---
+    showViewSellerModal(sellerId) {
         const seller = this.sellers.find(s => s.id == sellerId);
-        if (seller && confirm(`Are you sure you want to delete ${seller.name}?`)) {
-            // You can implement delete functionality here
-            console.log('Delete seller:', seller);
-            alert('Delete functionality to be implemented');
+        if (!seller) return;
+        
+        const status = this.getSellerStatus(seller);
+
+        const phoneDetailHTML = seller.phone ? `
+            <div class="copy-wrapper">
+                <span id="phone-to-copy">${seller.phone}</span>
+                <button class="copy-btn" id="copyPhoneBtn" title="Copy phone number">
+                    <i class="far fa-copy"></i>
+                </button>
+            </div>
+        ` : `<span>N/A</span>`;
+
+        const body = `
+            <div class="seller-details-grid">
+                <div class="detail-item"><label>Name</label><span>${seller.name}</span></div>
+                <div class="detail-item"><label>Email</label><span>${seller.email}</span></div>
+                <div class="detail-item"><label>Phone</label>${phoneDetailHTML}</div>
+                <div class="detail-item"><label>Address</label><span>${seller.address || 'N/A'}</span></div>
+                <div class="detail-item"><label>Status</label><div><span class="status-badge ${status}">${status}</span></div></div>
+                <div class="detail-item"><label>Total Revenue</label><span class="revenue-amount">${this.formatCurrency(seller.total_revenue)}</span></div>
+                <div class="detail-item"><label>Total Quantity Sold</label><span>${seller.total_quantity}</span></div>
+                <div class="detail-item"><label>Total Transactions</label><span>${seller.transactions_count}</span></div>
+                <div class="detail-item full-width"><label>Last Transaction</label><span>${seller.last_transaction_date ? new Date(seller.last_transaction_date).toLocaleString() : 'None'}</span></div>
+            </div>`;
+        const footer = `<button class="btn btn-secondary" id="modalCloseBtnFooter">Close</button>`;
+        
+        this.openModal('Seller Details', body, footer);
+
+        if (seller.phone) {
+            const copyBtn = document.getElementById('copyPhoneBtn');
+            copyBtn.addEventListener('click', () => {
+                const phoneText = document.getElementById('phone-to-copy').textContent;
+                
+                navigator.clipboard.writeText(phoneText).then(() => {
+                    const originalIcon = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<span class="copied-feedback">Copied!</span>';
+                    copyBtn.disabled = true;
+
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalIcon;
+                        copyBtn.disabled = false;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    this.showNotification('Failed to copy to clipboard.', 'error');
+                });
+            });
         }
+
+        document.getElementById('modalCloseBtnFooter').addEventListener('click', () => this.closeModal());
     }
 
+    showEditSellerModal(sellerId) {
+        const seller = this.sellers.find(s => s.id == sellerId);
+        if (!seller) return;
+
+        const body = this.getSellerFormHTML(seller);
+        const footer = `
+            <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
+            <button class="btn btn-primary" id="modalSaveBtn">Save Changes</button>`;
+        
+        this.openModal('Edit Seller', body, footer);
+        
+        document.getElementById('modalCancelBtn').addEventListener('click', () => this.closeModal());
+        document.getElementById('modalSaveBtn').addEventListener('click', (event) => this.handleUpdateSeller(event, sellerId));
+    }
+    
     showAddSellerModal() {
-        // You can implement add seller functionality here
-        alert('Add seller functionality to be implemented');
+        const body = this.getSellerFormHTML();
+        const footer = `
+            <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
+            <button class="btn btn-primary" id="modalAddBtn">Add Seller</button>`;
+            
+        this.openModal('Add New Seller', body, footer);
+
+        document.getElementById('modalCancelBtn').addEventListener('click', () => this.closeModal());
+        document.getElementById('modalAddBtn').addEventListener('click', (event) => this.handleCreateSeller(event));
+    }
+    
+    // ✅ NEW: Function to show the delete confirmation modal
+    showDeleteConfirmModal(sellerId) {
+        const seller = this.sellers.find(s => s.id == sellerId);
+        if (!seller) return;
+    
+        const title = 'Confirm Deletion';
+        const body = `
+            <div class="delete-confirm-body">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>Are you sure you want to permanently delete <strong>${seller.name}</strong>?</p>
+                <p>This action cannot be undone.</p>
+            </div>
+        `;
+        const footer = `
+            <button class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
+            <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+        `;
+    
+        this.openModal(title, body, footer);
+    
+        document.getElementById('cancelDeleteBtn').addEventListener('click', () => this.closeModal());
+        document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+            this.handleDeleteSeller(sellerId);
+        });
+    }
+
+    // --- CRUD OPERATIONS ---
+    async handleUpdateSeller(event, sellerId) {
+        event.preventDefault();
+
+        const form = document.getElementById('sellerForm');
+        const updatedData = {
+            name: form.querySelector('#sellerName').value,
+            email: form.querySelector('#sellerEmail').value,
+            phone: form.querySelector('#sellerPhone').value,
+            address: form.querySelector('#sellerAddress').value,
+        };
+
+        try {
+            const response = await fetch(`${this.apiUrl}/${sellerId}`, {
+                method: 'PUT',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to update seller.');
+            }
+            
+            this.showNotification('Seller updated successfully!', 'success');
+            this.closeModal();
+            await this.refreshSellers();
+
+        } catch (error) {
+            console.error('Update failed:', error);
+            this.showNotification(`Update failed: ${error.message}`, 'error');
+        }
+    }
+    
+    async handleCreateSeller(event) {
+         event.preventDefault();
+         const form = document.getElementById('sellerForm');
+         const newData = {
+            name: form.querySelector('#sellerName').value,
+            email: form.querySelector('#sellerEmail').value,
+            phone: form.querySelector('#sellerPhone').value,
+            address: form.querySelector('#sellerAddress').value,
+         };
+         
+         if (!newData.name || !newData.email) {
+            this.showNotification('Name and Email are required.', 'error');
+            return;
+         }
+
+        try {
+            const response = await fetch(this.apiUrl, {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newData),
+            });
+            
+            if (!response.ok) throw new Error(await response.json().then(d => d.message));
+
+            this.showNotification('Seller added successfully!', 'success');
+            this.closeModal();
+            await this.refreshSellers();
+        } catch (error) {
+            console.error('Add failed:', error);
+            this.showNotification(`Failed to add seller: ${error.message}`, 'error');
+        }
+    }
+    
+    // ✅ MODIFIED: This function now only performs the delete action
+    async handleDeleteSeller(sellerId) {
+        const seller = this.sellers.find(s => s.id == sellerId);
+        if (!seller) return;
+        
+        // The confirm() call is removed. We close the modal first.
+        this.closeModal();
+
+        try {
+            const response = await fetch(`${this.apiUrl}/${sellerId}`, {
+                method: 'DELETE',
+                credentials: 'include',
+            });
+
+            if (!response.ok) throw new Error(await response.json().then(d => d.message));
+
+            this.showNotification('Seller deleted successfully.', 'success');
+            await this.refreshSellers();
+
+        } catch (error) {
+            console.error('Delete failed:', error);
+            this.showNotification(`Delete failed: ${error.message}`, 'error');
+        }
+    }
+
+    // --- UTILITY AND HELPER FUNCTIONS ---
+    getSellerStatus(seller) {
+        if (!seller.last_transaction_date) return 'inactive';
+        const lastTransaction = new Date(seller.last_transaction_date);
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+        return lastTransaction >= sixMonthsAgo ? 'active' : 'inactive';
+    }
+
+    formatCurrency(value) {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency', currency: 'PHP', minimumFractionDigits: 2
+        }).format(value || 0);
+    }
+    
+    getSellerFormHTML(seller = {}) {
+        return `
+            <form id="sellerForm" class="form-grid" onsubmit="return false;">
+                <div class="form-group">
+                    <label for="sellerName">Full Name</label>
+                    <input type="text" id="sellerName" value="${seller.name || ''}" required>
+                </div>
+                <div class="form-group">
+                    <label for="sellerEmail">Email Address</label>
+                    <input type="email" id="sellerEmail" value="${seller.email || ''}" required>
+                </div>
+                <div class="form-group">
+                    <label for="sellerPhone">Phone Number</label>
+                    <input type="tel" id="sellerPhone" value="${seller.phone || ''}">
+                </div>
+                <div class="form-group">
+                    <label for="sellerAddress">Address</label>
+                    <input type="text" id="sellerAddress" value="${seller.address || ''}">
+                </div>
+            </form>`;
     }
 
     showError(message) {
         const sellersGrid = document.querySelector('.sellers-grid');
-        if (sellersGrid) {
-            sellersGrid.innerHTML = `
-                <div class="error-message">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <h3>Error</h3>
-                    <p>${message}</p>
-                    <button class="btn btn-primary" onclick="location.reload()">Retry</button>
-                </div>
-            `;
-        }
+        sellersGrid.innerHTML = `
+            <div class="error-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>An Error Occurred</h3>
+                <p>${message}</p>
+                <button class="btn btn-primary" onclick="location.reload()">Retry</button>
+            </div>
+        `;
     }
 
-    async refreshSellers() {
-        await this.loadSellers();
-        this.renderSellers();
+    showNotification(message, type = 'info') {
+        const container = document.getElementById('notification-container');
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i><span>${message}</span>`;
+        
+        container.appendChild(notification);
+        
+        // Trigger the animation
+        setTimeout(() => notification.classList.add('show'), 10);
+        
+        // Remove the notification after a delay
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 500);
+        }, 4000);
     }
 }
 
