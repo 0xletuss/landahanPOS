@@ -10,7 +10,7 @@ class SellerManagement {
         this.sellersPerPage = 6;
         this.apiUrl = 'https://landahan-5.onrender.com/api/sellers';
         
-        // ✅ REMOVED: This is no longer needed as Cloudinary provides the full URL.
+        // ✅ REMOVED: This is no longer needed because Cloudinary provides the full URL.
         // this.apiBaseUrl = 'https://landahan-5.onrender.com';
 
         this.init();
@@ -40,7 +40,7 @@ class SellerManagement {
 
             const data = await response.json();
             this.sellers = data.sellers || [];
-            this.applyFilters(); // Apply current filters to new data
+            this.applyFilters();
 
         } catch (error) {
             console.error('Error loading sellers:', error);
@@ -56,7 +56,6 @@ class SellerManagement {
         const status = document.getElementById('statusFilter').value;
         const sortBy = document.getElementById('sortBy').value;
 
-        // Filter by search and status
         this.filteredSellers = this.sellers.filter(seller => {
             const searchMatch = !searchTerm ||
                 seller.name.toLowerCase().includes(searchTerm) ||
@@ -68,7 +67,6 @@ class SellerManagement {
             return searchMatch && statusMatch;
         });
 
-        // Sort
         this.sortSellers(sortBy);
     }
     
@@ -91,7 +89,6 @@ class SellerManagement {
     
     // --- EVENT LISTENERS ---
     setupEventListeners() {
-        // Filter and Sort controls
         document.getElementById('searchInput').addEventListener('input', () => {
             this.currentPage = 1;
             this.applyFilters();
@@ -106,16 +103,10 @@ class SellerManagement {
             this.applyFilters();
             this.renderSellers();
         });
-
-        // Header buttons
         document.getElementById('refreshBtn').addEventListener('click', () => this.refreshSellers());
         document.getElementById('addSellerBtn').addEventListener('click', () => this.showAddSellerModal());
-
-        // Pagination buttons
         document.getElementById('prevPageBtn').addEventListener('click', () => this.changePage(this.currentPage - 1));
         document.getElementById('nextPageBtn').addEventListener('click', () => this.changePage(this.currentPage + 1));
-        
-        // Modal close button
         document.getElementById('modalCloseBtn').addEventListener('click', () => this.closeModal());
         document.getElementById('sellerModal').addEventListener('click', (e) => {
             if (e.target.classList.contains('modal-overlay')) {
@@ -125,24 +116,17 @@ class SellerManagement {
     }
     
     setupActionListeners() {
-        // For the view, edit, and delete icon buttons
         document.querySelectorAll('.view-btn').forEach(btn => btn.addEventListener('click', (e) => {
-            const sellerId = e.currentTarget.dataset.sellerId;
-            this.showViewSellerModal(sellerId);
+            this.showViewSellerModal(e.currentTarget.dataset.sellerId);
         }));
         document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', (e) => {
-            const sellerId = e.currentTarget.dataset.sellerId;
-            this.showEditSellerModal(sellerId);
+            this.showEditSellerModal(e.currentTarget.dataset.sellerId);
         }));
         document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => {
-            const sellerId = e.currentTarget.dataset.sellerId;
-            this.showDeleteConfirmModal(sellerId);
+            this.showDeleteConfirmModal(e.currentTarget.dataset.sellerId);
         }));
-
-        // For the avatars themselves
         document.querySelectorAll('.clickable-avatar').forEach(avatar => avatar.addEventListener('click', (e) => {
-            const sellerId = e.currentTarget.dataset.sellerId;
-            this.showViewSellerModal(sellerId);
+            this.showViewSellerModal(e.currentTarget.dataset.sellerId);
         }));
     }
 
@@ -159,8 +143,7 @@ class SellerManagement {
                     <i class="fas fa-store-slash"></i>
                     <h3>No sellers found</h3>
                     <p>Try adjusting your search criteria or add a new seller.</p>
-                </div>
-            `;
+                </div>`;
             this.updatePagination();
             return;
         }
@@ -215,8 +198,7 @@ class SellerManagement {
                         <button class="btn-icon delete-btn" title="Delete" data-seller-id="${seller.id}"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
-            </div>
-        `;
+            </div>`;
     }
 
     // --- PAGINATION ---
