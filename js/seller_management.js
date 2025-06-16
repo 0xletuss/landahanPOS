@@ -9,7 +9,9 @@ class SellerManagement {
         this.currentPage = 1;
         this.sellersPerPage = 6;
         this.apiUrl = 'https://landahan-5.onrender.com/api/sellers';
-        this.apiBaseUrl = 'https://landahan-5.onrender.com'; // Base URL for constructing photo paths
+        
+        // ✅ MODIFIED: The apiBaseUrl is no longer needed for constructing photo paths
+        // this.apiBaseUrl = 'https://landahan-5.onrender.com'; 
 
         this.init();
     }
@@ -170,13 +172,14 @@ class SellerManagement {
         this.setupActionListeners();
     }
 
+    // ✅ MODIFIED: Use seller.photo_url directly
     createSellerCard(seller) {
         const status = this.getSellerStatus(seller);
         const formattedRevenue = this.formatCurrency(seller.total_revenue);
         const initials = seller.name.split(' ').map(n => n[0]).join('').toUpperCase();
 
         const avatarHTML = seller.photo_url ?
-            `<img src="${this.apiBaseUrl}${seller.photo_url}" alt="${seller.name}" class="avatar-image clickable-avatar" data-seller-id="${seller.id}" title="View Details">` :
+            `<img src="${seller.photo_url}" alt="${seller.name}" class="avatar-image clickable-avatar" data-seller-id="${seller.id}" title="View Details">` :
             `<div class="avatar-placeholder clickable-avatar" data-seller-id="${seller.id}" title="View Details"><span class="avatar-initials">${initials}</span></div>`;
 
         return `
@@ -255,7 +258,7 @@ class SellerManagement {
     }
 
     // --- MODAL CONTENT AND ACTIONS ---
-    // ✅ MODIFIED: To display the seller's photo at the top of the modal
+    // ✅ MODIFIED: Use seller.photo_url directly
     showViewSellerModal(sellerId) {
         const seller = this.sellers.find(s => s.id == sellerId);
         if (!seller) return;
@@ -264,7 +267,7 @@ class SellerManagement {
         const initials = seller.name.split(' ').map(n => n[0]).join('').toUpperCase();
 
         const avatarHTML = seller.photo_url ?
-            `<img src="${this.apiBaseUrl}${seller.photo_url}" alt="${seller.name}" class="avatar-image-large">` :
+            `<img src="${seller.photo_url}" alt="${seller.name}" class="avatar-image-large">` :
             `<div class="avatar-placeholder-large"><span class="avatar-initials">${initials}</span></div>`;
 
         const phoneDetailHTML = seller.phone ? `
@@ -353,7 +356,7 @@ class SellerManagement {
     }
     
     showAddSellerModal() {
-        const body = this.getSellerFormHTML();
+        const body = this.getSellerFormHTML(); // Pass no seller to get the form for a new one
         const footer = `
             <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
             <button class="btn btn-primary" id="modalAddBtn">Add Seller</button>`;
@@ -512,8 +515,9 @@ class SellerManagement {
         }).format(value || 0);
     }
     
+    // ✅ MODIFIED: Use seller.photo_url directly
     getSellerFormHTML(seller = {}) {
-        const photoUrl = seller.photo_url ? `${this.apiBaseUrl}${seller.photo_url}` : '';
+        const photoUrl = seller.photo_url || ''; // Simplified
         
         let photoUploaderHTML = '';
         if (seller.id) {
