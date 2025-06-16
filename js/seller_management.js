@@ -10,8 +10,8 @@ class SellerManagement {
         this.sellersPerPage = 6;
         this.apiUrl = 'https://landahan-5.onrender.com/api/sellers';
         
-        // ✅ MODIFIED: The apiBaseUrl is no longer needed for constructing photo paths
-        // this.apiBaseUrl = 'https://landahan-5.onrender.com'; 
+        // ✅ REMOVED: This is no longer needed as Cloudinary provides the full URL.
+        // this.apiBaseUrl = 'https://landahan-5.onrender.com';
 
         this.init();
     }
@@ -356,7 +356,7 @@ class SellerManagement {
     }
     
     showAddSellerModal() {
-        const body = this.getSellerFormHTML(); // Pass no seller to get the form for a new one
+        const body = this.getSellerFormHTML();
         const footer = `
             <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
             <button class="btn btn-primary" id="modalAddBtn">Add Seller</button>`;
@@ -517,7 +517,7 @@ class SellerManagement {
     
     // ✅ MODIFIED: Use seller.photo_url directly
     getSellerFormHTML(seller = {}) {
-        const photoUrl = seller.photo_url || ''; // Simplified
+        const photoUrl = seller.photo_url || '';
         
         let photoUploaderHTML = '';
         if (seller.id) {
