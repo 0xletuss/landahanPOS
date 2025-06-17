@@ -9,7 +9,11 @@ class SellerManagement {
         this.currentPage = 1;
         this.sellersPerPage = 6;
         this.apiUrl = 'https://landahan-5.onrender.com/api/sellers';
+<<<<<<< HEAD
         // REMOVE OR COMMENT OUT THIS LINE: this.apiBaseUrl = 'https://landahan-5.onrender.com'; // Base URL for constructing photo paths
+=======
+        this.apiBaseUrl = 'https://landahan-5.onrender.com'; // Base URL for constructing photo paths
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
 
         this.init();
     }
@@ -175,9 +179,14 @@ class SellerManagement {
         const formattedRevenue = this.formatCurrency(seller.total_revenue);
         const initials = seller.name.split(' ').map(n => n[0]).join('').toUpperCase();
 
+<<<<<<< HEAD
         // FIX HERE: Use seller.photo_url directly
         const avatarHTML = seller.photo_url ?
             `<img src="${seller.photo_url}" alt="${seller.name}" class="avatar-image clickable-avatar" data-seller-id="${seller.id}" title="View Details">` :
+=======
+        const avatarHTML = seller.photo_url ?
+            `<img src="${this.apiBaseUrl}${seller.photo_url}" alt="${seller.name}" class="avatar-image clickable-avatar" data-seller-id="${seller.id}" title="View Details">` :
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
             `<div class="avatar-placeholder clickable-avatar" data-seller-id="${seller.id}" title="View Details"><span class="avatar-initials">${initials}</span></div>`;
 
         return `
@@ -264,9 +273,14 @@ class SellerManagement {
         const status = this.getSellerStatus(seller);
         const initials = seller.name.split(' ').map(n => n[0]).join('').toUpperCase();
 
+<<<<<<< HEAD
         // FIX HERE: Use seller.photo_url directly
         const avatarHTML = seller.photo_url ?
             `<img src="${seller.photo_url}" alt="${seller.name}" class="avatar-image-large">` :
+=======
+        const avatarHTML = seller.photo_url ?
+            `<img src="${this.apiBaseUrl}${seller.photo_url}" alt="${seller.name}" class="avatar-image-large">` :
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
             `<div class="avatar-placeholder-large"><span class="avatar-initials">${initials}</span></div>`;
 
         const phoneDetailHTML = seller.phone ? `
@@ -443,6 +457,7 @@ class SellerManagement {
     }
     
     async handleCreateSeller(event) {
+<<<<<<< HEAD
            event.preventDefault();
            const form = document.getElementById('sellerForm');
            const newData = {
@@ -456,6 +471,21 @@ class SellerManagement {
              this.showNotification('Name and Email are required.', 'error');
              return;
            }
+=======
+         event.preventDefault();
+         const form = document.getElementById('sellerForm');
+         const newData = {
+            name: form.querySelector('#sellerName').value,
+            email: form.querySelector('#sellerEmail').value,
+            phone: form.querySelector('#sellerPhone').value,
+            address: form.querySelector('#sellerAddress').value,
+         };
+         
+         if (!newData.name || !newData.email) {
+            this.showNotification('Name and Email are required.', 'error');
+            return;
+         }
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
 
         try {
             const response = await fetch(this.apiUrl, {
@@ -515,8 +545,12 @@ class SellerManagement {
     }
     
     getSellerFormHTML(seller = {}) {
+<<<<<<< HEAD
         // FIX HERE: Use seller.photo_url directly
         const photoUrl = seller.photo_url ? seller.photo_url : ''; 
+=======
+        const photoUrl = seller.photo_url ? `${this.apiBaseUrl}${seller.photo_url}` : '';
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
         
         let photoUploaderHTML = '';
         if (seller.id) {
@@ -597,4 +631,8 @@ class SellerManagement {
 // Initialize the seller management when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new SellerManagement();
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8

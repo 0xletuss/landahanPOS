@@ -1,10 +1,19 @@
+<<<<<<< HEAD
 // --- CONFIGURATION & STATE ---
+=======
+]// --- CONFIGURATION & STATE ---
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
 
 const API_BASE_URL = "https://landahan-5.onrender.com/api";
 
 const state = {
     selectedSellerId: null,
+<<<<<<< HEAD
     selectedProductId: 2, // Default to Unhusked (ID 2)
+=======
+    // ✅ NEW: Track the selected product ID. Default to '2' which is 'Unhusked'.
+    selectedProductId: 2,
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
 };
 
 /**
@@ -19,6 +28,7 @@ const api = {
             credentials: "include",
             headers: { "Content-Type": "application/json" },
         };
+<<<<<<< HEAD
         try {
             const res = await fetch(`${API_BASE_URL}${endpoint}`, { ...defaultOptions, ...options });
             if (res.status === 401) {
@@ -35,12 +45,28 @@ const api = {
             // Catch network errors like timeouts
             throw new Error(error.message);
         }
+=======
+        const res = await fetch(`${API_BASE_URL}${endpoint}`, { ...defaultOptions, ...options });
+        if (res.status === 401) {
+            ui.showMessage("❌ Session expired. Redirecting to login...", "error");
+            setTimeout(() => (window.location.href = "../index.html"), 2000);
+            throw new Error("Session expired");
+        }
+        const data = await res.json();
+        if (!res.ok) {
+            throw new Error(data.message || `An unknown server error occurred.`);
+        }
+        return data;
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
     },
     verifySession() { return this._fetch("/verify-session"); },
     getSellers() { return this._fetch("/sellers"); },
     getTransactions() { return this._fetch("/transactions"); },
+<<<<<<< HEAD
     // ✅ ADDED: New API function to get the product summary
     getProductSummary() { return this._fetch("/products-summary"); },
+=======
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
     addSeller(sellerData) {
         return this._fetch("/add-seller", {
             method: "POST",
@@ -64,6 +90,10 @@ const ui = {
     elements: {},
     cacheElements() {
         this.elements = {
+<<<<<<< HEAD
+=======
+            // ✅ NEW: Cache the new toggle switch elements
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
             productTypeToggle: document.getElementById("productTypeToggle"),
             huskedLabel: document.getElementById("huskedLabel"),
             unhuskedLabel: document.getElementById("unhuskedLabel"),
@@ -123,9 +153,16 @@ const ui = {
         state.selectedSellerId = null;
         elements.sellerDropdownSection?.classList.add("hidden");
         elements.addSellerFormSection?.classList.add("hidden");
+<<<<<<< HEAD
         if (elements.productTypeToggle) elements.productTypeToggle.checked = false;
         this.updateToggleLabels(false);
         state.selectedProductId = 2;
+=======
+        // ✅ NEW: Reset the toggle switch after payment
+        if (elements.productTypeToggle) elements.productTypeToggle.checked = false;
+        this.updateToggleLabels(false);
+        state.selectedProductId = 2; // Reset state to Unhusked
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
     },
     populateSellerList(sellers = []) {
         const { sellerList } = this.elements;
@@ -136,6 +173,10 @@ const ui = {
             sellerList.add(option);
         });
     },
+<<<<<<< HEAD
+=======
+    // ✅ NEW: A function to update the toggle labels' active state
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
     updateToggleLabels(isHusked) {
         if (this.elements.huskedLabel && this.elements.unhuskedLabel) {
             if (isHusked) {
@@ -147,6 +188,7 @@ const ui = {
             }
         }
     },
+<<<<<<< HEAD
     // ✅ ADDED: New UI function to display the product summary
     displayProductSummary(products = []) {
         const { mainContent } = this.elements;
@@ -179,6 +221,8 @@ const ui = {
         container.appendChild(cardsContainer);
         mainContent.prepend(container); // Use prepend to add it to the top
     },
+=======
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
     displayTransactions(transactions = []) {
         const { mainContent } = this.elements;
         if (!mainContent) return;
@@ -193,11 +237,19 @@ const ui = {
             tableContainer.className = "table-container";
             const table = document.createElement("table");
             table.className = "transactions-table";
+<<<<<<< HEAD
             table.innerHTML = `<thead><tr><th class="date-col">🗓️ Date</th><th class="seller-col">🧑‍💼 Seller</th><th class="product-col">🥥 Product</th><th class="quantity-col">📦 Qty</th><th class="total-col">💰 Total</th></tr></thead>`;
             const tbody = document.createElement("tbody");
             const rows = transactions.map((t) => {
                 const totalCostAsNumber = parseFloat(t.total_cost) || 0;
                 return `<tr><td class="date-col">${new Date(t.created_at).toLocaleDateString()}</td><td class="seller-col">${t.seller_name || "N/A"}</td><td class="product-col">${t.product_name || 'N/A'}</td><td class="quantity-col">${t.quantity}</td><td class="total-col">₱${totalCostAsNumber.toFixed(2)}</td></tr>`;
+=======
+            table.innerHTML = `<thead><tr><th class="date-col">🗓️ Date</th><th class="seller-col">🧑‍💼 Seller</th><th class="quantity-col">📦 Qty</th><th class="total-col">💰 Total</th></tr></thead>`;
+            const tbody = document.createElement("tbody");
+            const rows = transactions.map((t) => {
+                const totalCostAsNumber = parseFloat(t.total_cost) || 0;
+                return `<tr><td class="date-col">${new Date(t.created_at).toLocaleDateString()}</td><td class="seller-col">${t.seller_name || "N/A"}</td><td class="quantity-col">${t.quantity}</td><td class="total-col">₱${totalCostAsNumber.toFixed(2)}</td></tr>`;
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
             }).join("");
             tbody.innerHTML = rows;
             table.appendChild(tbody);
@@ -219,12 +271,16 @@ const handlers = {
                     ui.elements.userName.textContent = firstName;
                 }
             }
+<<<<<<< HEAD
             // ✅ UPDATED: Load all data in parallel, including summary
             await Promise.all([
                 handlers.loadSellers(),
                 handlers.loadTransactions(),
                 handlers.loadProductSummary()
             ]);
+=======
+            await Promise.all([handlers.loadSellers(), handlers.loadTransactions()]);
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
         } catch (error) {
             console.error("Initial page load failed:", error.message);
         }
@@ -240,6 +296,7 @@ const handlers = {
             return [];
         }
     },
+<<<<<<< HEAD
     // ✅ ADDED: New handler to load and display the summary
     async loadProductSummary() {
         try {
@@ -250,6 +307,8 @@ const handlers = {
             ui.showMessage(`❌ Could not load product summary: ${error.message}`, "error");
         }
     },
+=======
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
     async loadTransactions() {
         try {
             const { transactions } = await api.getTransactions();
@@ -268,8 +327,13 @@ const handlers = {
             phone: sellerPhoneInput.value.trim(),
             address: sellerAddressInput.value.trim(),
         };
+<<<<<<< HEAD
         if (!sellerData.name || !sellerData.email) {
             return ui.showMessage("❌ Name and Email fields are required.", "error");
+=======
+        if (Object.values(sellerData).some((val) => !val)) {
+            return ui.showMessage("❌ All seller fields are required.", "error");
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
         }
         try {
             const newSellerName = sellerData.name;
@@ -295,7 +359,11 @@ const handlers = {
             seller_id: state.selectedSellerId,
             product_id: state.selectedProductId,
             quantity: parseInt(quantityInput.value, 10),
+<<<<<<< HEAD
             price_per_unit: parseFloat(priceInput.value),
+=======
+            price_per_unit: parseFloat(priceInput.value), // Renamed from 'price'
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
             total_cost: parseFloat(totalInput.value.replace("₱", "")),
         };
         if (!transactionData.seller_id || !transactionData.product_id || !transactionData.quantity || !transactionData.price_per_unit) {
@@ -305,18 +373,29 @@ const handlers = {
             const data = await api.submitTransaction(transactionData);
             ui.showMessage(`✅ ${data.message || "Transaction successful!"}`, "success");
             ui.resetForm();
+<<<<<<< HEAD
             // ✅ UPDATED: Refresh both lists after a successful payment
             await Promise.all([
                 handlers.loadTransactions(),
                 handlers.loadProductSummary()
             ]);
+=======
+            await handlers.loadTransactions();
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
         } catch (error) {
             console.error("Payment failed:", error);
             ui.showMessage(`❌ Payment failed: ${error.message}`, "error");
         }
     },
+<<<<<<< HEAD
     handleProductToggle(event) {
         const isHusked = event.target.checked;
+=======
+    // ✅ NEW: A handler for when the toggle switch is clicked
+    handleProductToggle(event) {
+        const isHusked = event.target.checked;
+        // Your database has Husked as ID 1, Unhusked as ID 2
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
         state.selectedProductId = isHusked ? 1 : 2;
         ui.updateToggleLabels(isHusked);
         const productName = isHusked ? 'Husked Coconuts' : 'Unhusked Coconuts';
@@ -368,8 +447,18 @@ document.addEventListener("DOMContentLoaded", () => {
     el.confirmSellerBtn?.addEventListener("click", handlers.confirmSellerSelection);
     el.saveSellerBtn?.addEventListener("click", (event) => handlers.handleSaveSeller(event));
     
+<<<<<<< HEAD
     el.productTypeToggle?.addEventListener("change", handlers.handleProductToggle);
     
     handlers.initialPageLoad();
     ui.updateToggleLabels(false);
 });
+=======
+    // ✅ NEW: Add event listener for our new toggle switch
+    el.productTypeToggle?.addEventListener("change", handlers.handleProductToggle);
+    
+    handlers.initialPageLoad();
+    // Set the initial active state for the label
+    ui.updateToggleLabels(false);
+});
+>>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
