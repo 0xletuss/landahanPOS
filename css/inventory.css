@@ -1,5 +1,5 @@
 /* ============================================= */
-/* INVENTORY PAGE STYLES                */
+/* INVENTORY PAGE STYLES                         */
 /* ============================================= */
 
 /* Metrics Grid Section */
@@ -158,7 +158,7 @@
     resize: vertical;
     min-height: 80px;
 }
-<<<<<<< HEAD
+
 /* ✅ START: FIX FOR UNREADABLE TABLE TEXT */
 
 /* This rule specifically targets the cells in the table body
@@ -173,5 +173,3 @@
 }
 
 /* ✅ END: FIX FOR UNREADABLE TABLE TEXT */
-=======
->>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
