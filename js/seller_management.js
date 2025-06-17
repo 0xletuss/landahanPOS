@@ -9,9 +9,7 @@ class SellerManagement {
         this.currentPage = 1;
         this.sellersPerPage = 6;
         this.apiUrl = 'https://landahan-5.onrender.com/api/sellers';
-        
-        // ✅ REMOVED: This is no longer needed because Cloudinary provides the full URL.
-        // this.apiBaseUrl = 'https://landahan-5.onrender.com';
+        this.apiBaseUrl = 'https://landahan-5.onrender.com'; // Base URL for constructing photo paths
 
         this.init();
     }
@@ -40,7 +38,7 @@ class SellerManagement {
 
             const data = await response.json();
             this.sellers = data.sellers || [];
-            this.applyFilters();
+            this.applyFilters(); // Apply current filters to new data
 
         } catch (error) {
             console.error('Error loading sellers:', error);
@@ -56,6 +54,7 @@ class SellerManagement {
         const status = document.getElementById('statusFilter').value;
         const sortBy = document.getElementById('sortBy').value;
 
+        // Filter by search and status
         this.filteredSellers = this.sellers.filter(seller => {
             const searchMatch = !searchTerm ||
                 seller.name.toLowerCase().includes(searchTerm) ||
@@ -67,6 +66,7 @@ class SellerManagement {
             return searchMatch && statusMatch;
         });
 
+        // Sort
         this.sortSellers(sortBy);
     }
     
@@ -89,6 +89,7 @@ class SellerManagement {
     
     // --- EVENT LISTENERS ---
     setupEventListeners() {
+        // Filter and Sort controls
         document.getElementById('searchInput').addEventListener('input', () => {
             this.currentPage = 1;
             this.applyFilters();
@@ -103,10 +104,16 @@ class SellerManagement {
             this.applyFilters();
             this.renderSellers();
         });
+
+        // Header buttons
         document.getElementById('refreshBtn').addEventListener('click', () => this.refreshSellers());
         document.getElementById('addSellerBtn').addEventListener('click', () => this.showAddSellerModal());
+
+        // Pagination buttons
         document.getElementById('prevPageBtn').addEventListener('click', () => this.changePage(this.currentPage - 1));
         document.getElementById('nextPageBtn').addEventListener('click', () => this.changePage(this.currentPage + 1));
+        
+        // Modal close button
         document.getElementById('modalCloseBtn').addEventListener('click', () => this.closeModal());
         document.getElementById('sellerModal').addEventListener('click', (e) => {
             if (e.target.classList.contains('modal-overlay')) {
@@ -116,17 +123,24 @@ class SellerManagement {
     }
     
     setupActionListeners() {
+        // For the view, edit, and delete icon buttons
         document.querySelectorAll('.view-btn').forEach(btn => btn.addEventListener('click', (e) => {
-            this.showViewSellerModal(e.currentTarget.dataset.sellerId);
+            const sellerId = e.currentTarget.dataset.sellerId;
+            this.showViewSellerModal(sellerId);
         }));
         document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', (e) => {
-            this.showEditSellerModal(e.currentTarget.dataset.sellerId);
+            const sellerId = e.currentTarget.dataset.sellerId;
+            this.showEditSellerModal(sellerId);
         }));
         document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => {
-            this.showDeleteConfirmModal(e.currentTarget.dataset.sellerId);
+            const sellerId = e.currentTarget.dataset.sellerId;
+            this.showDeleteConfirmModal(sellerId);
         }));
+
+        // For the avatars themselves
         document.querySelectorAll('.clickable-avatar').forEach(avatar => avatar.addEventListener('click', (e) => {
-            this.showViewSellerModal(e.currentTarget.dataset.sellerId);
+            const sellerId = e.currentTarget.dataset.sellerId;
+            this.showViewSellerModal(sellerId);
         }));
     }
 
@@ -143,7 +157,8 @@ class SellerManagement {
                     <i class="fas fa-store-slash"></i>
                     <h3>No sellers found</h3>
                     <p>Try adjusting your search criteria or add a new seller.</p>
-                </div>`;
+                </div>
+            `;
             this.updatePagination();
             return;
         }
@@ -155,14 +170,13 @@ class SellerManagement {
         this.setupActionListeners();
     }
 
-    // ✅ MODIFIED: Use seller.photo_url directly
     createSellerCard(seller) {
         const status = this.getSellerStatus(seller);
         const formattedRevenue = this.formatCurrency(seller.total_revenue);
         const initials = seller.name.split(' ').map(n => n[0]).join('').toUpperCase();
 
         const avatarHTML = seller.photo_url ?
-            `<img src="${seller.photo_url}" alt="${seller.name}" class="avatar-image clickable-avatar" data-seller-id="${seller.id}" title="View Details">` :
+            `<img src="${this.apiBaseUrl}${seller.photo_url}" alt="${seller.name}" class="avatar-image clickable-avatar" data-seller-id="${seller.id}" title="View Details">` :
             `<div class="avatar-placeholder clickable-avatar" data-seller-id="${seller.id}" title="View Details"><span class="avatar-initials">${initials}</span></div>`;
 
         return `
@@ -198,7 +212,8 @@ class SellerManagement {
                         <button class="btn-icon delete-btn" title="Delete" data-seller-id="${seller.id}"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
-            </div>`;
+            </div>
+        `;
     }
 
     // --- PAGINATION ---
@@ -240,7 +255,7 @@ class SellerManagement {
     }
 
     // --- MODAL CONTENT AND ACTIONS ---
-    // ✅ MODIFIED: Use seller.photo_url directly
+    // ✅ MODIFIED: To display the seller's photo at the top of the modal
     showViewSellerModal(sellerId) {
         const seller = this.sellers.find(s => s.id == sellerId);
         if (!seller) return;
@@ -249,7 +264,7 @@ class SellerManagement {
         const initials = seller.name.split(' ').map(n => n[0]).join('').toUpperCase();
 
         const avatarHTML = seller.photo_url ?
-            `<img src="${seller.photo_url}" alt="${seller.name}" class="avatar-image-large">` :
+            `<img src="${this.apiBaseUrl}${seller.photo_url}" alt="${seller.name}" class="avatar-image-large">` :
             `<div class="avatar-placeholder-large"><span class="avatar-initials">${initials}</span></div>`;
 
         const phoneDetailHTML = seller.phone ? `
@@ -497,9 +512,8 @@ class SellerManagement {
         }).format(value || 0);
     }
     
-    // ✅ MODIFIED: Use seller.photo_url directly
     getSellerFormHTML(seller = {}) {
-        const photoUrl = seller.photo_url || '';
+        const photoUrl = seller.photo_url ? `${this.apiBaseUrl}${seller.photo_url}` : '';
         
         let photoUploaderHTML = '';
         if (seller.id) {
