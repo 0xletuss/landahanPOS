@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register - LANDAHAN</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 1rem;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+
+    form {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #match-message {
+      font-size: 0.9rem;
+      margin-top: -0.8rem;
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+
+    button {
+     background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    p {
+      text-align: center;
+    }
+
+    a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <form id="register">
+    <h2 style="text-align:center;">Register</h2>
+    <input type="text" id="name" placeholder="Full Name" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <input type="password" id="confirm_password" placeholder="Confirm Password" required />
+    <div id="match-message"></div>
+    <button type="submit">Register</button>
+    <p>Already have an account? <a href="login.html">Login here</a>
+    <p id="message"></p>
+  </form>
+
+  <script src="../js/register.js"></script>
+  <script>
+    const password = document.getElementById('password');
+    const confirm = document.getElementById('confirm_password');
+    const message = document.getElementById('match-message');
+    const form = document.getElementById('registerForm');
+
+    function checkMatch() {
+      if (confirm.value === "") {
+        message.textContent = "";
+        return;
+      }
+      if (password.value === confirm.value) {
+        message.textContent = "Passwords match";
+        message.style.color = "green";
+      } else {
+        message.textContent = "Passwords do not match";
+        message.style.color = "red";
+      }
+    }
+
+    password.addEventListener('input', checkMatch);
+    confirm.addEventListener('input', checkMatch);
+
+    form.addEventListener('submit', function (e) {
+      if (password.value !== confirm.value) {
+        e.preventDefault();
+        message.textContent = "Passwords do not match";
+        message.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>

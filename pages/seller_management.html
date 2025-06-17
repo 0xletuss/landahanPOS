@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Management</title>
+     <script src="../js/auth_check.js"></script>
+    <link rel="stylesheet" href="../css/seller.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/background.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="coconut-container">
+        <div class="floating-coconut"><div class="coconut"></div></div>
+        <div class="floating-coconut"><div class="coconut"></div></div>
+        <div class="floating-coconut"><div class="coconut"></div></div>
+        <div class="floating-coconut"><div class="coconut"></div></div>
+        <div class="floating-coconut"><div class="coconut"></div></div>
+        <div class="floating-coconut"><div class="coconut"></div></div>
+        <div class="floating-coconut"><div class="coconut"></div></div>
+        <div class="floating-coconut"><div class="coconut"></div></div>
+        <div class="floating-coconut"><div class="coconut"></div></div>
+        <div class="floating-coconut"><div class="coconut"></div></div>
+        <div class="palm-leaf"></div>
+        <div class="palm-leaf"></div>
+        <div class="palm-leaf"></div>   
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <h1 class="page-title">
+                <i class="fas fa-store"></i>
+                SUKI - Seller Management
+            </h1>
+            <div class="header-actions">
+                <button class="btn btn-primary" id="addSellerBtn">
+                    <i class="fas fa-plus"></i>
+                    Add New Seller
+                </button>
+                <button class="btn btn-secondary" id="announcementBtn">
+                    <i class="fas fa-bullhorn"></i> New Announcement
+                </button>
+                <button class="btn btn-secondary" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh
+                </button>
+            </div>
+        </header>
+
+        <div class="filters-section">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search sellers by name, email, or phone...">
+            </div>
+            <div class="filter-controls">
+                <select id="statusFilter" class="filter-select">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+                <select id="sortBy" class="filter-select">
+                    <option value="name">Sort by Name</option>
+                    <option value="revenue">Sort by Revenue</option>
+                    <option value="transactions">Sort by Transactions</option>
+                    <option value="quantity">Sort by Quantity</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="sellers-grid">
+            </div>
+
+        <div class="pagination">
+            <button class="pagination-btn" id="prevPageBtn" disabled>
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <span class="pagination-info">Page 1 of 1</span>
+            <button class="pagination-btn" id="nextPageBtn" disabled>
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+    <div id="nav-placeholder"></div>
+
+    <div class="modal-overlay" id="sellerModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="modal-close" id="modalCloseBtn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                </div>
+            <div class="modal-footer" id="modalFooter">
+                </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="announcementModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 id="announcementModalTitle">Make an Announcement</h2>
+                <button class="modal-close" id="closeAnnouncementModalBtn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">Choose an announcement to send to all sellers.</p>
+                <div class="announcement-options">
+                    <button class="announcement-option-btn" id="priceDecreaseBtn">
+                        <i class="fas fa-arrow-down"></i>
+                        <div class="btn-text">
+                            <h4>Price Decrease</h4>
+                            <p>Notify sellers about a price drop.</p>
+                        </div>
+                    </button>
+                    <button class="announcement-option-btn" id="priceIncreaseBtn">
+                        <i class="fas fa-arrow-up"></i>
+                        <div class="btn-text">
+                            <h4>Price Increase</h4>
+                            <p>Notify sellers about a price hike.</p>
+                        </div>
+                    </button>
+                    <button class="announcement-option-btn" id="notAvailableBtn">
+                        <i class="fas fa-calendar-times"></i>
+                        <div class="btn-text">
+                            <h4>Not Available Today</h4>
+                            <p>Inform sellers you are closed today.</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="notification-container"></div>
+
+
+    <script type="module" src="../js/seller_management.js"></script>
+    <script type="module" src="../js/announcement.js"></script>
+    <script src="../js/navbar.js"></script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+/* ============================================= */
+/* INVENTORY PAGE STYLES                */
+/* ============================================= */
+
+/* Metrics Grid Section */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.metric-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.metric-card i {
+    font-size: 2rem;
+    padding: 1rem;
+    border-radius: 50%;
+    color: #166534; /* Dark Green */
+    background-color: rgba(134, 239, 172, 0.3); /* Light Green transparent */
+}
+
+.metric-card.low-stock i {
+    color: #b45309; /* Amber */
+    background-color: rgba(251, 191, 36, 0.2);
+}
+
+.metric-info .metric-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1f2937;
+    line-height: 1;
+}
+
+.metric-info .metric-label {
+    font-size: 0.9rem;
+    color: #4b5563;
+}
+
+/* Inventory Table Container */
+.inventory-table-container {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 1rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    overflow-x: auto; /* Makes table scrollable on small screens */
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px; /* Ensures table content doesn't get too cramped before scrolling */
+}
+
+.data-table th, .data-table td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.data-table thead {
+    background-color: rgba(240, 253, 244, 0.7); /* Very light green */
+}
+
+.data-table th {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #14532d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.data-table tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+    transition: background-color 0.2s ease;
+}
+
+.data-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.data-table tbody tr:hover {
+    background-color: rgba(240, 253, 244, 0.9);
+}
+
+/* Specific Column Styles */
+.col-photo { width: 80px; }
+.col-qty, .col-price { text-align: right; }
+.col-status { text-align: center; }
+.col-actions { width: 150px; text-align: right; }
+
+.table-photo {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Status Pills */
+.status-pill {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-pill.in-stock {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.status-pill.low-stock {
+    background-color: #fef9c3;
+    color: #854d0e;
+}
+
+.status-pill.out-of-stock {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* Table Action Buttons */
+.col-actions .btn-icon {
+    margin-left: 0.5rem;
+}
+
+.add-stock-btn {
+    background: #60a5fa; /* Blue */
+    color: white;
+}
+.add-stock-btn:hover {
+    background: #3b82f6;
+    transform: scale(1.1);
+}
+
+/* Modal Form Specifics */
+#productForm textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 80px;
+}
+/* ✅ START: FIX FOR UNREADABLE TABLE TEXT */
+
+/* This rule specifically targets the cells in the table body
+   and sets a dark, readable text color. */
+.data-table tbody td {
+    color: #2d3748; /* A dark, readable slate gray */
+}
+
+/* We can also add a style for the product name to make it stand out */
+.data-table .col-name strong {
+    color: #1f2937;
+}
+
+/* ✅ END: FIX FOR UNREADABLE TABLE TEXT */

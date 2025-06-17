@@ -1,0 +1,283 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - LANDAHAN</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      padding: 1rem;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background-attachment: fixed;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    
+    form {
+      background: #fff;
+      padding: 2.5rem 2rem 2rem;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      position: relative;
+      backdrop-filter: blur(10px);
+    }
+    
+    .back-button {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #6b7280;
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+      width: auto;
+      margin-bottom: 0;
+    }
+    
+    .back-button:hover {
+      background-color: #f3f4f6;
+      color: #374151;
+    }
+    
+    h2 {
+      text-align: center;
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+      margin-top: 1rem;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #6b7280;
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+      line-height: 1.4;
+    }
+    
+    .input-group {
+      margin-bottom: 1.25rem;
+      position: relative;
+    }
+    
+    input {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 16px;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      background: #f9fafb;
+      color: #1f2937;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #c7f52e;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(199, 245, 46, 0.1);
+    }
+    
+    input::placeholder {
+      color: #9ca3af;
+      font-weight: 400;
+    }
+    
+    button {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: none;
+    }
+    
+    button[type="submit"] {
+      background: linear-gradient(135deg, #c7f52e 0%, #a8e526 100%);
+      color: #1f2937;
+      margin-bottom: 1.5rem;
+      margin-top: 0.5rem;
+    }
+    
+    button[type="submit"]:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 25px rgba(199, 245, 46, 0.3);
+      background: linear-gradient(135deg, #a8e526 0%, #94d61f 100%);
+    }
+    
+    .links-container {
+      text-align: center;
+      space-y: 1rem;
+    }
+    
+    .forgot-password {
+      display: block;
+      margin-bottom: 1.5rem;
+    }
+    
+    .register-link {
+      display: block;
+      margin-bottom: 1rem;
+    }
+    
+    a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+    
+    a:hover {
+      color: #5a67d8;
+      text-decoration: underline;
+    }
+    
+    p {
+      text-align: center;
+      color: #6b7280;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    #message {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      text-align: center;
+      display: none;
+    }
+    
+    #message.show {
+      display: block;
+    }
+    
+    #message.error {
+      background-color: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+    
+    #message.success {
+      background-color: #f0fdf4;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 480px) {
+      body {
+        padding: 0.5rem;
+      }
+      
+      form {
+        padding: 2rem 1.5rem 1.5rem;
+        border-radius: 20px;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+      }
+      
+      .subtitle {
+        font-size: 0.85rem;
+      }
+      
+      input, button {
+        padding: 0.9rem 1rem;
+        font-size: 0.95rem;
+      }
+    }
+    
+    /* Loading state */
+    button[type="submit"]:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .loading {
+      position: relative;
+      color: transparent;
+    }
+    
+    .loading::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      top: 50%;
+      left: 50%;
+      margin-left: -10px;
+      margin-top: -10px;
+      border: 2px solid #1f2937;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <form id="loginForm">
+      <button type="button" class="back-button" onclick="history.back()">←</button>
+      
+      <h2>Welcome back,</h2>
+      <p class="subtitle">Sign in to your account to continue your journey</p>
+      
+      <div class="input-group">
+        <input type="email" id="email" placeholder="Email" required>
+      </div>
+      
+      <div class="input-group">
+        <input type="password" id="password" placeholder="Password" required>
+      </div>
+      
+      <button type="submit">Log in</button>
+      
+      <div class="links-container">
+        <p class="forgot-password"><a href="/pages/forgot_password.html">Forgot password?</a></p>
+        <p class="register-link">Don't have an account? <a href="register.html">Create an Account</a></p>
+      </div>
+      
+      <p id="message"></p>
+    </form>
+  </div>
+  
+  <script src="/js/login.js"></script>
+</body>
+</html>
