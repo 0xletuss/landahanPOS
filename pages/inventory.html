@@ -3,21 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
     <title>Inventory Summary</title>
-=======
-    <title>Inventory Management</title>
->>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
     
     <script src="../js/auth_check.js"></script>
     
     <link rel="stylesheet" href="../css/seller.css">
-<<<<<<< HEAD
     <link rel="stylesheet" href="../css/inventory.css">
     <link rel="stylesheet" href="../css/navbar.css">
-=======
-    <link rel="stylesheet" href="../css/inventory.css"> <link rel="stylesheet" href="../css/navbar.css">
->>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
     <link rel="stylesheet" href="../css/background.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -31,30 +23,16 @@
         <div class="floating-coconut"><div class="coconut"></div></div>
         <div class="palm-leaf"></div>
         <div class="palm-leaf"></div>
-<<<<<<< HEAD
         <div class="palm-leaf"></div> 
-=======
-        <div class="palm-leaf"></div>   
->>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
     </div>
 
     <div class="container">
         <header class="header">
             <h1 class="page-title">
                 <i class="fas fa-boxes-stacked"></i>
-<<<<<<< HEAD
                 Inventory Purchase Summary
             </h1>
             <div class="header-actions">
-=======
-                Inventory Management
-            </h1>
-            <div class="header-actions">
-                <button class="btn btn-primary" id="addProductBtn">
-                    <i class="fas fa-plus"></i>
-                    Add New Product
-                </button>
->>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
                 <button class="btn btn-secondary" id="refreshBtn">
                     <i class="fas fa-sync-alt"></i>
                     Refresh
@@ -67,65 +45,19 @@
                 <i class="fas fa-box-archive"></i>
                 <div class="metric-info">
                     <span class="metric-value" id="totalProductsValue">0</span>
-<<<<<<< HEAD
                     <span class="metric-label">Total Product Types</span>
-=======
-                    <span class="metric-label">Total Products</span>
-                </div>
-            </div>
-            <div class="metric-card">
-                <i class="fas fa-hand-holding-dollar"></i>
-                <div class="metric-info">
-                    <span class="metric-value" id="totalStockValue">₱0</span>
-                    <span class="metric-label">Total Stock Value</span>
-                </div>
-            </div>
-            <div class="metric-card low-stock">
-                <i class="fas fa-triangle-exclamation"></i>
-                <div class="metric-info">
-                    <span class="metric-value" id="lowStockItemsValue">0</span>
-                    <span class="metric-label">Items with Low Stock</span>
->>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
                 </div>
             </div>
         </section>
 
-<<<<<<< HEAD
-=======
-        <div class="filters-section">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="inventorySearchInput" placeholder="Search by product name or SKU...">
-            </div>
-            <div class="filter-controls">
-                <select id="stockStatusFilter" class="filter-select">
-                    <option value="all">All Statuses</option>
-                    <option value="in_stock">In Stock</option>
-                    <option value="low_stock">Low Stock</option>
-                    <option value="out_of_stock">Out of Stock</option>
-                </select>
-            </div>
-        </div>
-
->>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
         <div class="inventory-table-container">
             <table class="data-table">
                 <thead>
                     <tr>
-<<<<<<< HEAD
                         <th class="col-name">Product Name</th>
                         <th class="col-qty">Total Quantity Purchased</th>
                         <th class="col-price">Average Price</th>
                         <th class="col-price">Total Cost</th>
-=======
-                        <th class="col-photo">Photo</th>
-                        <th class="col-name">Product Name</th>
-                        <th class="col-sku">SKU</th>
-                        <th class="col-qty">Qty on Hand</th>
-                        <th class="col-price">Price</th>
-                        <th class="col-status">Status</th>
-                        <th class="col-actions">Actions</th>
->>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
                     </tr>
                 </thead>
                 <tbody id="inventoryTableBody">
@@ -133,31 +65,12 @@
             </table>
         </div>
         
-<<<<<<< HEAD
     </div>
 
     <div id="nav-placeholder"></div>
-=======
-        <div class="pagination">
-             </div>
-    </div>
-
-    <div id="nav-placeholder"></div>
-
-    <div class="modal-overlay" id="productModal">
-         </div>
-
-    <div class="modal-overlay" id="addStockModal">
-         </div>
-    
->>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
     <div id="notification-container"></div>
 
     <script type="module" src="../js/inventory.js"></script>
     <script src="../js/navbar.js"></script>
 </body>
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> 14fc7f51bd905e6946ffdd0aa966c73555d4f2d8
