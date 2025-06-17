@@ -5,11 +5,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>POS - LANDAHAN</title>
-     <script src="../js/auth_check.js"></script>
+    <script src="../js/auth_check.js"></script>
     <link rel="stylesheet" href="../css/home.css" />
     <link rel="stylesheet" href="../css/modal.css" />
-     <link rel="stylesheet" href="../css/navbar.css" />
-     <link rel="stylesheet" href="../css/background.css" />
+    <link rel="stylesheet" href="../css/navbar.css" />
+    <link rel="stylesheet" href="../css/background.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -17,44 +17,42 @@
 <body>
 
 
-  <div class="coconut-container">
-    <!-- Floating Coconuts -->
-    <div class="floating-coconut">
-        <div class="coconut"></div>
+    <div class="coconut-container">
+        <div class="floating-coconut">
+            <div class="coconut"></div>
+        </div>
+        <div class="floating-coconut">
+            <div class="coconut"></div>
+        </div>
+        <div class="floating-coconut">
+            <div class="coconut"></div>
+        </div>
+        <div class="floating-coconut">
+            <div class="coconut"></div>
+        </div>
+        <div class="floating-coconut">
+            <div class="coconut"></div>
+        </div>
+        <div class="floating-coconut">
+            <div class="coconut"></div>
+        </div>
+        <div class="floating-coconut">
+            <div class="coconut"></div>
+        </div>
+        <div class="floating-coconut">
+            <div class="coconut"></div>
+        </div>
+        <div class="floating-coconut">
+            <div class="coconut"></div>
+        </div>
+        <div class="floating-coconut">
+            <div class="coconut"></div>
+        </div>
+
+        <div class="palm-leaf"></div>
+        <div class="palm-leaf"></div>
+        <div class="palm-leaf"></div>
     </div>
-    <div class="floating-coconut">
-        <div class="coconut"></div>
-    </div>
-    <div class="floating-coconut">
-        <div class="coconut"></div>
-    </div>
-    <div class="floating-coconut">
-        <div class="coconut"></div>
-    </div>
-    <div class="floating-coconut">
-        <div class="coconut"></div>
-    </div>
-    <div class="floating-coconut">
-        <div class="coconut"></div>
-    </div>
-    <div class="floating-coconut">
-        <div class="coconut"></div>
-    </div>
-    <div class="floating-coconut">
-        <div class="coconut"></div>
-    </div>
-    <div class="floating-coconut">
-        <div class="coconut"></div>
-    </div>
-    <div class="floating-coconut">
-        <div class="coconut"></div>
-    </div>
-    
-    <!-- Falling Palm Leaves -->
-    <div class="palm-leaf"></div>
-    <div class="palm-leaf"></div>
-    <div class="palm-leaf"></div>
-</div>
     <div class="container">
         <header class="glassmorphism">
             <div class="header-left">
@@ -113,6 +111,15 @@
                         </div>
                         <div class="pos-card-body">
                             <div class="transaction-grid">
+                                
+                                <div class="product-toggle-container">
+                                    <span class="toggle-label" id="unhuskedLabel">Unhusked</span>
+                                    <label class="switch">
+                                        <input type="checkbox" id="productTypeToggle">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span class="toggle-label" id="huskedLabel">Husked</span>
+                                </div>
                                 <div class="input-group">
                                     <label for="quantity">
                                         <i class="fas fa-boxes"></i> Quantity:
@@ -125,7 +132,8 @@
                                     <label for="price">
                                         <i class="fas fa-peso-sign"></i> Price per Unit:
                                     </label>
-                                    <input type="number" id="price" class="pos-input" step="0.01" min="0" placeholder="0.00" />
+                                    <input type="number" id="price" class="pos-input" step="0.01" min="0"
+                                        placeholder="0.00" />
                                     <div class="input-decoration"></div>
                                 </div>
 
@@ -133,7 +141,8 @@
                                     <label for="total">
                                         <i class="fas fa-calculator"></i> Total Cost:
                                     </label>
-                                    <input type="text" id="total" class="pos-input total-input" readonly placeholder="₱0.00" />
+                                    <input type="text" id="total" class="pos-input total-input" readonly
+                                        placeholder="₱0.00" />
                                     <div class="total-decoration">
                                         <i class="fas fa-coins"></i>
                                     </div>
@@ -214,19 +223,22 @@
                             <label for="sellerEmail">
                                 <i class="fas fa-envelope"></i> Email:
                             </label>
-                            <input type="email" id="sellerEmail" class="modal-input" placeholder="seller@example.com" required />
+                            <input type="email" id="sellerEmail" class="modal-input" placeholder="seller@example.com"
+                                required />
                         </div>
                         <div class="input-group">
                             <label for="sellerPhone">
                                 <i class="fas fa-phone"></i> Phone:
                             </label>
-                            <input type="text" id="sellerPhone" class="modal-input" placeholder="+63 XXX XXX XXXX" required />
+                            <input type="text" id="sellerPhone" class="modal-input" placeholder="+63 XXX XXX XXXX"
+                                required />
                         </div>
                         <div class="input-group">
                             <label for="sellerAddress">
                                 <i class="fas fa-map-marker-alt"></i> Address:
                             </label>
-                            <input type="text" id="sellerAddress" class="modal-input" placeholder="Complete address" required />
+                            <input type="text" id="sellerAddress" class="modal-input" placeholder="Complete address"
+                                required />
                         </div>
                     </div>
                     <button id="saveSellerBtn" class="modal-save-btn" type="button">
@@ -239,8 +251,6 @@
     </dialog>
 
     <div id="nav-placeholder"></div>
-
-
 
     <script src="../js/home.js"></script>
     <script src="../js/navbar.js"></script>
