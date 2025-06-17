@@ -1,9 +1,11 @@
-// --- CONFIGURATION & STATE ---
+]// --- CONFIGURATION & STATE ---
 
 const API_BASE_URL = "https://landahan-5.onrender.com/api";
 
 const state = {
     selectedSellerId: null,
+    // ✅ NEW: Track the selected product ID. Default to '2' which is 'Unhusked'.
+    selectedProductId: 2,
 };
 
 /**
@@ -56,7 +58,10 @@ const ui = {
     elements: {},
     cacheElements() {
         this.elements = {
-            // Add userName to the cached elements
+            // ✅ NEW: Cache the new toggle switch elements
+            productTypeToggle: document.getElementById("productTypeToggle"),
+            huskedLabel: document.getElementById("huskedLabel"),
+            unhuskedLabel: document.getElementById("unhuskedLabel"),
             userName: document.getElementById("userName"),
             quantityInput: document.getElementById("quantity"),
             priceInput: document.getElementById("price"),
@@ -91,7 +96,7 @@ const ui = {
         messageBox.className = `pos-message ${type}`;
         messageBox.classList.remove("hidden");
         if (type === "success" || type === "info") {
-            setTimeout(() => messageBox.classList.add("hidden"), 4000);
+            setTimeout(() => messageBox.classList.add("hidden"), 3000);
         }
     },
     resetSellerFormInputs() {
@@ -113,6 +118,10 @@ const ui = {
         state.selectedSellerId = null;
         elements.sellerDropdownSection?.classList.add("hidden");
         elements.addSellerFormSection?.classList.add("hidden");
+        // ✅ NEW: Reset the toggle switch after payment
+        if (elements.productTypeToggle) elements.productTypeToggle.checked = false;
+        this.updateToggleLabels(false);
+        state.selectedProductId = 2; // Reset state to Unhusked
     },
     populateSellerList(sellers = []) {
         const { sellerList } = this.elements;
@@ -123,95 +132,63 @@ const ui = {
             sellerList.add(option);
         });
     },
-    
+    // ✅ NEW: A function to update the toggle labels' active state
+    updateToggleLabels(isHusked) {
+        if (this.elements.huskedLabel && this.elements.unhuskedLabel) {
+            if (isHusked) {
+                this.elements.huskedLabel.classList.add('active');
+                this.elements.unhuskedLabel.classList.remove('active');
+            } else {
+                this.elements.huskedLabel.classList.remove('active');
+                this.elements.unhuskedLabel.classList.add('active');
+            }
+        }
+    },
     displayTransactions(transactions = []) {
-    const { mainContent } = this.elements;
-    if (!mainContent) return;
-    
-    mainContent.querySelector(".transactions-container")?.remove();
-    
-    const container = document.createElement("div");
-    container.className = "transactions-container";
-    container.innerHTML = "<h3>📋 Your Recent Transactions</h3>";
-    
-    if (!transactions.length) {
-        container.innerHTML += '<p class="no-transactions">You have no transactions yet.</p>';
-    } else {
-        const tableContainer = document.createElement("div");
-        tableContainer.className = "table-container";
-        
-        const table = document.createElement("table");
-        table.className = "transactions-table";
-        
-        table.innerHTML = `
-            <thead>
-                <tr>
-                    <th class="date-col">🗓️ Date</th>
-                    <th class="seller-col">🧑‍💼 Seller</th>
-                    <th class="quantity-col">📦 Qty</th>
-                    <th class="total-col">💰 Total</th>
-                </tr>
-            </thead>
-        `;
-        
-        const tbody = document.createElement("tbody");
-        const rows = transactions
-            .map((t) => {
+        const { mainContent } = this.elements;
+        if (!mainContent) return;
+        mainContent.querySelector(".transactions-container")?.remove();
+        const container = document.createElement("div");
+        container.className = "transactions-container";
+        container.innerHTML = "<h3>📋 Your Recent Transactions</h3>";
+        if (!transactions.length) {
+            container.innerHTML += '<p class="no-transactions">You have no transactions yet.</p>';
+        } else {
+            const tableContainer = document.createElement("div");
+            tableContainer.className = "table-container";
+            const table = document.createElement("table");
+            table.className = "transactions-table";
+            table.innerHTML = `<thead><tr><th class="date-col">🗓️ Date</th><th class="seller-col">🧑‍💼 Seller</th><th class="quantity-col">📦 Qty</th><th class="total-col">💰 Total</th></tr></thead>`;
+            const tbody = document.createElement("tbody");
+            const rows = transactions.map((t) => {
                 const totalCostAsNumber = parseFloat(t.total_cost) || 0;
-                return `
-                    <tr>
-                        <td class="date-col">${new Date(t.created_at).toLocaleDateString()}</td>
-                        <td class="seller-col">${t.seller_name || "N/A"}</td>
-                        <td class="quantity-col">${t.quantity}</td>
-                        <td class="total-col">₱${totalCostAsNumber.toFixed(2)}</td>
-                    </tr>
-                `;
-            })
-            .join("");
-        
-        tbody.innerHTML = rows;
-        table.appendChild(tbody);
-        tableContainer.appendChild(table);
-        container.appendChild(tableContainer);
-    }
-    
-    mainContent.appendChild(container);
+                return `<tr><td class="date-col">${new Date(t.created_at).toLocaleDateString()}</td><td class="seller-col">${t.seller_name || "N/A"}</td><td class="quantity-col">${t.quantity}</td><td class="total-col">₱${totalCostAsNumber.toFixed(2)}</td></tr>`;
+            }).join("");
+            tbody.innerHTML = rows;
+            table.appendChild(tbody);
+            tableContainer.appendChild(table);
+            container.appendChild(tableContainer);
+        }
+        mainContent.appendChild(container);
     },
 };
 
-/**
- * =================================================================
- * EVENT HANDLERS ⚡
- * =================================================================
- */
 const handlers = {
-    // ✅ START: MODIFIED FUNCTION
     async initialPageLoad() {
         try {
-            // Step 1: Verify the session and get user data
             const sessionData = await api.verifySession();
-            
-            // Step 2: Update the UI with the user's name
             if (sessionData && sessionData.user && sessionData.user.name) {
                 const fullName = sessionData.user.name;
-                // Get the first name by splitting the string and taking the first part
                 const firstName = fullName.split(' ')[0];
                 if (ui.elements.userName) {
                     ui.elements.userName.textContent = firstName;
                 }
             }
-            
-            // Step 3: Load the rest of the page data
             await Promise.all([handlers.loadSellers(), handlers.loadTransactions()]);
-
         } catch (error) {
-            // This will trigger if verifySession fails (e.g., user not logged in)
-            // The api._fetch function already handles the redirect.
             console.error("Initial page load failed:", error.message);
         }
     },
-    // ✅ END: MODIFIED FUNCTION
-
     async loadSellers() {
         try {
             const sellers = await api.getSellers();
@@ -232,7 +209,6 @@ const handlers = {
             ui.showMessage(`❌ Could not load transactions: ${error.message}`, "error");
         }
     },
-    
     async handleSaveSeller(event) {
         event.preventDefault();
         const { sellerNameInput, sellerEmailInput, sellerPhoneInput, sellerAddressInput, selectedSellerText, sellerList } = ui.elements;
@@ -242,11 +218,9 @@ const handlers = {
             phone: sellerPhoneInput.value.trim(),
             address: sellerAddressInput.value.trim(),
         };
-
         if (Object.values(sellerData).some((val) => !val)) {
             return ui.showMessage("❌ All seller fields are required.", "error");
         }
-
         try {
             const newSellerName = sellerData.name;
             const response = await api.addSeller(sellerData);
@@ -260,23 +234,22 @@ const handlers = {
                 sellerList.value = newSeller.id;
             }
             ui.hide(ui.elements.sellerModal);
-
         } catch (error) {
             console.error("Save seller failed:", error);
             ui.showMessage(`❌ Failed to save seller: ${error.message}`, "error");
         }
     },
-
     async handlePayment() {
         const { quantityInput, priceInput, totalInput } = ui.elements;
         const transactionData = {
             seller_id: state.selectedSellerId,
+            product_id: state.selectedProductId,
             quantity: parseInt(quantityInput.value, 10),
-            price: parseFloat(priceInput.value),
+            price_per_unit: parseFloat(priceInput.value), // Renamed from 'price'
             total_cost: parseFloat(totalInput.value.replace("₱", "")),
         };
-        if (!transactionData.seller_id || !transactionData.quantity || !transactionData.price) {
-            return ui.showMessage("❌ Please select a seller and enter quantity/price.", "error");
+        if (!transactionData.seller_id || !transactionData.product_id || !transactionData.quantity || !transactionData.price_per_unit) {
+            return ui.showMessage("❌ Please select seller/product and enter quantity/price.", "error");
         }
         try {
             const data = await api.submitTransaction(transactionData);
@@ -287,6 +260,15 @@ const handlers = {
             console.error("Payment failed:", error);
             ui.showMessage(`❌ Payment failed: ${error.message}`, "error");
         }
+    },
+    // ✅ NEW: A handler for when the toggle switch is clicked
+    handleProductToggle(event) {
+        const isHusked = event.target.checked;
+        // Your database has Husked as ID 1, Unhusked as ID 2
+        state.selectedProductId = isHusked ? 1 : 2;
+        ui.updateToggleLabels(isHusked);
+        const productName = isHusked ? 'Husked Coconuts' : 'Unhusked Coconuts';
+        ui.showMessage(`✅ Switched to ${productName}`, "info");
     },
     updateTotal() {
         const quantity = parseFloat(ui.elements.quantityInput.value) || 0;
@@ -310,11 +292,6 @@ const handlers = {
     },
 };
 
-/**
- * =================================================================
- * INITIALIZATION 🚀
- * =================================================================
- */
 document.addEventListener("DOMContentLoaded", () => {
     ui.cacheElements();
     const { elements: el } = ui;
@@ -339,6 +316,10 @@ document.addEventListener("DOMContentLoaded", () => {
     el.confirmSellerBtn?.addEventListener("click", handlers.confirmSellerSelection);
     el.saveSellerBtn?.addEventListener("click", (event) => handlers.handleSaveSeller(event));
     
-    // This now handles everything
+    // ✅ NEW: Add event listener for our new toggle switch
+    el.productTypeToggle?.addEventListener("change", handlers.handleProductToggle);
+    
     handlers.initialPageLoad();
+    // Set the initial active state for the label
+    ui.updateToggleLabels(false);
 });
