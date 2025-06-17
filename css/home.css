@@ -716,3 +716,120 @@ header {
         font-size: 20px;
     }
 }
+/* ... (all your existing CSS from the start of the file) ... */
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    header {
+        padding: 20px;
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .header-left {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .main-content {
+        padding: 25px;
+    }
+    
+    .transaction-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .total-group {
+        grid-column: span 1;
+    }
+    
+    .pos-header h2 {
+        font-size: 24px;
+    }
+    
+    .header-left h1 {
+        font-size: 20px;
+    }
+}
+
+
+/* ✅ START: HUSKED/UNHUSKED TOGGLE SWITCH STYLES */
+
+.product-toggle-container {
+    grid-column: 1 / -1; /* Make it span the full width of the grid */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(199, 245, 46, 0.1);
+}
+
+.toggle-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #4a5568; /* A darker text color */
+    transition: all 0.2s ease-in-out;
+}
+
+/* Style for the active label */
+.product-toggle-container .toggle-label.active {
+    color: #38a169; /* Your theme's green color */
+    transform: scale(1.05);
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    flex-shrink: 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e0; /* Gray for off state */
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #38a169; /* Your theme's green color */
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* ✅ END: HUSKED/UNHUSKED TOGGLE SWITCH STYLES */
