@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Summary</title>
+    <title>Inventory Dashboard</title>
     
     <script src="../js/auth_check.js"></script>
     
@@ -30,7 +30,7 @@
         <header class="header">
             <h1 class="page-title">
                 <i class="fas fa-boxes-stacked"></i>
-                Inventory Purchase Summary
+                Inventory Dashboard
             </h1>
             <div class="header-actions">
                 <button class="btn btn-secondary" id="refreshBtn">
@@ -39,13 +39,22 @@
                 </button>
             </div>
         </header>
+        
+        <section id="inventoryAlerts" class="alerts-container"></section>
 
         <section class="metrics-grid">
             <div class="metric-card">
-                <i class="fas fa-box-archive"></i>
+                <i class="fas fa-boxes-stacked"></i>
                 <div class="metric-info">
-                    <span class="metric-value" id="totalProductsValue">0</span>
-                    <span class="metric-label">Total Product Types</span>
+                    <span class="metric-value" id="totalQuantityValue">0</span>
+                    <span class="metric-label">Total Quantity Purchased</span>
+                </div>
+            </div>
+            <div class="metric-card">
+                <i class="fas fa-hand-holding-dollar"></i>
+                <div class="metric-info">
+                    <span class="metric-value" id="totalCostValue">₱0</span>
+                    <span class="metric-label">Total Value of Purchases</span>
                 </div>
             </div>
         </section>
@@ -55,9 +64,8 @@
                 <thead>
                     <tr>
                         <th class="col-name">Product Name</th>
-                        <th class="col-qty">Total Quantity Purchased</th>
-                        <th class="col-price">Average Price</th>
-                        <th class="col-price">Total Cost</th>
+                        <th class="col-qty">Current Stock on Hand</th>
+                        <th class="col-price">Estimated Stock Value</th>
                     </tr>
                 </thead>
                 <tbody id="inventoryTableBody">

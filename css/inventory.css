@@ -167,9 +167,43 @@
     color: #2d3748; /* A dark, readable slate gray */
 }
 
-/* We can also add a style for the product name to make it stand out */
+
 .data-table .col-name strong {
     color: #1f2937;
 }
 
-/* ✅ END: FIX FOR UNREADABLE TABLE TEXT */
+
+
+.alerts-container {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 20px; 
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.95rem;
+    border: 1px solid transparent;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05); 
+    backdrop-filter: blur(8px);
+}
+
+.alert i {
+    font-size: 1.25rem;
+}
+
+
+.alert.alert-warning {
+    background-color: rgba(254, 243, 199, 0.8); 
+    border-color: rgba(252, 211, 77, 0.5);
+    color: #92400e; 
+}
+
+.alert.alert-warning strong {
+    color: #78350f;
+}

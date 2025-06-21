@@ -7,31 +7,33 @@ class InventoryManager {
     }
 
     async init() {
-        await this.loadInventorySummary();
+        await this.loadInventoryData();
         this.setupEventListeners();
     }
 
     cacheDOMElements() {
         this.dom = {
-            totalProductsValue: document.getElementById('totalProductsValue'),
+            totalQuantityValue: document.getElementById('totalQuantityValue'),
+            totalCostValue: document.getElementById('totalCostValue'),
             refreshBtn: document.getElementById('refreshBtn'),
             tableBody: document.getElementById('inventoryTableBody'),
-            notificationContainer: document.getElementById('notification-container')
+            notificationContainer: document.getElementById('notification-container'),
+            inventoryAlerts: document.getElementById('inventoryAlerts'),
         };
     }
 
     setupEventListeners() {
-        this.dom.refreshBtn.addEventListener('click', () => this.loadInventorySummary());
+        this.dom.refreshBtn.addEventListener('click', () => this.loadInventoryData());
     }
 
-    async loadInventorySummary() {
+    async loadInventoryData() {
         this.showLoader();
         try {
             const data = await this.fetchData('/products-summary');
             this.products = data || [];
             this.render();
         } catch (error) {
-            this.showNotification(`Error loading inventory summary: ${error.message}`, 'error');
+            this.showNotification(`Error loading inventory: ${error.message}`, 'error');
             console.error(error);
         } finally {
             this.hideLoader();
@@ -39,44 +41,82 @@ class InventoryManager {
     }
     
     render() {
+        this.renderAlerts();
         this.renderMetrics();
         this.renderTable();
     }
 
+    renderAlerts() {
+        if (!this.dom.inventoryAlerts) return;
+        this.dom.inventoryAlerts.innerHTML = ''; 
+        
+        const highStockProducts = this.products.filter(p => p.current_stock >= p.high_stock_threshold && p.high_stock_threshold > 0);
+
+        if (highStockProducts.length === 0) {
+            return; 
+        }
+
+        highStockProducts.forEach(product => {
+            let alertMessage = '';
+            let alertClass = 'alert-warning';
+
+            if (product.name === 'Husked Coconut') {
+                alertMessage = `<strong>High Stock Alert:</strong> Husked Coconut stock is at ${product.current_stock}. Time to schedule deliveries.`;
+            } else if (product.name === 'Unhusked Coconut') {
+                alertMessage = `<strong>High Stock Alert:</strong> Unhusked Coconut stock is at ${product.current_stock}. Needs to be processed for husking.`;
+            }
+
+            if(alertMessage) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert ${alertClass}`;
+                alertDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${alertMessage}`;
+                this.dom.inventoryAlerts.appendChild(alertDiv);
+            }
+        });
+    }
+
     renderMetrics() {
-        const totalProducts = this.products.length;
-        this.dom.totalProductsValue.textContent = totalProducts;
+        const totalQuantity = this.products.reduce((sum, p) => sum + parseInt(p.total_quantity, 10), 0);
+        const totalCost = this.products.reduce((sum, p) => sum + parseFloat(p.total_cost), 0);
+        
+        this.dom.totalQuantityValue.textContent = totalQuantity.toLocaleString();
+        this.dom.totalCostValue.textContent = this.formatCurrency(totalCost);
     }
 
     renderTable() {
         if (this.products.length === 0) {
-            // ✅ UPDATED: Colspan changed to 4
-            this.dom.tableBody.innerHTML = `<tr><td colspan="4" class="no-data">No product summary found.</td></tr>`;
+            // ✅ UPDATED: Colspan changed to 3 for the new table structure
+            this.dom.tableBody.innerHTML = `<tr><td colspan="3" class="no-data">No product data found.</td></tr>`;
             return;
         }
-
         this.dom.tableBody.innerHTML = this.products.map(p => this.createProductRow(p)).join('');
     }
 
+    // ✅ UPDATED: This function now renders the 3-column row
     createProductRow(product) {
-        const averagePrice = product.total_quantity > 0
-            ? product.total_cost / product.total_quantity
+        const totalQuantityNum = parseInt(product.total_quantity, 10);
+        const totalCostNum = parseFloat(product.total_cost);
+        const currentStockNum = parseInt(product.current_stock, 10);
+
+        const averagePrice = totalQuantityNum > 0
+            ? totalCostNum / totalQuantityNum
             : 0;
+            
+        const estimatedStockValue = currentStockNum * averagePrice;
 
         return `
             <tr data-product-id="${product.id}">
                 <td class="col-name"><strong>${product.name}</strong></td>
-                <td class="col-qty">${product.total_quantity}</td>
-                <td class="col-price">${this.formatCurrency(averagePrice)}</td>
-                <td class="col-price">${this.formatCurrency(product.total_cost)}</td>
+                <td class="col-qty">${currentStockNum}</td>
+                <td class="col-price">${this.formatCurrency(estimatedStockValue)}</td>
             </tr>
         `;
     }
 
     // --- UTILITY FUNCTIONS ---
     showLoader() {
-        // ✅ UPDATED: Colspan changed to 4
-        this.dom.tableBody.innerHTML = `<tr><td colspan="4" class="loading-row"><div class="loading-spinner"></div></td></tr>`;
+        // ✅ UPDATED: Colspan changed to 3
+        this.dom.tableBody.innerHTML = `<tr><td colspan="3" class="loading-row"><div class="loading-spinner"></div></td></tr>`;
     }
     hideLoader() {
         // This works as is.
