@@ -207,3 +207,67 @@
 .alert.alert-warning strong {
     color: #78350f;
 }
+/* ... all your existing CSS code is above this ... */
+
+/* ============================================= */
+/* RESPONSIVE CARD LAYOUT FOR MOBILE             */
+/* ============================================= */
+
+/* This media query targets screens 768px wide or smaller (most phones) */
+@media screen and (max-width: 768px) {
+    
+    /* Hide the table header on mobile, it's not needed for cards */
+    .responsive-table-container .data-table thead {
+        display: none;
+    }
+
+    /* Make the table, body, and rows full-width blocks */
+    .responsive-table-container .data-table,
+    .responsive-table-container .data-table tbody,
+    .responsive-table-container .data-table tr,
+    .responsive-table-container .data-table td {
+        display: block;
+        width: 100%;
+    }
+
+    /* Style each table row like a card */
+    .responsive-table-container .data-table tr {
+        margin-bottom: 1rem;
+        border-radius: 15px;
+        border: 1px solid #e5e7eb;
+        background-color: #ffffff;
+    }
+
+    /* Style the table cells for the card layout */
+    .responsive-table-container .data-table td {
+        display: flex; /* Use flexbox for nice alignment */
+        justify-content: space-between; /* Pushes label and value apart */
+        padding: 0.75rem 1rem;
+        text-align: right; /* Align value to the right */
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .responsive-table-container .data-table td:last-child {
+        border-bottom: none;
+    }
+
+    /* This is the magic part: create labels using the 'data-label' attribute */
+    .responsive-table-container .data-table td::before {
+        content: attr(data-label); /* Reads the text from the data-label attribute */
+        font-weight: 600;
+        text-align: left;
+        color: #4b5563;
+    }
+
+    /* Make the first row (Product Name) stand out as the card header */
+    .responsive-table-container .data-table td.col-name {
+        background-color: rgba(240, 253, 244, 0.7);
+        justify-content: center; /* Center the name */
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .responsive-table-container .data-table td.col-name::before {
+        display: none; /* Don't show a label for the main product name */
+    }
+}

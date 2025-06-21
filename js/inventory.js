@@ -85,14 +85,12 @@ class InventoryManager {
 
     renderTable() {
         if (this.products.length === 0) {
-            // ✅ UPDATED: Colspan changed to 3 for the new table structure
             this.dom.tableBody.innerHTML = `<tr><td colspan="3" class="no-data">No product data found.</td></tr>`;
             return;
         }
         this.dom.tableBody.innerHTML = this.products.map(p => this.createProductRow(p)).join('');
     }
 
-    // ✅ UPDATED: This function now renders the 3-column row
     createProductRow(product) {
         const totalQuantityNum = parseInt(product.total_quantity, 10);
         const totalCostNum = parseFloat(product.total_cost);
@@ -104,18 +102,18 @@ class InventoryManager {
             
         const estimatedStockValue = currentStockNum * averagePrice;
 
+        // ✅ UPDATED: Added 'data-label' attributes to each <td> for mobile view
         return `
             <tr data-product-id="${product.id}">
-                <td class="col-name"><strong>${product.name}</strong></td>
-                <td class="col-qty">${currentStockNum}</td>
-                <td class="col-price">${this.formatCurrency(estimatedStockValue)}</td>
+                <td class="col-name" data-label="Product Name"><strong>${product.name}</strong></td>
+                <td class="col-qty" data-label="Current Stock">${currentStockNum}</td>
+                <td class="col-price" data-label="Est. Stock Value">${this.formatCurrency(estimatedStockValue)}</td>
             </tr>
         `;
     }
 
     // --- UTILITY FUNCTIONS ---
     showLoader() {
-        // ✅ UPDATED: Colspan changed to 3
         this.dom.tableBody.innerHTML = `<tr><td colspan="3" class="loading-row"><div class="loading-spinner"></div></td></tr>`;
     }
     hideLoader() {
