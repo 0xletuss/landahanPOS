@@ -54,13 +54,13 @@
     border-radius: 20px;
     padding: 1rem;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-    overflow-x: auto; /* Makes table scrollable on small screens */
+    overflow-x: auto; /* This creates the scrollbar on desktop if needed */
 }
 
 .data-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px; /* Ensures table content doesn't get too cramped before scrolling */
+    min-width: 800px; /* Ensures desktop table content doesn't get too cramped */
 }
 
 .data-table th, .data-table td {
@@ -159,20 +159,17 @@
     min-height: 80px;
 }
 
-/* ✅ START: FIX FOR UNREADABLE TABLE TEXT */
-
-/* This rule specifically targets the cells in the table body
-   and sets a dark, readable text color. */
 .data-table tbody td {
-    color: #2d3748; /* A dark, readable slate gray */
+    color: #2d3748; 
 }
-
 
 .data-table .col-name strong {
     color: #1f2937;
 }
 
-
+/* ============================================= */
+/* INVENTORY ALERTS STYLES                       */
+/* ============================================= */
 
 .alerts-container {
     margin-bottom: 2rem;
@@ -197,7 +194,6 @@
     font-size: 1.25rem;
 }
 
-
 .alert.alert-warning {
     background-color: rgba(254, 243, 199, 0.8); 
     border-color: rgba(252, 211, 77, 0.5);
@@ -207,7 +203,6 @@
 .alert.alert-warning strong {
     color: #78350f;
 }
-/* ... all your existing CSS code is above this ... */
 
 /* ============================================= */
 /* RESPONSIVE CARD LAYOUT FOR MOBILE             */
@@ -216,18 +211,26 @@
 /* This media query targets screens 768px wide or smaller (most phones) */
 @media screen and (max-width: 768px) {
     
-    /* Hide the table header on mobile, it's not needed for cards */
+    /* Hide the table header on mobile */
     .responsive-table-container .data-table thead {
         display: none;
     }
 
-    /* Make the table, body, and rows full-width blocks */
+    /* Make the table, body, rows, and cells full-width blocks */
     .responsive-table-container .data-table,
     .responsive-table-container .data-table tbody,
     .responsive-table-container .data-table tr,
     .responsive-table-container .data-table td {
         display: block;
         width: 100%;
+    }
+    
+    /* This rule resets the desktop minimum width and removes the scrollbar container */
+    .responsive-table-container .data-table {
+        min-width: 100%;
+    }
+    .responsive-table-container {
+        overflow-x: hidden;
     }
 
     /* Style each table row like a card */
@@ -236,14 +239,15 @@
         border-radius: 15px;
         border: 1px solid #e5e7eb;
         background-color: #ffffff;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     }
 
     /* Style the table cells for the card layout */
     .responsive-table-container .data-table td {
-        display: flex; /* Use flexbox for nice alignment */
-        justify-content: space-between; /* Pushes label and value apart */
+        display: flex;
+        justify-content: space-between;
         padding: 0.75rem 1rem;
-        text-align: right; /* Align value to the right */
+        text-align: right; 
         border-bottom: 1px solid #f3f4f6;
     }
 
@@ -251,23 +255,25 @@
         border-bottom: none;
     }
 
-    /* This is the magic part: create labels using the 'data-label' attribute */
+    /* Create labels using the 'data-label' attribute from the HTML */
     .responsive-table-container .data-table td::before {
-        content: attr(data-label); /* Reads the text from the data-label attribute */
+        content: attr(data-label);
         font-weight: 600;
         text-align: left;
         color: #4b5563;
+        padding-right: 1rem;
     }
 
-    /* Make the first row (Product Name) stand out as the card header */
+    /* Style the first cell as a card header */
     .responsive-table-container .data-table td.col-name {
         background-color: rgba(240, 253, 244, 0.7);
-        justify-content: center; /* Center the name */
+        justify-content: center;
         padding: 1rem;
         border-bottom: 1px solid #e5e7eb;
     }
-
+    
+    /* Don't show a label for the main product name */
     .responsive-table-container .data-table td.col-name::before {
-        display: none; /* Don't show a label for the main product name */
+        display: none; 
     }
 }
