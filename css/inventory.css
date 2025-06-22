@@ -1,88 +1,129 @@
 /* ============================================= */
-/* INVENTORY PAGE STYLES                         */
+/* GLOBAL VARIABLES & BASE STYLES                */
 /* ============================================= */
+:root {
+    /* Color Palette */
+    --color-primary-dark: #14532d;
+    --color-primary-med: #166534;
+    --color-primary-light: #dcfce7;
+    --color-primary-bg: rgba(240, 253, 244, 0.7);
 
-/* Metrics Grid Section */
+    --color-secondary-dark: #b45309;
+    --color-secondary-med: #854d0e;
+    --color-secondary-light: #fef9c3;
+    --color-secondary-bg: rgba(251, 191, 36, 0.2);
+    
+    --color-danger-dark: #991b1b;
+    --color-danger-light: #fee2e2;
+
+    --color-text-dark: #1f2937;
+    --color-text-med: #2d3748;
+    --color-text-light: #4b5563;
+    --color-text-subtle: #9ca3af;
+    
+    --color-surface-bg: rgba(255, 255, 255, 0.85);
+    --color-border: #e5e7eb;
+
+    /* Spacing & Radius */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --border-radius: 20px;
+    --border-radius-sm: 12px;
+
+    /* Shadows */
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================= */
+/* METRICS SECTION                               */
+/* ============================================= */
 .metrics-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
 }
 
 .metric-card {
-    background: rgba(255, 255, 255, 0.8);
+    background: var(--color-surface-bg);
     backdrop-filter: blur(8px);
-    border-radius: 20px;
-    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    gap: var(--spacing-lg);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: var(--shadow-md);
 }
 
 .metric-card i {
     font-size: 2rem;
-    padding: 1rem;
+    padding: var(--spacing-md);
     border-radius: 50%;
-    color: #166534; /* Dark Green */
-    background-color: rgba(134, 239, 172, 0.3); /* Light Green transparent */
+    color: var(--color-primary-med);
+    background-color: rgba(134, 239, 172, 0.4);
 }
 
 .metric-card.low-stock i {
-    color: #b45309; /* Amber */
-    background-color: rgba(251, 191, 36, 0.2);
+    color: var(--color-secondary-dark);
+    background-color: var(--color-secondary-bg);
 }
 
 .metric-info .metric-value {
     font-size: 2rem;
     font-weight: 800;
-    color: #1f2937;
+    color: var(--color-text-dark);
     line-height: 1;
 }
 
 .metric-info .metric-label {
     font-size: 0.9rem;
-    color: #4b5563;
+    color: var(--color-text-light);
 }
 
-/* Inventory Table Container */
+/* ============================================= */
+/* INVENTORY TABLE                               */
+/* ============================================= */
 .inventory-table-container {
-    background: rgba(255, 255, 255, 0.8);
+    background: var(--color-surface-bg);
     backdrop-filter: blur(8px);
-    border-radius: 20px;
-    padding: 1rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-    overflow-x: auto; /* This creates the scrollbar on desktop if needed */
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-lg);
+    overflow-x: auto;
 }
 
 .data-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px; /* Ensures desktop table content doesn't get too cramped */
+    min-width: 800px;
 }
 
-.data-table th, .data-table td {
-    padding: 1rem 1.5rem;
+.data-table th, 
+.data-table td {
+    padding: var(--spacing-md) var(--spacing-lg);
     text-align: left;
     vertical-align: middle;
 }
 
 .data-table thead {
-    background-color: rgba(240, 253, 244, 0.7); /* Very light green */
+    background-color: var(--color-primary-bg);
 }
 
 .data-table th {
     font-size: 0.8rem;
     font-weight: 700;
-    color: #14532d;
+    color: var(--color-primary-dark);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .data-table tbody tr {
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--color-border);
     transition: background-color 0.2s ease;
 }
 
@@ -94,129 +135,150 @@
     background-color: rgba(240, 253, 244, 0.9);
 }
 
-/* Specific Column Styles */
-.col-photo { width: 80px; }
+/* Table Column & Cell Styles */
 .col-qty, .col-price { text-align: right; }
-.col-status { text-align: center; }
 .col-actions { width: 150px; text-align: right; }
 
-.table-photo {
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
-    object-fit: cover;
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-/* Status Pills */
-.status-pill {
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    display: inline-block;
-}
-
-.status-pill.in-stock {
-    background-color: #dcfce7;
-    color: #166534;
-}
-
-.status-pill.low-stock {
-    background-color: #fef9c3;
-    color: #854d0e;
-}
-
-.status-pill.out-of-stock {
-    background-color: #fee2e2;
-    color: #991b1b;
-}
-
-/* Table Action Buttons */
-.col-actions .btn-icon {
-    margin-left: 0.5rem;
-}
-
-.add-stock-btn {
-    background: #60a5fa; /* Blue */
-    color: white;
-}
-.add-stock-btn:hover {
-    background: #3b82f6;
-    transform: scale(1.1);
-}
-
-/* Modal Form Specifics */
-#productForm textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-family: inherit;
-    resize: vertical;
-    min-height: 80px;
-}
-
 .data-table tbody td {
-    color: #2d3748; 
+    color: var(--color-text-med); 
 }
 
 .data-table .col-name strong {
-    color: #1f2937;
+    color: var(--color-text-dark);
+}
+
+.no-action {
+    color: var(--color-text-subtle);
+    font-style: italic;
+    font-size: 0.9rem;
 }
 
 /* ============================================= */
-/* INVENTORY ALERTS STYLES                       */
+/* MODAL STYLES (THE FINAL FIX)                  */
 /* ============================================= */
-
-.alerts-container {
-    margin-bottom: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.alert {
-    padding: 1rem 1.5rem;
-    border-radius: 20px; 
-    display: flex;
+#deliverModal,
+#huskModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
     align-items: center;
-    gap: 1rem;
-    font-size: 0.95rem;
-    border: 1px solid transparent;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05); 
-    backdrop-filter: blur(8px);
-}
-
-.alert i {
-    font-size: 1.25rem;
-}
-
-.alert.alert-warning {
-    background-color: rgba(254, 243, 199, 0.8); 
-    border-color: rgba(252, 211, 77, 0.5);
-    color: #92400e; 
-}
-
-.alert.alert-warning strong {
-    color: #78350f;
-}
-
-/* ============================================= */
-/* RESPONSIVE CARD LAYOUT FOR MOBILE             */
-/* ============================================= */
-
-/* This media query targets screens 768px wide or smaller (most phones) */
-@media screen and (max-width: 768px) {
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    z-index: 9999; 
     
-    /* Hide the table header on mobile */
+    /* These values are inherited from seller.css, so let's set them here too */
+    opacity: 0;
+    visibility: hidden;
+    /* Add a transition to match */
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* This rule makes the specific modal with the .show class visible */
+#deliverModal.show,
+#huskModal.show {
+    display: flex; 
+    visibility: visible; /* ADDED THIS LINE */
+    opacity: 1;         /* ADDED THIS LINE */
+}
+
+#deliverModal .modal-content,
+#huskModal .modal-content {
+    background-color: #fefefe;
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    width: 90%;
+    max-width: 500px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+#deliverModal .modal-content .close-btn,
+#huskModal .modal-content .close-btn {
+    color: #aaa;
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-lg);
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+#deliverModal .modal-content .close-btn:hover,
+#huskModal .modal-content .close-btn:hover {
+    color: var(--color-text-dark);
+}
+
+/* Form elements inside the modal */
+#deliverModal .modal-content h2,
+#huskModal .modal-content h2 {
+    margin-top: 0;
+    color: var(--color-text-dark);
+}
+
+#deliverModal .modal-content p,
+#huskModal .modal-content p {
+    color: var(--color-text-light);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-lg);
+}
+
+#deliverModal .modal-content .form-group,
+#huskModal .modal-content .form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+#deliverModal .modal-content label,
+#huskModal .modal-content label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 600;
+    color: var(--color-text-light);
+}
+
+#deliverModal .modal-content input[type="number"],
+#huskModal .modal-content input[type="number"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Accessibility focus style */
+#deliverModal .modal-content input[type="number"]:focus-visible,
+#huskModal .modal-content input[type="number"]:focus-visible,
+.btn:focus-visible {
+    outline: 2px solid var(--color-primary-med);
+    outline-offset: 2px;
+}
+
+#deliverModal .modal-content .form-actions,
+#huskModal .modal-content .form-actions {
+    margin-top: var(--spacing-xl);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-md);
+}
+
+/* ============================================= */
+/* RESPONSIVE DESIGN FOR MOBILE                  */
+/* ============================================= */
+@media screen and (max-width: 768px) {
     .responsive-table-container .data-table thead {
         display: none;
     }
 
-    /* Make the table, body, rows, and cells full-width blocks */
     .responsive-table-container .data-table,
     .responsive-table-container .data-table tbody,
     .responsive-table-container .data-table tr,
@@ -225,7 +287,6 @@
         width: 100%;
     }
     
-    /* This rule resets the desktop minimum width and removes the scrollbar container */
     .responsive-table-container .data-table {
         min-width: 100%;
     }
@@ -233,20 +294,20 @@
         overflow-x: hidden;
     }
 
-    /* Style each table row like a card */
     .responsive-table-container .data-table tr {
-        margin-bottom: 1rem;
+        margin-bottom: var(--spacing-md);
         border-radius: 15px;
-        border: 1px solid #e5e7eb;
+        border: 1px solid var(--color-border);
         background-color: #ffffff;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
     }
 
-    /* Style the table cells for the card layout */
     .responsive-table-container .data-table td {
         display: flex;
         justify-content: space-between;
-        padding: 0.75rem 1rem;
+        align-items: center;
+        padding: 0.75rem var(--spacing-md);
         text-align: right; 
         border-bottom: 1px solid #f3f4f6;
     }
@@ -255,24 +316,20 @@
         border-bottom: none;
     }
 
-    /* Create labels using the 'data-label' attribute from the HTML */
     .responsive-table-container .data-table td::before {
         content: attr(data-label);
         font-weight: 600;
         text-align: left;
-        color: #4b5563;
-        padding-right: 1rem;
+        color: var(--color-text-light);
+        padding-right: var(--spacing-md);
     }
 
-    /* Style the first cell as a card header */
     .responsive-table-container .data-table td.col-name {
-        background-color: rgba(240, 253, 244, 0.7);
+        background-color: var(--color-primary-bg);
         justify-content: center;
-        padding: 1rem;
-        border-bottom: 1px solid #e5e7eb;
+        padding: var(--spacing-md);
     }
     
-    /* Don't show a label for the main product name */
     .responsive-table-container .data-table td.col-name::before {
         display: none; 
     }

@@ -7,8 +7,9 @@
     
     <script src="../js/auth_check.js"></script>
     
-    <link rel="stylesheet" href="../css/seller.css">
+    
     <link rel="stylesheet" href="../css/inventory.css">
+    <link rel="stylesheet" href="../css/seller.css">
     <link rel="stylesheet" href="../css/navbar.css">
     <link rel="stylesheet" href="../css/background.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -16,15 +17,7 @@
 <body>
 
     <div class="coconut-container">
-        <div class="floating-coconut"><div class="coconut"></div></div>
-        <div class="floating-coconut"><div class="coconut"></div></div>
-        <div class="floating-coconut"><div class="coconut"></div></div>
-        <div class="floating-coconut"><div class="coconut"></div></div>
-        <div class="floating-coconut"><div class="coconut"></div></div>
-        <div class="palm-leaf"></div>
-        <div class="palm-leaf"></div>
-        <div class="palm-leaf"></div> 
-    </div>
+        </div>
 
     <div class="container">
         <header class="header">
@@ -40,7 +33,7 @@
             </div>
         </header>
         
-        <section id="inventoryAlerts" class="alerts-container"></section>
+        <div id="inventoryAlerts" class="alerts-container"></div>
 
         <section class="metrics-grid">
             <div class="metric-card">
@@ -64,20 +57,50 @@
                 <thead>
                     <tr>
                         <th class="col-name">Product Name</th>
-                        <th class="col-qty">Current Stock on Hand</th>
-                        <th class="col-price">Estimated Stock Value</th>
+                        <th class="col-qty">Current Stock</th>
+                        <th class="col-price">Est. Stock Value</th>
+                        <th class="col-actions">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="inventoryTableBody">
                     </tbody>
             </table>
         </div>
-        
     </div>
 
     <div id="nav-placeholder"></div>
     <div id="notification-container"></div>
+    
+    <div class="modal-overlay" id="deliverModal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Record Delivery</h2>
+            <p>Deliver <strong id="deliverProductName"></strong>. Current stock is <span id="deliverCurrentStock"></span>.</p>
+            <form id="deliverForm">
+                <div class="form-group">
+                    <label for="deliverQuantity">Quantity to Deliver:</label>
+                    <input type="number" id="deliverQuantity" name="quantity" min="1" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Confirm Delivery</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
+    <div class="modal-overlay" id="huskModal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Confirm Dehusking Process</h2>
+            <p>Are you sure you want to process all <strong id="huskCurrentStock"></strong> Unhusked Coconuts?</p>
+            <form id="huskForm">
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Yes, Process All</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <script type="module" src="../js/inventory.js"></script>
     <script src="../js/navbar.js"></script>
 </body>
