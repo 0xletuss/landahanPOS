@@ -334,3 +334,86 @@
         display: none; 
     }
 }
+
+/* ============================================= */
+/* HIGH STOCK WARNING UI (NEW)                   */
+/* ============================================= */
+
+/* --- 1. The Alert Box at the Top --- */
+/* This styles the container for our warning messages */
+.alerts-container {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* This creates a prominent, amber-colored alert box */
+.alert.alert-warning {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    font-size: 0.95rem;
+    
+    /* Amber color scheme for "caution" */
+    background-color: #FFFBEB; /* Light cream/yellow background */
+    color: #B45309;           /* Dark amber text color */
+    border: 1px solid #FBBF24;  /* Amber border */
+    border-left-width: 5px; /* Thicker left border for emphasis */
+
+    border-radius: 12px; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); 
+}
+
+.alert.alert-warning i {
+    font-size: 1.25rem;
+    color: #FBBF24; /* Amber icon color */
+}
+
+.alert.alert-warning strong {
+    color: #92400E; /* Darker amber for bold text */
+}
+
+
+/* --- 2. The Highlighted Table Row --- */
+/* This style applies to any <tr> with the .high-stock-warning class */
+.data-table tbody tr.high-stock-warning {
+    /* Blue color scheme for "informational / action needed" */
+    background-color: #EFF6FF; /* Very light blue background */
+    border-left: 4px solid #3B82F6; /* Distinct blue left border */
+}
+
+/* Make the text easier to read on the new background */
+.data-table tbody tr.high-stock-warning td {
+    color: #1E40AF; 
+}
+
+.data-table tbody tr.high-stock-warning .col-name strong {
+    color: #1D4ED8; /* A slightly brighter blue for the product name */
+    font-weight: 700;
+}
+
+/* Make sure the hover effect is still nice */
+.data-table tbody tr.high-stock-warning:hover {
+    background-color: #DBEAFE; /* A slightly darker blue on hover */
+}
+
+
+/* --- 3. Pulsing Action Button (Bonus) --- */
+/* This makes the button on the warning row gently pulse to attract attention */
+.high-stock-warning .btn {
+    animation: pulse-animation 2s infinite;
+}
+
+@keyframes pulse-animation {
+    0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    }
+}
