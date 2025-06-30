@@ -1,9 +1,9 @@
 class InventoryManager {
     constructor() {
         console.log('1. InventoryManager class instantiated.');
-        this.apiBaseUrl = 'https://landahan-5.onrender.com/api'; // Make sure this is your correct API URL
+        this.apiBaseUrl = 'https://landahan-5.onrender.com/api';
         this.products = [];
-        this.currentDelivery = {}; // NEW: To hold temporary delivery data
+        this.currentDelivery = {};
         this.cacheDOMElements();
         this.init();
     }
@@ -22,23 +22,22 @@ class InventoryManager {
             tableBody: document.getElementById('inventoryTableBody'),
             notificationContainer: document.getElementById('notification-container'),
             inventoryAlerts: document.getElementById('inventoryAlerts'),
-            
-            // MODIFIED: Replaced old deliver modal with new modals
             huskModal: document.getElementById('huskModal'),
             huskForm: document.getElementById('huskForm'),
-            
-            // NEW: Confirmation modal for delivery
             confirmDeliverModal: document.getElementById('confirmDeliverModal'),
             confirmDeliverForm: document.getElementById('confirmDeliverForm'),
             deliverAllProductName: document.getElementById('deliverAllProductName'),
             deliverAllStockQuantity: document.getElementById('deliverAllStockQuantity'),
-
-            // NEW: Profit calculation modal
             profitModal: document.getElementById('profitModal'),
             profitForm: document.getElementById('profitForm'),
             costOfGoodsSold: document.getElementById('costOfGoodsSold'),
             totalEarned: document.getElementById('totalEarned'),
             calculatedProfit: document.getElementById('calculatedProfit'),
+            addPurchaseBtn: document.getElementById('addPurchaseBtn'),
+            addPurchaseModal: document.getElementById('addPurchaseModal'),
+            addPurchaseForm: document.getElementById('addPurchaseForm'),
+            purchaseProduct: document.getElementById('purchaseProduct'),
+            purchaseSeller: document.getElementById('purchaseSeller')
         };
     }
 
@@ -51,7 +50,7 @@ class InventoryManager {
             const huskButton = e.target.closest('.husk-btn');
             if (deliverButton) {
                 const product = this.getProductFromButton(deliverButton);
-                if (product) this.openConfirmDeliverModal(product); // MODIFIED
+                if (product) this.openConfirmDeliverModal(product);
             }
             if (huskButton) {
                 const product = this.getProductFromButton(huskButton);
@@ -59,22 +58,20 @@ class InventoryManager {
             }
         });
 
-        // MODIFIED: Listen to new forms and remove old ones
+        this.dom.addPurchaseBtn.addEventListener('click', () => this.openAddPurchaseModal());
+        this.dom.addPurchaseForm.addEventListener('submit', (e) => this.handleAddPurchaseSubmit(e));
         this.dom.confirmDeliverForm.addEventListener('submit', (e) => this.handleConfirmDeliverSubmit(e));
         this.dom.profitForm.addEventListener('submit', (e) => this.handleProfitSubmit(e));
         this.dom.huskForm.addEventListener('submit', (e) => this.handleHuskSubmit(e));
-        
-        // NEW: Real-time profit calculation
         this.dom.totalEarned.addEventListener('input', () => this.updateProfitDisplay());
 
-        // MODIFIED: Add new modals to close listeners
+        this.setupModalCloseListeners(this.dom.addPurchaseModal);
         this.setupModalCloseListeners(this.dom.huskModal);
         this.setupModalCloseListeners(this.dom.confirmDeliverModal);
         this.setupModalCloseListeners(this.dom.profitModal);
     }
 
     async loadInventoryData() {
-        // This function remains the same
         this.showLoader();
         try {
             console.log('3. Loading inventory data...');
@@ -89,23 +86,25 @@ class InventoryManager {
             this.hideLoader();
         }
     }
-    
-    // --- All render functions (render, renderMetrics, renderAlerts, renderTable, createProductRow) remain the same ---
+
     render() {
         this.renderMetrics();
         this.renderAlerts();
-        this.renderTable(); 
+        this.renderTable();
     }
+
     renderMetrics() {
         const totalQuantity = this.products.reduce((sum, p) => sum + parseInt(p.total_quantity, 10), 0);
         const totalCost = this.products.reduce((sum, p) => sum + parseFloat(p.total_cost), 0);
         this.dom.totalQuantityValue.textContent = totalQuantity.toLocaleString();
         this.dom.totalCostValue.textContent = this.formatCurrency(totalCost);
     }
+
     renderAlerts() {
         const highStockProducts = this.products.filter(p => p.current_stock >= p.high_stock_threshold && p.high_stock_threshold > 0);
         if (highStockProducts.length === 0) {
-            this.dom.inventoryAlerts.innerHTML = ''; return;
+            this.dom.inventoryAlerts.innerHTML = '';
+            return;
         }
         const alertMessages = highStockProducts.map(p => {
             const actionText = p.name === 'Unhusked Coconut' ? 'process (husk)' : 'deliver';
@@ -113,6 +112,7 @@ class InventoryManager {
         }).join('');
         this.dom.inventoryAlerts.innerHTML = alertMessages;
     }
+
     renderTable() {
         if (this.products.length === 0) {
             this.dom.tableBody.innerHTML = `<tr><td colspan="4" class="no-data">No product data found.</td></tr>`;
@@ -120,6 +120,7 @@ class InventoryManager {
         }
         this.dom.tableBody.innerHTML = this.products.map(p => this.createProductRow(p)).join('');
     }
+
     createProductRow(product) {
         if (!product || typeof product.id === 'undefined') {
             console.error('Invalid product data passed to createProductRow:', product);
@@ -127,7 +128,7 @@ class InventoryManager {
         }
         const isHighStock = product.current_stock >= product.high_stock_threshold && product.high_stock_threshold > 0;
         let actionButtonHTML = `<span class="no-action">-</span>`;
-        if (isHighStock) {
+        if (isHighStock && product.current_stock > 0) { // Only show button if there is stock
             if (product.name === 'Husked Coconut') {
                 actionButtonHTML = `<button class="btn btn-primary deliver-btn" data-id="${product.id}">Deliver</button>`;
             } else if (product.name === 'Unhusked Coconut') {
@@ -135,13 +136,60 @@ class InventoryManager {
             }
         }
         const currentStockNum = parseInt(product.current_stock, 10);
-        const estimatedStockValue = currentStockNum * (parseFloat(product.total_cost) / parseInt(product.total_quantity, 10) || 0);
+        const estimatedStockValue = (product.total_quantity > 0) ? currentStockNum * (parseFloat(product.total_cost) / parseInt(product.total_quantity, 10)) : 0;
         return `<tr data-product-id="${product.id}" class="${isHighStock ? 'high-stock-warning' : ''}"><td class="col-name" data-label="Product Name"><strong>${product.name}</strong></td><td class="col-qty" data-label="Current Stock">${currentStockNum}</td><td class="col-price" data-label="Est. Stock Value">${this.formatCurrency(estimatedStockValue)}</td><td class="col-actions" data-label="Actions">${actionButtonHTML}</td></tr>`;
     }
 
-    // --- MODIFIED & NEW MODAL LOGIC STARTS HERE ---
+    async openAddPurchaseModal() {
+        try {
+            this.dom.purchaseProduct.innerHTML = this.products
+                .map(p => `<option value="${p.id}">${p.name}</option>`)
+                .join('');
 
-    // NEW: Opens the simple "deliver all" confirmation modal
+            this.showNotification('Loading sellers...', 'info');
+            const sellers = await this.fetchData('/sellers');
+            this.dom.purchaseSeller.innerHTML = sellers
+                .map(s => `<option value="${s.id}">${s.name}</option>`)
+                .join('');
+
+            this.dom.addPurchaseForm.reset();
+            this.dom.addPurchaseModal.classList.add('show');
+        } catch (error) {
+            this.showNotification(`Error opening purchase form: ${error.message}`, 'error');
+        }
+    }
+
+    async handleAddPurchaseSubmit(event) {
+        event.preventDefault();
+        const form = event.target;
+        const payload = {
+            product_id: form.querySelector('#purchaseProduct').value,
+            seller_id: form.querySelector('#purchaseSeller').value,
+            quantity: form.querySelector('#purchaseQuantity').value,
+            price_per_unit: form.querySelector('#purchasePrice').value
+        };
+
+        if (!payload.product_id || !payload.seller_id || !payload.quantity || !payload.price_per_unit) {
+            this.showNotification('Please fill out all fields.', 'error');
+            return;
+        }
+
+        try {
+            this.showNotification('Saving purchase...', 'info');
+            const result = await this.fetchData('/inventory/add-purchase', {
+                method: 'POST',
+                body: JSON.stringify(payload),
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            this.showNotification(result.message, 'success');
+            this.dom.addPurchaseModal.classList.remove('show');
+            await this.loadInventoryData();
+        } catch (error) {
+            this.showNotification(`Error saving purchase: ${error.message}`, 'error');
+        }
+    }
+
     openConfirmDeliverModal(product) {
         this.dom.deliverAllProductName.textContent = product.name;
         this.dom.deliverAllStockQuantity.textContent = product.current_stock;
@@ -149,51 +197,27 @@ class InventoryManager {
         this.dom.confirmDeliverModal.classList.add('show');
     }
 
-    // NEW: Handles Stage 1 of delivery - Calculating Cost
-    // In inventory.js, inside the InventoryManager class...
-
-    // ...
-
-    async handleConfirmDeliverSubmit(event) {
+    handleConfirmDeliverSubmit(event) {
         event.preventDefault();
         const productId = event.target.dataset.productId;
         const product = this.products.find(p => p.id == productId);
 
-        if (!product) {
-            this.showNotification('Could not find product data.', 'error');
+        if (!product || product.current_stock <= 0) {
+            this.showNotification('No stock to deliver for this product.', 'error');
             return;
         }
+
+        const stockValue = (product.total_quantity > 0) ? product.current_stock * (product.total_cost / product.total_quantity) : 0;
         
-        try {
-            this.showNotification('Calculating cost of goods...', 'info');
-            // We only need to send the product ID now
-            const payload = { productId: product.id };
-            
-            const result = await this.fetchData('/inventory/calculate-delivery-cost', {
-                method: 'POST',
-                body: JSON.stringify(payload),
-                headers: { 'Content-Type': 'application/json' }
-            });
-            
-            // ✅ MODIFIED: Store all data from the backend's response
-            this.currentDelivery = {
-                productId: product.id,
-                quantity: result.quantity_to_deliver, // Use quantity from backend
-                costOfGoodsSold: result.cost_of_goods_sold // Use cost from backend
-            };
-            
-            this.dom.confirmDeliverModal.classList.remove('show');
-            this.openProfitModal();
-
-        } catch (error) {
-            this.showNotification(`Error calculating cost: ${error.message}`, 'error');
-            this.dom.confirmDeliverModal.classList.remove('show');
-        }
+        this.currentDelivery = {
+            productId: product.id,
+            costOfGoodsSold: stockValue
+        };
+        
+        this.dom.confirmDeliverModal.classList.remove('show');
+        this.openProfitModal();
     }
-    
-    // ...
 
-    // NEW: Opens the profit modal and populates it with data
     openProfitModal() {
         this.dom.costOfGoodsSold.textContent = this.formatCurrency(this.currentDelivery.costOfGoodsSold);
         this.dom.totalEarned.value = '';
@@ -201,7 +225,6 @@ class InventoryManager {
         this.dom.profitModal.classList.add('show');
     }
 
-    // NEW: Handles Stage 2 of delivery - Confirming Sale and Profit
     async handleProfitSubmit(event) {
         event.preventDefault();
         const totalEarned = parseFloat(this.dom.totalEarned.value);
@@ -212,13 +235,12 @@ class InventoryManager {
         }
 
         const finalPayload = {
-            ...this.currentDelivery,
+            productId: this.currentDelivery.productId,
             total_earned: totalEarned
         };
 
         try {
             this.showNotification('Saving sale...', 'info');
-            // This is the SECOND API call to the backend
             const result = await this.fetchData('/inventory/confirm-delivery', {
                 method: 'POST',
                 body: JSON.stringify(finalPayload),
@@ -227,8 +249,8 @@ class InventoryManager {
             
             this.showNotification(result.message, 'success');
             this.dom.profitModal.classList.remove('show');
-            this.currentDelivery = {}; // Clear temp data
-            await this.loadInventoryData(); // Refresh dashboard
+            this.currentDelivery = {};
+            await this.loadInventoryData();
 
         } catch (error) {
             this.showNotification(`Error saving sale: ${error.message}`, 'error');
@@ -236,7 +258,6 @@ class InventoryManager {
         }
     }
     
-    // NEW: Helper to calculate profit in real-time in the UI
     updateProfitDisplay() {
         const totalEarned = parseFloat(this.dom.totalEarned.value) || 0;
         const cost = this.currentDelivery.costOfGoodsSold || 0;
@@ -244,13 +265,13 @@ class InventoryManager {
         this.dom.calculatedProfit.textContent = this.formatCurrency(profit);
     }
 
-    // --- Husk functions and other utilities remain the same ---
     openHuskModal(product) {
         const modal = this.dom.huskModal;
         modal.querySelector('#huskCurrentStock').textContent = product.current_stock;
         this.dom.huskForm.dataset.productId = product.id;
         modal.classList.add('show');
     }
+
     async handleHuskSubmit(event) {
         event.preventDefault();
         const product_id = event.target.dataset.productId;
@@ -273,10 +294,12 @@ class InventoryManager {
             this.dom.huskModal.classList.remove('show');
         }
     }
+
     getProductFromButton(button) {
         const productId = parseInt(button.dataset.id, 10);
         return this.products.find(p => p.id === productId);
     }
+
     setupModalCloseListeners(modalElement) {
         modalElement.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal-overlay') || e.target.classList.contains('close-btn') || e.target.classList.contains('cancel-btn')) {
@@ -284,13 +307,17 @@ class InventoryManager {
             }
         });
     }
+
     showLoader() {
         this.dom.tableBody.innerHTML = `<tr><td colspan="4" class="loading-row"><div class="loading-spinner"></div></td></tr>`;
     }
+
     hideLoader() {}
+
     formatCurrency(value) {
         return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(value || 0);
     }
+
     showNotification(message, type = 'info') {
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
@@ -303,6 +330,7 @@ class InventoryManager {
             setTimeout(() => notification.remove(), 500);
         }, 4000);
     }
+
     async fetchData(endpoint, options = {}) {
         const defaultOptions = { credentials: 'include' };
         const res = await fetch(`${this.apiBaseUrl}${endpoint}`, { ...defaultOptions, ...options });

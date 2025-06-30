@@ -7,7 +7,6 @@
     
     <script src="../js/auth_check.js"></script>
     
-    
     <link rel="stylesheet" href="../css/inventory.css">
     <link rel="stylesheet" href="../css/seller.css">
     <link rel="stylesheet" href="../css/navbar.css">
@@ -16,8 +15,7 @@
 </head>
 <body>
 
-    <div class="coconut-container">
-        </div>
+    <div class="coconut-container"></div>
 
     <div class="container">
         <header class="header">
@@ -29,6 +27,10 @@
                 <button class="btn btn-secondary" id="refreshBtn">
                     <i class="fas fa-sync-alt"></i>
                     Refresh
+                </button>
+                <button class="btn btn-primary" id="addPurchaseBtn">
+                    <i class="fas fa-plus"></i>
+                    Add Purchase
                 </button>
             </div>
         </header>
@@ -62,14 +64,42 @@
                         <th class="col-actions">Actions</th>
                     </tr>
                 </thead>
-                <tbody id="inventoryTableBody">
-                    </tbody>
+                <tbody id="inventoryTableBody"></tbody>
             </table>
         </div>
     </div>
 
     <div id="nav-placeholder"></div>
     <div id="notification-container"></div>
+    
+    <div class="modal-overlay" id="addPurchaseModal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Record New Purchase</h2>
+            <form id="addPurchaseForm">
+                <div class="form-group">
+                    <label for="purchaseProduct">Product:</label>
+                    <select id="purchaseProduct" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="purchaseSeller">Seller:</label>
+                    <select id="purchaseSeller" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="purchaseQuantity">Quantity:</label>
+                    <input type="number" id="purchaseQuantity" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="purchasePrice">Price Per Unit:</label>
+                    <input type="number" id="purchasePrice" step="0.01" min="0" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Purchase</button>
+                </div>
+            </form>
+        </div>
+    </div>
     
     <div class="modal-overlay" id="confirmDeliverModal">
         <div class="modal-content">
