@@ -71,18 +71,44 @@
     <div id="nav-placeholder"></div>
     <div id="notification-container"></div>
     
-    <div class="modal-overlay" id="deliverModal">
+    <div class="modal-overlay" id="confirmDeliverModal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <h2>Record Delivery</h2>
-            <p>Deliver <strong id="deliverProductName"></strong>. Current stock is <span id="deliverCurrentStock"></span>.</p>
-            <form id="deliverForm">
-                <div class="form-group">
-                    <label for="deliverQuantity">Quantity to Deliver:</label>
-                    <input type="number" id="deliverQuantity" name="quantity" min="1" required>
+            <h2>Confirm Delivery</h2>
+            <p>Are you sure you want to deliver all <strong id="deliverAllProductName"></strong>?
+            <br>
+            Total stock to be delivered: <strong id="deliverAllStockQuantity"></strong> units.
+            </p>
+            <form id="confirmDeliverForm">
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Yes, Confirm Delivery</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="profitModal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Calculate Delivery Profit</h2>
+            <form id="profitForm">
+                <div class="profit-summary">
+                    <p>
+                        Cost of Goods Delivered:
+                        <strong id="costOfGoodsSold">₱0.00</strong>
+                    </p>
+                    <div class="form-group">
+                        <label for="totalEarned">Enter Total Amount Earned from Sale:</label>
+                        <input type="number" id="totalEarned" name="totalEarned" step="0.01" min="0" required>
+                    </div>
+                    <p class="profit-result">
+                        Calculated Profit:
+                        <strong id="calculatedProfit">₱0.00</strong>
+                    </p>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Confirm Delivery</button>
+                    <button type="submit" class="btn btn-primary">Confirm & Save Sale</button>
                 </div>
             </form>
         </div>
@@ -101,6 +127,7 @@
             </form>
         </div>
     </div>
+
     <script type="module" src="../js/inventory.js"></script>
     <script src="../js/navbar.js"></script>
 </body>

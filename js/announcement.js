@@ -13,8 +13,8 @@ class AnnouncementUIManager {
         this.priceDecreaseBtn = document.getElementById('priceDecreaseBtn');
         this.priceIncreaseBtn = document.getElementById('priceIncreaseBtn');
         this.notAvailableBtn = document.getElementById('notAvailableBtn');
-
         this.init();
+        
     }
 
     init() {

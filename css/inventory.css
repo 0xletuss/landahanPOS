@@ -154,39 +154,44 @@
 }
 
 /* ============================================= */
-/* MODAL STYLES (THE FINAL FIX)                  */
+/* UNIFIED MODAL STYLES (THE FIX)                */
 /* ============================================= */
-#deliverModal,
-#huskModal {
-    display: none;
+
+/* This is the master style for ALL modal overlays.
+   It targets any element with the .modal-overlay class,
+   which all our modals now have.
+*/
+.modal-overlay {
+    display: flex; /* Use flex to center the content */
+    justify-content: center;
+    align-items: center;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    justify-content: center;
-    align-items: center;
     background-color: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(5px);
     z-index: 9999; 
     
-    /* These values are inherited from seller.css, so let's set them here too */
+    /* Default hidden state */
     opacity: 0;
     visibility: hidden;
-    /* Add a transition to match */
+    
+    /* Smooth transition for appearing/disappearing */
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-/* This rule makes the specific modal with the .show class visible */
-#deliverModal.show,
-#huskModal.show {
-    display: flex; 
-    visibility: visible; /* ADDED THIS LINE */
-    opacity: 1;         /* ADDED THIS LINE */
+/* This is the master "show" rule. Our JavaScript adds the .show
+   class to make any modal with .modal-overlay visible.
+*/
+.modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
 }
 
-#deliverModal .modal-content,
-#huskModal .modal-content {
+/* This is the master style for the white content box inside ANY modal. */
+.modal-overlay .modal-content {
     background-color: #fefefe;
     padding: var(--spacing-xl);
     border-radius: var(--border-radius);
@@ -194,16 +199,19 @@
     position: relative;
     width: 90%;
     max-width: 500px;
-    animation: fadeIn 0.3s ease-in-out;
+    
+    /* Animation for when the content appears */
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
+/* When the modal is shown, the content box scales up to normal size */
+.modal-overlay.show .modal-content {
+    transform: scale(1);
 }
 
-#deliverModal .modal-content .close-btn,
-#huskModal .modal-content .close-btn {
+/* This is the master style for the close button in ANY modal. */
+.modal-overlay .modal-content .close-btn {
     color: #aaa;
     position: absolute;
     top: var(--spacing-md);
@@ -213,40 +221,34 @@
     cursor: pointer;
     transition: color 0.2s;
 }
-#deliverModal .modal-content .close-btn:hover,
-#huskModal .modal-content .close-btn:hover {
+.modal-overlay .modal-content .close-btn:hover {
     color: var(--color-text-dark);
 }
 
-/* Form elements inside the modal */
-#deliverModal .modal-content h2,
-#huskModal .modal-content h2 {
+/* Master styles for form elements inside any modal */
+.modal-overlay .modal-content h2 {
     margin-top: 0;
     color: var(--color-text-dark);
 }
 
-#deliverModal .modal-content p,
-#huskModal .modal-content p {
+.modal-overlay .modal-content p {
     color: var(--color-text-light);
     line-height: 1.6;
     margin-bottom: var(--spacing-lg);
 }
 
-#deliverModal .modal-content .form-group,
-#huskModal .modal-content .form-group {
+.modal-overlay .modal-content .form-group {
     margin-bottom: var(--spacing-lg);
 }
 
-#deliverModal .modal-content label,
-#huskModal .modal-content label {
+.modal-overlay .modal-content label {
     display: block;
     margin-bottom: var(--spacing-sm);
     font-weight: 600;
     color: var(--color-text-light);
 }
 
-#deliverModal .modal-content input[type="number"],
-#huskModal .modal-content input[type="number"] {
+.modal-overlay .modal-content input[type="number"] {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid var(--color-border);
@@ -256,15 +258,13 @@
 }
 
 /* Accessibility focus style */
-#deliverModal .modal-content input[type="number"]:focus-visible,
-#huskModal .modal-content input[type="number"]:focus-visible,
+.modal-overlay .modal-content input[type="number"]:focus-visible,
 .btn:focus-visible {
     outline: 2px solid var(--color-primary-med);
     outline-offset: 2px;
 }
 
-#deliverModal .modal-content .form-actions,
-#huskModal .modal-content .form-actions {
+.modal-overlay .modal-content .form-actions {
     margin-top: var(--spacing-xl);
     display: flex;
     justify-content: flex-end;
@@ -340,7 +340,6 @@
 /* ============================================= */
 
 /* --- 1. The Alert Box at the Top --- */
-/* This styles the container for our warning messages */
 .alerts-container {
     margin-bottom: 2rem;
     display: flex;
@@ -348,60 +347,51 @@
     gap: 1rem;
 }
 
-/* This creates a prominent, amber-colored alert box */
 .alert.alert-warning {
     display: flex;
     align-items: center;
     gap: 1rem;
     padding: 1rem 1.5rem;
     font-size: 0.95rem;
-    
-    /* Amber color scheme for "caution" */
-    background-color: #FFFBEB; /* Light cream/yellow background */
-    color: #B45309;           /* Dark amber text color */
-    border: 1px solid #FBBF24;  /* Amber border */
-    border-left-width: 5px; /* Thicker left border for emphasis */
-
+    background-color: #FFFBEB;
+    color: #B45309;
+    border: 1px solid #FBBF24;
+    border-left-width: 5px;
     border-radius: 12px; 
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); 
 }
 
 .alert.alert-warning i {
     font-size: 1.25rem;
-    color: #FBBF24; /* Amber icon color */
+    color: #FBBF24;
 }
 
 .alert.alert-warning strong {
-    color: #92400E; /* Darker amber for bold text */
+    color: #92400E;
 }
 
 
 /* --- 2. The Highlighted Table Row --- */
-/* This style applies to any <tr> with the .high-stock-warning class */
 .data-table tbody tr.high-stock-warning {
-    /* Blue color scheme for "informational / action needed" */
-    background-color: #EFF6FF; /* Very light blue background */
-    border-left: 4px solid #3B82F6; /* Distinct blue left border */
+    background-color: #EFF6FF;
+    border-left: 4px solid #3B82F6;
 }
 
-/* Make the text easier to read on the new background */
 .data-table tbody tr.high-stock-warning td {
     color: #1E40AF; 
 }
 
 .data-table tbody tr.high-stock-warning .col-name strong {
-    color: #1D4ED8; /* A slightly brighter blue for the product name */
+    color: #1D4ED8;
     font-weight: 700;
 }
 
-/* Make sure the hover effect is still nice */
 .data-table tbody tr.high-stock-warning:hover {
-    background-color: #DBEAFE; /* A slightly darker blue on hover */
+    background-color: #DBEAFE;
 }
 
 
 /* --- 3. Pulsing Action Button (Bonus) --- */
-/* This makes the button on the warning row gently pulse to attract attention */
 .high-stock-warning .btn {
     animation: pulse-animation 2s infinite;
 }
