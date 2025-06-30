@@ -150,6 +150,10 @@ class InventoryManager {
     }
 
     // NEW: Handles Stage 1 of delivery - Calculating Cost
+    // In inventory.js, inside the InventoryManager class...
+
+    // ...
+
     async handleConfirmDeliverSubmit(event) {
         event.preventDefault();
         const productId = event.target.dataset.productId;
@@ -159,22 +163,25 @@ class InventoryManager {
             this.showNotification('Could not find product data.', 'error');
             return;
         }
-
-        this.currentDelivery = {
-            productId: product.id,
-            quantity: product.current_stock
-        };
         
         try {
             this.showNotification('Calculating cost of goods...', 'info');
-            // This is the FIRST API call to the backend
+            // We only need to send the product ID now
+            const payload = { productId: product.id };
+            
             const result = await this.fetchData('/inventory/calculate-delivery-cost', {
                 method: 'POST',
-                body: JSON.stringify(this.currentDelivery),
+                body: JSON.stringify(payload),
                 headers: { 'Content-Type': 'application/json' }
             });
             
-            this.currentDelivery.costOfGoodsSold = result.cost_of_goods_sold;
+            // ✅ MODIFIED: Store all data from the backend's response
+            this.currentDelivery = {
+                productId: product.id,
+                quantity: result.quantity_to_deliver, // Use quantity from backend
+                costOfGoodsSold: result.cost_of_goods_sold // Use cost from backend
+            };
+            
             this.dom.confirmDeliverModal.classList.remove('show');
             this.openProfitModal();
 
@@ -183,6 +190,8 @@ class InventoryManager {
             this.dom.confirmDeliverModal.classList.remove('show');
         }
     }
+    
+    // ...
 
     // NEW: Opens the profit modal and populates it with data
     openProfitModal() {
