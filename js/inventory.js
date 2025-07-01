@@ -14,7 +14,7 @@ class InventoryManager {
     }
 
     cacheDOMElements() {
-        console.log('2. Caching DOM elements.');
+        // Caches all the necessary DOM elements
         this.dom = {
             totalQuantityValue: document.getElementById('totalQuantityValue'),
             totalCostValue: document.getElementById('totalCostValue'),
@@ -45,6 +45,7 @@ class InventoryManager {
     }
 
     setupEventListeners() {
+        // Sets up all event listeners for buttons and forms
         console.log('4. Setting up event listeners.');
         this.dom.refreshBtn.addEventListener('click', () => this.loadInventoryData());
 
@@ -77,6 +78,7 @@ class InventoryManager {
     }
 
     async loadInventoryData() {
+        // Fetches product data from the backend
         this.showLoader();
         try {
             console.log('3. Loading inventory data...');
@@ -93,19 +95,27 @@ class InventoryManager {
     }
 
     render() {
+        // Renders all components on the page
         this.renderMetrics();
         this.renderAlerts();
         this.renderTable();
     }
 
+    /**
+     * ✅ MODIFIED: Excludes 'Reject' products from total calculations.
+     */
     renderMetrics() {
-        const totalQuantity = this.products.reduce((sum, p) => sum + parseInt(p.total_quantity, 10), 0);
-        const totalCost = this.products.reduce((sum, p) => sum + parseFloat(p.total_cost), 0);
+        const activeProducts = this.products.filter(p => p.name !== 'Reject');
+
+        const totalQuantity = activeProducts.reduce((sum, p) => sum + parseInt(p.total_quantity, 10), 0);
+        const totalCost = activeProducts.reduce((sum, p) => sum + parseFloat(p.total_cost), 0);
+        
         this.dom.totalQuantityValue.textContent = totalQuantity.toLocaleString();
         this.dom.totalCostValue.textContent = this.formatCurrency(totalCost);
     }
 
     renderAlerts() {
+        // Renders high-stock warning alerts
         const highStockProducts = this.products.filter(p => p.current_stock >= p.high_stock_threshold && p.high_stock_threshold > 0);
         if (highStockProducts.length === 0) {
             this.dom.inventoryAlerts.innerHTML = '';
@@ -119,6 +129,7 @@ class InventoryManager {
     }
 
     renderTable() {
+        // Renders the main inventory table
         if (this.products.length === 0) {
             this.dom.tableBody.innerHTML = `<tr><td colspan="4" class="no-data">No product data found.</td></tr>`;
             return;
@@ -126,35 +137,72 @@ class InventoryManager {
         this.dom.tableBody.innerHTML = this.products.map(p => this.createProductRow(p)).join('');
     }
 
+    /**
+     * ✅ MODIFIED: This function now handles displaying Copra and Rejects correctly.
+     */
+   /**
+     * This function builds the HTML for a single row in the inventory table.
+     * It needs to return a complete <tr> element with <td> cells inside.
+     */
     createProductRow(product) {
         if (!product || typeof product.id === 'undefined') {
             console.error('Invalid product data passed to createProductRow:', product);
             return '';
         }
-        const isHighStock = product.current_stock >= product.high_stock_threshold && product.high_stock_threshold > 0;
-        let actionButtonHTML = `<span class="no-action">-</span>`;
-        if (isHighStock && product.current_stock > 0) {
-            if (product.name === 'Husked Coconut') {
-                actionButtonHTML = `<button class="btn btn-primary deliver-btn" data-id="${product.id}">Deliver</button>`;
-            } else if (product.name === 'Unhusked Coconut') {
-                actionButtonHTML = `<button class="btn btn-secondary husk-btn" data-id="${product.id}">Husk All</button>`;
+
+        let stockDisplay, stockValueDisplay, actionsDisplay;
+
+        // Special handling for the "Reject" product type
+        if (product.name === 'Reject') {
+            stockDisplay = parseInt(product.reject_count, 10); // Use reject_count
+            stockValueDisplay = `<span class="no-action">N/A</span>`; // No value for rejects
+            actionsDisplay = `<span class="no-action">N/A</span>`; // No actions for rejects
+        } else {
+            // Normal handling for all other products (Husked, Unhusked, Copra)
+            stockDisplay = parseInt(product.current_stock, 10);
+            const estimatedValue = (product.total_quantity > 0) ? stockDisplay * (parseFloat(product.total_cost) / parseInt(product.total_quantity, 10)) : 0;
+            stockValueDisplay = this.formatCurrency(estimatedValue);
+            
+            const isHighStock = product.current_stock >= product.high_stock_threshold && product.high_stock_threshold > 0;
+            actionsDisplay = `<span class="no-action">-</span>`;
+
+            if (isHighStock && product.current_stock > 0) {
+                // Deliver button applies to Husked Coconut and Copra
+                if (['Husked Coconut', 'Copra'].includes(product.name)) {
+                    actionsDisplay = `<button class="btn btn-primary deliver-btn" data-id="${product.id}">Deliver</button>`;
+                } else if (product.name === 'Unhusked Coconut') {
+                    actionsDisplay = `<button class="btn btn-secondary husk-btn" data-id="${product.id}">Husk All</button>`;
+                }
             }
         }
-        const currentStockNum = parseInt(product.current_stock, 10);
-        const estimatedStockValue = (product.total_quantity > 0) ? currentStockNum * (parseFloat(product.total_cost) / parseInt(product.total_quantity, 10)) : 0;
-        return `<tr data-product-id="${product.id}" class="${isHighStock ? 'high-stock-warning' : ''}"><td class="col-name" data-label="Product Name"><strong>${product.name}</strong></td><td class="col-qty" data-label="Current Stock">${currentStockNum}</td><td class="col-price" data-label="Est. Stock Value">${this.formatCurrency(estimatedStockValue)}</td><td class="col-actions" data-label="Actions">${actionButtonHTML}</td></tr>`;
+        
+        // ✅ CRITICAL PART: The surrounding <tr> and <td> tags create the table structure.
+        return `
+            <tr data-product-id="${product.id}">
+                <td class="col-name" data-label="Product Name"><strong>${product.name}</strong></td>
+                <td class="col-qty" data-label="Current Stock">${stockDisplay}</td>
+                <td class="col-price" data-label="Est. Stock Value">${stockValueDisplay}</td>
+                <td class="col-actions" data-label="Actions">${actionsDisplay}</td>
+            </tr>
+        `;
     }
 
+    // --- All other functions for handling modals and utilities are unchanged ---
+    
     async openAddPurchaseModal() {
         try {
-            this.dom.purchaseProduct.innerHTML = this.products
+            // Filter out 'Reject' from the list of purchasable products
+            const purchasableProducts = this.products.filter(p => p.name !== 'Reject');
+            this.dom.purchaseProduct.innerHTML = purchasableProducts
                 .map(p => `<option value="${p.id}">${p.name}</option>`)
                 .join('');
+
             this.showNotification('Loading sellers...', 'info');
             const sellers = await this.fetchData('/sellers');
             this.dom.purchaseSeller.innerHTML = sellers
                 .map(s => `<option value="${s.id}">${s.name}</option>`)
                 .join('');
+
             this.dom.addPurchaseForm.reset();
             this.dom.addPurchaseModal.classList.add('show');
         } catch (error) {
@@ -323,7 +371,7 @@ class InventoryManager {
     hideLoader() {}
 
     formatCurrency(value) {
-        return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(value || 0);
+        return new Intl.NumberFormat('en-ph', { style: 'currency', currency: 'PHP' }).format(value || 0);
     }
 
     showNotification(message, type = 'info') {
@@ -347,12 +395,11 @@ class InventoryManager {
             console.error("API Error Response:", errorData);
             throw new Error(errorData.message || 'API request failed');
         }
-        // Handle cases where the response might be empty (like a 204 No Content)
         const contentType = res.headers.get("content-type");
         if (contentType && contentType.indexOf("application/json") !== -1) {
             return await res.json();
         } else {
-            return {}; // Return empty object for non-json responses
+            return {};
         }
     }
 }
