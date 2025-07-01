@@ -12,7 +12,7 @@ class SellerManagement {
 
         this.init();
     }
-
+    
     async init() {
         await this.loadSellers();
         this.setupEventListeners();

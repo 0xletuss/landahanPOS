@@ -343,6 +343,7 @@ class InventoryManager {
     }
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
     new InventoryManager();
 });
