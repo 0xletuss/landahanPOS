@@ -138,7 +138,24 @@
                     </p>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Confirm & Save Sale</button>
+                    <button type="submit" class="btn btn-primary">Next: Record Rejects</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="rejectsModal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Record Rejects</h2>
+            <form id="rejectsForm">
+                <div class="form-group">
+                    <label for="rejectQuantity">How many coconuts were rejected?</label>
+                    <input type="number" id="rejectQuantity" min="0" value="0" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Finish & Save</button>
                 </div>
             </form>
         </div>

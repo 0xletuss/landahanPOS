@@ -37,7 +37,10 @@ class InventoryManager {
             addPurchaseModal: document.getElementById('addPurchaseModal'),
             addPurchaseForm: document.getElementById('addPurchaseForm'),
             purchaseProduct: document.getElementById('purchaseProduct'),
-            purchaseSeller: document.getElementById('purchaseSeller')
+            purchaseSeller: document.getElementById('purchaseSeller'),
+            rejectsModal: document.getElementById('rejectsModal'),
+            rejectsForm: document.getElementById('rejectsForm'),
+            rejectQuantity: document.getElementById('rejectQuantity')
         };
     }
 
@@ -64,11 +67,13 @@ class InventoryManager {
         this.dom.profitForm.addEventListener('submit', (e) => this.handleProfitSubmit(e));
         this.dom.huskForm.addEventListener('submit', (e) => this.handleHuskSubmit(e));
         this.dom.totalEarned.addEventListener('input', () => this.updateProfitDisplay());
+        this.dom.rejectsForm.addEventListener('submit', (e) => this.handleRejectsSubmit(e));
 
         this.setupModalCloseListeners(this.dom.addPurchaseModal);
         this.setupModalCloseListeners(this.dom.huskModal);
         this.setupModalCloseListeners(this.dom.confirmDeliverModal);
         this.setupModalCloseListeners(this.dom.profitModal);
+        this.setupModalCloseListeners(this.dom.rejectsModal);
     }
 
     async loadInventoryData() {
@@ -128,7 +133,7 @@ class InventoryManager {
         }
         const isHighStock = product.current_stock >= product.high_stock_threshold && product.high_stock_threshold > 0;
         let actionButtonHTML = `<span class="no-action">-</span>`;
-        if (isHighStock && product.current_stock > 0) { // Only show button if there is stock
+        if (isHighStock && product.current_stock > 0) {
             if (product.name === 'Husked Coconut') {
                 actionButtonHTML = `<button class="btn btn-primary deliver-btn" data-id="${product.id}">Deliver</button>`;
             } else if (product.name === 'Unhusked Coconut') {
@@ -145,13 +150,11 @@ class InventoryManager {
             this.dom.purchaseProduct.innerHTML = this.products
                 .map(p => `<option value="${p.id}">${p.name}</option>`)
                 .join('');
-
             this.showNotification('Loading sellers...', 'info');
             const sellers = await this.fetchData('/sellers');
             this.dom.purchaseSeller.innerHTML = sellers
                 .map(s => `<option value="${s.id}">${s.name}</option>`)
                 .join('');
-
             this.dom.addPurchaseForm.reset();
             this.dom.addPurchaseModal.classList.add('show');
         } catch (error) {
@@ -168,12 +171,10 @@ class InventoryManager {
             quantity: form.querySelector('#purchaseQuantity').value,
             price_per_unit: form.querySelector('#purchasePrice').value
         };
-
         if (!payload.product_id || !payload.seller_id || !payload.quantity || !payload.price_per_unit) {
             this.showNotification('Please fill out all fields.', 'error');
             return;
         }
-
         try {
             this.showNotification('Saving purchase...', 'info');
             const result = await this.fetchData('/inventory/add-purchase', {
@@ -181,7 +182,6 @@ class InventoryManager {
                 body: JSON.stringify(payload),
                 headers: { 'Content-Type': 'application/json' }
             });
-
             this.showNotification(result.message, 'success');
             this.dom.addPurchaseModal.classList.remove('show');
             await this.loadInventoryData();
@@ -201,19 +201,15 @@ class InventoryManager {
         event.preventDefault();
         const productId = event.target.dataset.productId;
         const product = this.products.find(p => p.id == productId);
-
         if (!product || product.current_stock <= 0) {
             this.showNotification('No stock to deliver for this product.', 'error');
             return;
         }
-
         const stockValue = (product.total_quantity > 0) ? product.current_stock * (product.total_cost / product.total_quantity) : 0;
-        
         this.currentDelivery = {
             productId: product.id,
             costOfGoodsSold: stockValue
         };
-        
         this.dom.confirmDeliverModal.classList.remove('show');
         this.openProfitModal();
     }
@@ -225,20 +221,34 @@ class InventoryManager {
         this.dom.profitModal.classList.add('show');
     }
 
-    async handleProfitSubmit(event) {
+    handleProfitSubmit(event) {
         event.preventDefault();
         const totalEarned = parseFloat(this.dom.totalEarned.value);
-
         if (isNaN(totalEarned) || totalEarned < 0) {
             this.showNotification('Please enter a valid amount earned.', 'error');
             return;
         }
+        this.currentDelivery.total_earned = totalEarned;
+        this.dom.profitModal.classList.remove('show');
+        this.openRejectsModal();
+    }
 
+    openRejectsModal() {
+        this.dom.rejectQuantity.value = 0;
+        this.dom.rejectsModal.classList.add('show');
+    }
+
+    async handleRejectsSubmit(event) {
+        event.preventDefault();
+        const rejectQuantity = parseInt(this.dom.rejectQuantity.value, 10);
+        if (isNaN(rejectQuantity) || rejectQuantity < 0) {
+            this.showNotification('Please enter a valid number for rejects.', 'error');
+            return;
+        }
         const finalPayload = {
-            productId: this.currentDelivery.productId,
-            total_earned: totalEarned
+            ...this.currentDelivery,
+            reject_quantity: rejectQuantity
         };
-
         try {
             this.showNotification('Saving sale...', 'info');
             const result = await this.fetchData('/inventory/confirm-delivery', {
@@ -246,15 +256,13 @@ class InventoryManager {
                 body: JSON.stringify(finalPayload),
                 headers: { 'Content-Type': 'application/json' }
             });
-            
             this.showNotification(result.message, 'success');
-            this.dom.profitModal.classList.remove('show');
+            this.dom.rejectsModal.classList.remove('show');
             this.currentDelivery = {};
             await this.loadInventoryData();
-
         } catch (error) {
             this.showNotification(`Error saving sale: ${error.message}`, 'error');
-            this.dom.profitModal.classList.remove('show');
+            this.dom.rejectsModal.classList.remove('show');
         }
     }
     
@@ -334,15 +342,20 @@ class InventoryManager {
     async fetchData(endpoint, options = {}) {
         const defaultOptions = { credentials: 'include' };
         const res = await fetch(`${this.apiBaseUrl}${endpoint}`, { ...defaultOptions, ...options });
-        const data = await res.json();
         if (!res.ok) {
-            console.error("API Error Response:", data);
-            throw new Error(data.message || 'API request failed');
+            const errorData = await res.json();
+            console.error("API Error Response:", errorData);
+            throw new Error(errorData.message || 'API request failed');
         }
-        return data;
+        // Handle cases where the response might be empty (like a 204 No Content)
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            return await res.json();
+        } else {
+            return {}; // Return empty object for non-json responses
+        }
     }
 }
-
 
 document.addEventListener('DOMContentLoaded', () => {
     new InventoryManager();
