@@ -144,48 +144,56 @@ class InventoryManager {
      * This function builds the HTML for a single row in the inventory table.
      * It needs to return a complete <tr> element with <td> cells inside.
      */
-    createProductRow(product) {
-        if (!product || typeof product.id === 'undefined') {
-            console.error('Invalid product data passed to createProductRow:', product);
-            return '';
-        }
+   /**
+ * This function builds the HTML for a single row in the inventory table.
+ * It needs to return a complete <tr> element with <td> cells inside.
+ */
+createProductRow(product) {
+    if (!product || typeof product.id === 'undefined') {
+        console.error('Invalid product data passed to createProductRow:', product);
+        return '';
+    }
 
-        let stockDisplay, stockValueDisplay, actionsDisplay;
+    let stockDisplay, stockValueDisplay, actionsDisplay;
 
-        // Special handling for the "Reject" product type
-        if (product.name === 'Reject') {
-            stockDisplay = parseInt(product.reject_count, 10); // Use reject_count
-            stockValueDisplay = `<span class="no-action">N/A</span>`; // No value for rejects
-            actionsDisplay = `<span class="no-action">N/A</span>`; // No actions for rejects
-        } else {
-            // Normal handling for all other products (Husked, Unhusked, Copra)
-            stockDisplay = parseInt(product.current_stock, 10);
-            const estimatedValue = (product.total_quantity > 0) ? stockDisplay * (parseFloat(product.total_cost) / parseInt(product.total_quantity, 10)) : 0;
-            stockValueDisplay = this.formatCurrency(estimatedValue);
-            
-            const isHighStock = product.current_stock >= product.high_stock_threshold && product.high_stock_threshold > 0;
-            actionsDisplay = `<span class="no-action">-</span>`;
+    // Special handling for the "Reject" product type
+    if (product.name === 'Reject') {
+        stockDisplay = parseInt(product.current_stock, 10) || 0;
+        
+        // ✅ CALCULATE VALUE FOR REJECTS USING SAME LOGIC AS OTHER PRODUCTS
+        const estimatedValue = (product.total_quantity > 0) ? 
+            stockDisplay * (parseFloat(product.total_cost) / parseInt(product.total_quantity, 10)) : 0;
+        stockValueDisplay = this.formatCurrency(estimatedValue);
+        
+        actionsDisplay = `<span class="no-action">N/A</span>`; // Still no actions for rejects
+    } else {
+        // Normal handling for all other products (Husked, Unhusked, Copra)
+        stockDisplay = parseInt(product.current_stock, 10);
+        const estimatedValue = (product.total_quantity > 0) ? stockDisplay * (parseFloat(product.total_cost) / parseInt(product.total_quantity, 10)) : 0;
+        stockValueDisplay = this.formatCurrency(estimatedValue);
+        
+        const isHighStock = product.current_stock >= product.high_stock_threshold && product.high_stock_threshold > 0;
+        actionsDisplay = `<span class="no-action">-</span>`;
 
-            if (isHighStock && product.current_stock > 0) {
-                // Deliver button applies to Husked Coconut and Copra
-                if (['Husked Coconut', 'Copra'].includes(product.name)) {
-                    actionsDisplay = `<button class="btn btn-primary deliver-btn" data-id="${product.id}">Deliver</button>`;
-                } else if (product.name === 'Unhusked Coconut') {
-                    actionsDisplay = `<button class="btn btn-secondary husk-btn" data-id="${product.id}">Husk All</button>`;
-                }
+        if (isHighStock && product.current_stock > 0) {
+            // Deliver button applies to Husked Coconut and Copra
+            if (['Husked Coconut', 'Copra'].includes(product.name)) {
+                actionsDisplay = `<button class="btn btn-primary deliver-btn" data-id="${product.id}">Deliver</button>`;
+            } else if (product.name === 'Unhusked Coconut') {
+                actionsDisplay = `<button class="btn btn-secondary husk-btn" data-id="${product.id}">Husk All</button>`;
             }
         }
-        
-        // ✅ CRITICAL PART: The surrounding <tr> and <td> tags create the table structure.
-        return `
-            <tr data-product-id="${product.id}">
-                <td class="col-name" data-label="Product Name"><strong>${product.name}</strong></td>
-                <td class="col-qty" data-label="Current Stock">${stockDisplay}</td>
-                <td class="col-price" data-label="Est. Stock Value">${stockValueDisplay}</td>
-                <td class="col-actions" data-label="Actions">${actionsDisplay}</td>
-            </tr>
-        `;
     }
+    
+    return `
+        <tr data-product-id="${product.id}">
+            <td class="col-name" data-label="Product Name"><strong>${product.name}</strong></td>
+            <td class="col-qty" data-label="Current Stock">${stockDisplay}</td>
+            <td class="col-price" data-label="Est. Stock Value">${stockValueDisplay}</td>
+            <td class="col-actions" data-label="Actions">${actionsDisplay}</td>
+        </tr>
+    `;
+}
 
     // --- All other functions for handling modals and utilities are unchanged ---
     
@@ -245,22 +253,109 @@ class InventoryManager {
         this.dom.confirmDeliverModal.classList.add('show');
     }
 
-    handleConfirmDeliverSubmit(event) {
-        event.preventDefault();
-        const productId = event.target.dataset.productId;
-        const product = this.products.find(p => p.id == productId);
-        if (!product || product.current_stock <= 0) {
-            this.showNotification('No stock to deliver for this product.', 'error');
-            return;
-        }
-        const stockValue = (product.total_quantity > 0) ? product.current_stock * (product.total_cost / product.total_quantity) : 0;
-        this.currentDelivery = {
-            productId: product.id,
-            costOfGoodsSold: stockValue
-        };
-        this.dom.confirmDeliverModal.classList.remove('show');
-        this.openProfitModal();
+ handleConfirmDeliverSubmit(event) {
+    event.preventDefault();
+    const productId = event.target.dataset.productId;
+    const product = this.products.find(p => p.id == productId);
+    
+    console.log('=== CONFIRM DELIVER DEBUG ===');
+    console.log('Product found:', product);
+    
+    if (!product || product.current_stock <= 0) {
+        this.showNotification('No stock to deliver for this product.', 'error');
+        return;
     }
+    
+    const stockValue = (product.total_quantity > 0) ? product.current_stock * (product.total_cost / product.total_quantity) : 0;
+    
+    // ✅ CALCULATE AND STORE THE AVERAGE PRICE PER UNIT
+    const avgPricePerUnit = (product.total_quantity > 0) ? (product.total_cost / product.total_quantity) : 0;
+    
+    console.log('Stock value:', stockValue);
+    console.log('Average price per unit:', avgPricePerUnit);
+    console.log('Current stock:', product.current_stock);
+    console.log('Total quantity:', product.total_quantity);
+    console.log('Total cost:', product.total_cost);
+    
+    this.currentDelivery = {
+        productId: product.id,
+        costOfGoodsSold: stockValue,
+        avgPricePerUnit: avgPricePerUnit,
+        deliveredQuantity: product.current_stock
+    };
+    
+    console.log('Current delivery object:', this.currentDelivery);
+    
+    this.dom.confirmDeliverModal.classList.remove('show');
+    this.openProfitModal();
+}
+
+handleProfitSubmit(event) {
+    event.preventDefault();
+    const totalEarned = parseFloat(this.dom.totalEarned.value);
+    
+    console.log('=== PROFIT SUBMIT DEBUG ===');
+    console.log('Total earned:', totalEarned);
+    console.log('Current delivery before adding totalEarned:', this.currentDelivery);
+    
+    if (isNaN(totalEarned) || totalEarned < 0) {
+        this.showNotification('Please enter a valid amount earned.', 'error');
+        return;
+    }
+    
+    this.currentDelivery.total_earned = totalEarned;
+    console.log('Current delivery after adding totalEarned:', this.currentDelivery);
+    
+    this.dom.profitModal.classList.remove('show');
+    this.openRejectsModal();
+}
+
+async handleRejectsSubmit(event) {
+    event.preventDefault();
+    const rejectQuantity = parseInt(this.dom.rejectQuantity.value, 10);
+    
+    console.log('=== REJECTS SUBMIT DEBUG ===');
+    console.log('Reject quantity:', rejectQuantity);
+    console.log('Current delivery object:', this.currentDelivery);
+    console.log('Average price per unit:', this.currentDelivery.avgPricePerUnit);
+    
+    if (isNaN(rejectQuantity) || rejectQuantity < 0) {
+        this.showNotification('Please enter a valid number for rejects.', 'error');
+        return;
+    }
+    
+    // ✅ CALCULATE THE REJECT TOTAL COST
+    const rejectTotalCost = this.currentDelivery.avgPricePerUnit * rejectQuantity;
+    console.log('Calculated reject total cost:', rejectTotalCost);
+    
+    const finalPayload = {
+        ...this.currentDelivery,
+        reject_quantity: rejectQuantity,
+        reject_total_cost: rejectTotalCost
+    };
+    
+    console.log('Final payload being sent to backend:', finalPayload);
+    
+    try {
+        this.showNotification('Saving sale...', 'info');
+        const result = await this.fetchData('/inventory/confirm-delivery', {
+            method: 'POST',
+            body: JSON.stringify(finalPayload),
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        console.log('Backend response:', result);
+        
+        this.showNotification(result.message, 'success');
+        this.dom.rejectsModal.classList.remove('show');
+        this.currentDelivery = {};
+        await this.loadInventoryData();
+    } catch (error) {
+        console.error('Error in handleRejectsSubmit:', error);
+        this.showNotification(`Error saving sale: ${error.message}`, 'error');
+        this.dom.rejectsModal.classList.remove('show');
+    }
+}
 
     openProfitModal() {
         this.dom.costOfGoodsSold.textContent = this.formatCurrency(this.currentDelivery.costOfGoodsSold);
@@ -286,33 +381,7 @@ class InventoryManager {
         this.dom.rejectsModal.classList.add('show');
     }
 
-    async handleRejectsSubmit(event) {
-        event.preventDefault();
-        const rejectQuantity = parseInt(this.dom.rejectQuantity.value, 10);
-        if (isNaN(rejectQuantity) || rejectQuantity < 0) {
-            this.showNotification('Please enter a valid number for rejects.', 'error');
-            return;
-        }
-        const finalPayload = {
-            ...this.currentDelivery,
-            reject_quantity: rejectQuantity
-        };
-        try {
-            this.showNotification('Saving sale...', 'info');
-            const result = await this.fetchData('/inventory/confirm-delivery', {
-                method: 'POST',
-                body: JSON.stringify(finalPayload),
-                headers: { 'Content-Type': 'application/json' }
-            });
-            this.showNotification(result.message, 'success');
-            this.dom.rejectsModal.classList.remove('show');
-            this.currentDelivery = {};
-            await this.loadInventoryData();
-        } catch (error) {
-            this.showNotification(`Error saving sale: ${error.message}`, 'error');
-            this.dom.rejectsModal.classList.remove('show');
-        }
-    }
+
     
     updateProfitDisplay() {
         const totalEarned = parseFloat(this.dom.totalEarned.value) || 0;
