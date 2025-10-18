@@ -102,21 +102,23 @@
     </div>
     
     <div class="modal-overlay" id="confirmDeliverModal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h2>Confirm Delivery</h2>
-            <p>Are you sure you want to deliver all <strong id="deliverAllProductName"></strong>?
-            <br>
-            Total stock to be delivered: <strong id="deliverAllStockQuantity"></strong> units.
-            </p>
-            <form id="confirmDeliverForm">
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Yes, Confirm Delivery</button>
-                </div>
-            </form>
-        </div>
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>Confirm Delivery</h2>
+        <p>Product: <strong id="deliverAllProductName"></strong></p>
+        <p>Available stock: <strong id="deliverAllStockQuantity"></strong> units</p>
+        <form id="confirmDeliverForm">
+            <div class="form-group">
+                <label for="deliverQuantity">How many units to deliver?</label>
+                <input type="number" id="deliverQuantity" min="1" required>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                <button type="submit" class="btn btn-primary">Confirm Delivery</button>
+            </div>
+        </form>
     </div>
+</div>
 
     <div class="modal-overlay" id="profitModal">
         <div class="modal-content">
@@ -174,6 +176,42 @@
             </form>
         </div>
     </div>
+
+    <div class="modal-overlay" id="landaModal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>Convert to Copra (Landa)</h2>
+        <p>Available Husked Coconut stock: <strong id="landaCurrentStock"></strong></p>
+        <form id="landaForm">
+            <div class="form-group">
+                <label for="landaQuantity">How many husked coconuts to convert to copra?</label>
+                <input type="number" id="landaQuantity" min="1" required>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                <button type="submit" class="btn btn-primary">Convert to Copra</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal-overlay" id="landaRejectsModal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>Convert Rejects to Copra (Landa)</h2>
+        <p>Available Reject stock: <strong id="landaRejectsCurrentStock"></strong></p>
+        <form id="landaRejectsForm">
+            <div class="form-group">
+                <label for="landaRejectsQuantity">How many rejects to convert to copra?</label>
+                <input type="number" id="landaRejectsQuantity" min="1" required>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                <button type="submit" class="btn btn-primary">Convert to Copra</button>
+            </div>
+        </form>
+    </div>
+</div>
 
     <script type="module" src="../js/inventory.js"></script>
     <script src="../js/navbar.js"></script>

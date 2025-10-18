@@ -40,7 +40,16 @@ class InventoryManager {
             purchaseSeller: document.getElementById('purchaseSeller'),
             rejectsModal: document.getElementById('rejectsModal'),
             rejectsForm: document.getElementById('rejectsForm'),
-            rejectQuantity: document.getElementById('rejectQuantity')
+            rejectQuantity: document.getElementById('rejectQuantity'),
+            landaModal: document.getElementById('landaModal'),
+            landaForm: document.getElementById('landaForm'),
+            landaCurrentStock: document.getElementById('landaCurrentStock'),
+            landaQuantity: document.getElementById('landaQuantity'),
+            landaRejectsModal: document.getElementById('landaRejectsModal'),
+            landaRejectsForm: document.getElementById('landaRejectsForm'),
+            landaRejectsCurrentStock: document.getElementById('landaRejectsCurrentStock'),
+            landaRejectsQuantity: document.getElementById('landaRejectsQuantity'),
+            deliverQuantity: document.getElementById('deliverQuantity'),
         };
     }
 
@@ -52,6 +61,9 @@ class InventoryManager {
         this.dom.tableBody.addEventListener('click', (e) => {
             const deliverButton = e.target.closest('.deliver-btn');
             const huskButton = e.target.closest('.husk-btn');
+            const landaButton = e.target.closest('.landa-btn');
+            const landaRejectsButton = e.target.closest('.landa-rejects-btn');
+            
             if (deliverButton) {
                 const product = this.getProductFromButton(deliverButton);
                 if (product) this.openConfirmDeliverModal(product);
@@ -60,6 +72,14 @@ class InventoryManager {
                 const product = this.getProductFromButton(huskButton);
                 if (product) this.openHuskModal(product);
             }
+            if (landaButton) {
+                const product = this.getProductFromButton(landaButton);
+                if (product) this.openLandaModal(product);
+            }
+            if (landaRejectsButton) {
+                const product = this.getProductFromButton(landaRejectsButton);
+                if (product) this.openLandaRejectsModal(product);
+            }
         });
 
         this.dom.addPurchaseBtn.addEventListener('click', () => this.openAddPurchaseModal());
@@ -67,6 +87,8 @@ class InventoryManager {
         this.dom.confirmDeliverForm.addEventListener('submit', (e) => this.handleConfirmDeliverSubmit(e));
         this.dom.profitForm.addEventListener('submit', (e) => this.handleProfitSubmit(e));
         this.dom.huskForm.addEventListener('submit', (e) => this.handleHuskSubmit(e));
+        this.dom.landaForm.addEventListener('submit', (e) => this.handleLandaSubmit(e));
+        this.dom.landaRejectsForm.addEventListener('submit', (e) => this.handleLandaRejectsSubmit(e));
         this.dom.totalEarned.addEventListener('input', () => this.updateProfitDisplay());
         this.dom.rejectsForm.addEventListener('submit', (e) => this.handleRejectsSubmit(e));
 
@@ -75,6 +97,8 @@ class InventoryManager {
         this.setupModalCloseListeners(this.dom.confirmDeliverModal);
         this.setupModalCloseListeners(this.dom.profitModal);
         this.setupModalCloseListeners(this.dom.rejectsModal);
+        this.setupModalCloseListeners(this.dom.landaModal);
+        this.setupModalCloseListeners(this.dom.landaRejectsModal);
     }
 
     async loadInventoryData() {
@@ -84,6 +108,8 @@ class InventoryManager {
             console.log('3. Loading inventory data...');
             const data = await this.fetchData('/products-summary');
             this.products = data || [];
+            // Ensure a "Copra" product exists client-side so the UI can show it
+            this.ensureCopraProduct();
             this.render();
             console.log('Data loaded successfully.');
         } catch (error) {
@@ -138,17 +164,9 @@ class InventoryManager {
     }
 
     /**
-     * ✅ MODIFIED: This function now handles displaying Copra and Rejects correctly.
-     */
-   /**
      * This function builds the HTML for a single row in the inventory table.
-     * It needs to return a complete <tr> element with <td> cells inside.
      */
-   /**
- * This function builds the HTML for a single row in the inventory table.
- * It needs to return a complete <tr> element with <td> cells inside.
- */
-createProductRow(product) {
+   createProductRow(product) {
     if (!product || typeof product.id === 'undefined') {
         console.error('Invalid product data passed to createProductRow:', product);
         return '';
@@ -156,16 +174,20 @@ createProductRow(product) {
 
     let stockDisplay, stockValueDisplay, actionsDisplay;
 
-    // Special handling for the "Reject" product type
+    // ✅ Special handling for the "Reject" product type
     if (product.name === 'Reject') {
         stockDisplay = parseInt(product.current_stock, 10) || 0;
         
-        // ✅ CALCULATE VALUE FOR REJECTS USING SAME LOGIC AS OTHER PRODUCTS
         const estimatedValue = (product.total_quantity > 0) ? 
             stockDisplay * (parseFloat(product.total_cost) / parseInt(product.total_quantity, 10)) : 0;
         stockValueDisplay = this.formatCurrency(estimatedValue);
         
-        actionsDisplay = `<span class="no-action">N/A</span>`; // Still no actions for rejects
+        // ✅ Add Landa button for Rejects if there's stock
+        if (product.current_stock > 0) {
+            actionsDisplay = `<button class="btn btn-warning landa-rejects-btn" data-id="${product.id}">Landa</button>`;
+        } else {
+            actionsDisplay = `<span class="no-action">N/A</span>`;
+        }
     } else {
         // Normal handling for all other products (Husked, Unhusked, Copra)
         stockDisplay = parseInt(product.current_stock, 10);
@@ -175,10 +197,15 @@ createProductRow(product) {
         const isHighStock = product.current_stock >= product.high_stock_threshold && product.high_stock_threshold > 0;
         actionsDisplay = `<span class="no-action">-</span>`;
 
-        if (isHighStock && product.current_stock > 0) {
-            // Deliver button applies to Husked Coconut and Copra
-            if (['Husked Coconut', 'Copra'].includes(product.name)) {
-                actionsDisplay = `<button class="btn btn-primary deliver-btn" data-id="${product.id}">Deliver</button>`;
+        // ✅ FIXED: Copra always shows Deliver button when stock > 0
+        if (product.name === 'Copra' && product.current_stock > 0) {
+            actionsDisplay = `<button class="btn btn-primary deliver-btn" data-id="${product.id}">Deliver</button>`;
+        } else if (isHighStock && product.current_stock > 0) {
+            if (product.name === 'Husked Coconut') {
+                actionsDisplay = `
+                    <button class="btn btn-primary deliver-btn" data-id="${product.id}">Deliver</button>
+                    <button class="btn btn-warning landa-btn" data-id="${product.id}">Landa</button>
+                `;
             } else if (product.name === 'Unhusked Coconut') {
                 actionsDisplay = `<button class="btn btn-secondary husk-btn" data-id="${product.id}">Husk All</button>`;
             }
@@ -194,12 +221,36 @@ createProductRow(product) {
         </tr>
     `;
 }
+    /**
+     * Ensure a Copra product exists in the local products array.
+     */
+    ensureCopraProduct() {
+        try {
+            const hasCopra = this.products.some(p => (p.name || '').toLowerCase() === 'copra');
+            if (hasCopra) return;
 
-    // --- All other functions for handling modals and utilities are unchanged ---
+            const numericIds = this.products.map(p => Number(p.id)).filter(n => Number.isFinite(n));
+            const maxId = numericIds.length ? Math.max(...numericIds) : 0;
+            const newId = maxId + 1 || Date.now();
+
+            const copra = {
+                id: newId,
+                name: 'Copra',
+                current_stock: 0,
+                total_quantity: 0,
+                total_cost: 0,
+                // Default threshold of 1 so high-stock logic can trigger when there's any stock
+                high_stock_threshold: 1
+            };
+            this.products.push(copra);
+            console.log('Client-side: injected Copra product:', copra);
+        } catch (err) {
+            console.error('Error ensuring Copra product exists:', err);
+        }
+    }
     
     async openAddPurchaseModal() {
         try {
-            // Filter out 'Reject' from the list of purchasable products
             const purchasableProducts = this.products.filter(p => p.name !== 'Reject');
             this.dom.purchaseProduct.innerHTML = purchasableProducts
                 .map(p => `<option value="${p.id}">${p.name}</option>`)
@@ -247,41 +298,53 @@ createProductRow(product) {
     }
 
     openConfirmDeliverModal(product) {
-        this.dom.deliverAllProductName.textContent = product.name;
-        this.dom.deliverAllStockQuantity.textContent = product.current_stock;
-        this.dom.confirmDeliverForm.dataset.productId = product.id;
-        this.dom.confirmDeliverModal.classList.add('show');
-    }
+    this.dom.deliverAllProductName.textContent = product.name;
+    this.dom.deliverAllStockQuantity.textContent = product.current_stock;
+    this.dom.deliverQuantity.max = product.current_stock;
+    this.dom.deliverQuantity.value = '';
+    this.dom.confirmDeliverForm.dataset.productId = product.id;
+    this.dom.confirmDeliverModal.classList.add('show');
+}
 
- handleConfirmDeliverSubmit(event) {
+handleConfirmDeliverSubmit(event) {
     event.preventDefault();
     const productId = event.target.dataset.productId;
     const product = this.products.find(p => p.id == productId);
+    const deliverQuantity = parseInt(this.dom.deliverQuantity.value, 10);
     
     console.log('=== CONFIRM DELIVER DEBUG ===');
     console.log('Product found:', product);
+    console.log('Quantity to deliver:', deliverQuantity);
     
     if (!product || product.current_stock <= 0) {
         this.showNotification('No stock to deliver for this product.', 'error');
         return;
     }
     
-    const stockValue = (product.total_quantity > 0) ? product.current_stock * (product.total_cost / product.total_quantity) : 0;
+    if (!deliverQuantity || deliverQuantity <= 0) {
+        this.showNotification('Please enter a valid quantity to deliver.', 'error');
+        return;
+    }
     
-    // ✅ CALCULATE AND STORE THE AVERAGE PRICE PER UNIT
+    if (deliverQuantity > product.current_stock) {
+        this.showNotification(`Cannot deliver more than available stock (${product.current_stock}).`, 'error');
+        return;
+    }
+    
+    // Calculate cost based on delivered quantity
     const avgPricePerUnit = (product.total_quantity > 0) ? (product.total_cost / product.total_quantity) : 0;
+    const stockValue = deliverQuantity * avgPricePerUnit;
     
     console.log('Stock value:', stockValue);
     console.log('Average price per unit:', avgPricePerUnit);
-    console.log('Current stock:', product.current_stock);
-    console.log('Total quantity:', product.total_quantity);
-    console.log('Total cost:', product.total_cost);
+    console.log('Deliver quantity:', deliverQuantity);
     
     this.currentDelivery = {
         productId: product.id,
+        productName: product.name,
         costOfGoodsSold: stockValue,
         avgPricePerUnit: avgPricePerUnit,
-        deliveredQuantity: product.current_stock
+        deliveredQuantity: deliverQuantity
     };
     
     console.log('Current delivery object:', this.currentDelivery);
@@ -290,7 +353,7 @@ createProductRow(product) {
     this.openProfitModal();
 }
 
-handleProfitSubmit(event) {
+   handleProfitSubmit(event) {
     event.preventDefault();
     const totalEarned = parseFloat(this.dom.totalEarned.value);
     
@@ -307,33 +370,26 @@ handleProfitSubmit(event) {
     console.log('Current delivery after adding totalEarned:', this.currentDelivery);
     
     this.dom.profitModal.classList.remove('show');
-    this.openRejectsModal();
-}
-
-async handleRejectsSubmit(event) {
-    event.preventDefault();
-    const rejectQuantity = parseInt(this.dom.rejectQuantity.value, 10);
     
-    console.log('=== REJECTS SUBMIT DEBUG ===');
-    console.log('Reject quantity:', rejectQuantity);
-    console.log('Current delivery object:', this.currentDelivery);
-    console.log('Average price per unit:', this.currentDelivery.avgPricePerUnit);
-    
-    if (isNaN(rejectQuantity) || rejectQuantity < 0) {
-        this.showNotification('Please enter a valid number for rejects.', 'error');
-        return;
+    // ✅ Check if product is Copra - skip rejects modal
+    if (this.currentDelivery.productName === 'Copra') {
+        this.handleCopraDeliveryFinal();
+    } else {
+        this.openRejectsModal();
     }
-    
-    // ✅ CALCULATE THE REJECT TOTAL COST
-    const rejectTotalCost = this.currentDelivery.avgPricePerUnit * rejectQuantity;
-    console.log('Calculated reject total cost:', rejectTotalCost);
-    
+}
+async handleCopraDeliveryFinal() {
     const finalPayload = {
-        ...this.currentDelivery,
-        reject_quantity: rejectQuantity,
-        reject_total_cost: rejectTotalCost
+        productId: this.currentDelivery.productId,
+        costOfGoodsSold: this.currentDelivery.costOfGoodsSold,
+        avgPricePerUnit: this.currentDelivery.avgPricePerUnit,
+        deliveredQuantity: this.currentDelivery.deliveredQuantity,
+        total_earned: this.currentDelivery.total_earned,
+        reject_quantity: 0, // No rejects for Copra
+        reject_total_cost: 0
     };
     
+    console.log('=== COPRA DELIVERY FINAL ===');
     console.log('Final payload being sent to backend:', finalPayload);
     
     try {
@@ -347,15 +403,56 @@ async handleRejectsSubmit(event) {
         console.log('Backend response:', result);
         
         this.showNotification(result.message, 'success');
-        this.dom.rejectsModal.classList.remove('show');
         this.currentDelivery = {};
         await this.loadInventoryData();
     } catch (error) {
-        console.error('Error in handleRejectsSubmit:', error);
+        console.error('Error in handleCopraDeliveryFinal:', error);
         this.showNotification(`Error saving sale: ${error.message}`, 'error');
-        this.dom.rejectsModal.classList.remove('show');
     }
 }
+    async handleRejectsSubmit(event) {
+        event.preventDefault();
+        const rejectQuantity = parseInt(this.dom.rejectQuantity.value, 10);
+        
+        console.log('=== REJECTS SUBMIT DEBUG ===');
+        console.log('Reject quantity:', rejectQuantity);
+        
+        if (isNaN(rejectQuantity) || rejectQuantity < 0) {
+            this.showNotification('Please enter a valid number for rejects.', 'error');
+            return;
+        }
+        
+        const rejectTotalCost = this.currentDelivery.avgPricePerUnit * rejectQuantity;
+        console.log('Calculated reject total cost:', rejectTotalCost);
+        
+        const finalPayload = {
+            ...this.currentDelivery,
+            reject_quantity: rejectQuantity,
+            reject_total_cost: rejectTotalCost
+        };
+        
+        console.log('Final payload being sent to backend:', finalPayload);
+        
+        try {
+            this.showNotification('Saving sale...', 'info');
+            const result = await this.fetchData('/inventory/confirm-delivery', {
+                method: 'POST',
+                body: JSON.stringify(finalPayload),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            
+            console.log('Backend response:', result);
+            
+            this.showNotification(result.message, 'success');
+            this.dom.rejectsModal.classList.remove('show');
+            this.currentDelivery = {};
+            await this.loadInventoryData();
+        } catch (error) {
+            console.error('Error in handleRejectsSubmit:', error);
+            this.showNotification(`Error saving sale: ${error.message}`, 'error');
+            this.dom.rejectsModal.classList.remove('show');
+        }
+    }
 
     openProfitModal() {
         this.dom.costOfGoodsSold.textContent = this.formatCurrency(this.currentDelivery.costOfGoodsSold);
@@ -364,25 +461,11 @@ async handleRejectsSubmit(event) {
         this.dom.profitModal.classList.add('show');
     }
 
-    handleProfitSubmit(event) {
-        event.preventDefault();
-        const totalEarned = parseFloat(this.dom.totalEarned.value);
-        if (isNaN(totalEarned) || totalEarned < 0) {
-            this.showNotification('Please enter a valid amount earned.', 'error');
-            return;
-        }
-        this.currentDelivery.total_earned = totalEarned;
-        this.dom.profitModal.classList.remove('show');
-        this.openRejectsModal();
-    }
-
     openRejectsModal() {
         this.dom.rejectQuantity.value = 0;
         this.dom.rejectsModal.classList.add('show');
     }
 
-
-    
     updateProfitDisplay() {
         const totalEarned = parseFloat(this.dom.totalEarned.value) || 0;
         const cost = this.currentDelivery.costOfGoodsSold || 0;
@@ -417,6 +500,82 @@ async handleRejectsSubmit(event) {
         } catch (error) {
             this.showNotification(`Error: ${error.message}`, 'error');
             this.dom.huskModal.classList.remove('show');
+        }
+    }
+
+    // ✅ Landa Modal for Husked Coconut
+    openLandaModal(product) {
+        this.dom.landaCurrentStock.textContent = product.current_stock;
+        this.dom.landaQuantity.max = product.current_stock;
+        this.dom.landaQuantity.value = '';
+        this.dom.landaForm.dataset.productId = product.id;
+        this.dom.landaModal.classList.add('show');
+    }
+
+    async handleLandaSubmit(event) {
+        event.preventDefault();
+        const product_id = event.target.dataset.productId;
+        const quantity = parseInt(this.dom.landaQuantity.value, 10);
+        
+        if (!product_id || !quantity || quantity <= 0) {
+            this.showNotification('Please enter a valid quantity.', 'error');
+            return;
+        }
+        
+        try {
+            const payload = { 
+                product_id: parseInt(product_id, 10),
+                quantity: quantity
+            };
+            const result = await this.fetchData('/inventory/landa', {
+                method: 'POST',
+                body: JSON.stringify(payload),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            this.showNotification(result.message, 'success');
+            this.dom.landaModal.classList.remove('show');
+            await this.loadInventoryData();
+        } catch (error) {
+            this.showNotification(`Error: ${error.message}`, 'error');
+            this.dom.landaModal.classList.remove('show');
+        }
+    }
+
+    // ✅ NEW: Landa Modal for Rejects
+    openLandaRejectsModal(product) {
+        this.dom.landaRejectsCurrentStock.textContent = product.current_stock;
+        this.dom.landaRejectsQuantity.max = product.current_stock;
+        this.dom.landaRejectsQuantity.value = '';
+        this.dom.landaRejectsForm.dataset.productId = product.id;
+        this.dom.landaRejectsModal.classList.add('show');
+    }
+
+    async handleLandaRejectsSubmit(event) {
+        event.preventDefault();
+        const product_id = event.target.dataset.productId;
+        const quantity = parseInt(this.dom.landaRejectsQuantity.value, 10);
+        
+        if (!product_id || !quantity || quantity <= 0) {
+            this.showNotification('Please enter a valid quantity.', 'error');
+            return;
+        }
+        
+        try {
+            const payload = { 
+                product_id: parseInt(product_id, 10),
+                quantity: quantity
+            };
+            const result = await this.fetchData('/inventory/landa-rejects', {
+                method: 'POST',
+                body: JSON.stringify(payload),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            this.showNotification(result.message, 'success');
+            this.dom.landaRejectsModal.classList.remove('show');
+            await this.loadInventoryData();
+        } catch (error) {
+            this.showNotification(`Error: ${error.message}`, 'error');
+            this.dom.landaRejectsModal.classList.remove('show');
         }
     }
 
@@ -456,7 +615,7 @@ async handleRejectsSubmit(event) {
         }, 4000);
     }
 
-    async fetchData(endpoint, options = {}) {
+async fetchData(endpoint, options = {}) {
         const defaultOptions = { credentials: 'include' };
         const res = await fetch(`${this.apiBaseUrl}${endpoint}`, { ...defaultOptions, ...options });
         if (!res.ok) {
