@@ -4,10 +4,8 @@
 
 class ProfitManager {
     constructor() {
-        // API Configuration
-        this.API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? 'https://landahan-5.onrender.com/api'
-            : '/api';
+        // API Configuration - Match exactly with home.js pattern
+        this.API_BASE_URL = 'https://landahan-5.onrender.com/api';
         
         this.currentGroupBy = 'daily';
         this.filters = {
@@ -18,21 +16,27 @@ class ProfitManager {
         this.transactions = [];
         this.stats = null;
         this.products = [];
-            this.chart = null;
+        this.chart = null;
     }
 
     // ============================================
-    // AUTHENTICATION HELPER
+    // AUTHENTICATION HELPER (Updated to match home.js)
     // ============================================
 
-    getFetchOptions(method = 'GET') {
-        return {
+    getFetchOptions(method = 'GET', body = null) {
+        const options = {
             method: method,
+            credentials: 'include', // CRITICAL: Send cookies with request
             headers: {
                 'Content-Type': 'application/json'
-            },
-            credentials: 'include' // CRITICAL: Send cookies with request
+            }
         };
+        
+        if (body) {
+            options.body = JSON.stringify(body);
+        }
+        
+        return options;
     }
 
     async checkAuthentication() {
@@ -41,6 +45,14 @@ class ProfitManager {
                 method: 'GET',
                 credentials: 'include'
             });
+            
+            if (response.status === 401) {
+                this.showError('Session expired. Redirecting to login...');
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 2000);
+                return false;
+            }
             
             const data = await response.json();
             
@@ -75,11 +87,10 @@ class ProfitManager {
             }
 
             await this.loadProducts();
-            // Initialize chart component (Chart.js must be loaded in the page)
             this.initChart();
+            this.setDefaultDateRange();
             await this.loadData();
             this.setupEventListeners();
-            this.setDefaultDateRange();
         } catch (error) {
             console.error('Initialization error:', error);
             
@@ -121,7 +132,11 @@ class ProfitManager {
             );
             
             if (response.status === 401 || response.status === 403) {
-                throw new Error('HTTP error! status: 401');
+                this.showError('Session expired. Redirecting to login...');
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 2000);
+                throw new Error('Authentication failed');
             }
             
             if (!response.ok) {
@@ -134,7 +149,7 @@ class ProfitManager {
                 this.transactions = result.data;
                 return result.data;
             } else {
-                throw new Error(result.message);
+                throw new Error(result.message || 'Failed to load transactions');
             }
         } catch (error) {
             console.error('Error loading transactions:', error);
@@ -159,7 +174,11 @@ class ProfitManager {
             );
             
             if (response.status === 401 || response.status === 403) {
-                throw new Error('HTTP error! status: 401');
+                this.showError('Session expired. Redirecting to login...');
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 2000);
+                throw new Error('Authentication failed');
             }
             
             if (!response.ok) {
@@ -172,7 +191,7 @@ class ProfitManager {
                 this.stats = result.stats;
                 return result;
             } else {
-                throw new Error(result.message);
+                throw new Error(result.message || 'Failed to load statistics');
             }
         } catch (error) {
             console.error('Error loading statistics:', error);
@@ -188,7 +207,11 @@ class ProfitManager {
             );
             
             if (response.status === 401 || response.status === 403) {
-                throw new Error('HTTP error! status: 401');
+                this.showError('Session expired. Redirecting to login...');
+                setTimeout(() => {
+                    window.location.href = '/login.html';
+                }, 2000);
+                throw new Error('Authentication failed');
             }
             
             if (!response.ok) {
@@ -201,7 +224,7 @@ class ProfitManager {
                 this.products = result.products;
                 this.populateProductFilter();
             } else {
-                throw new Error(result.message);
+                throw new Error(result.message || 'Failed to load products');
             }
         } catch (error) {
             console.error('Error loading products:', error);
@@ -220,14 +243,13 @@ class ProfitManager {
 
             this.renderStatistics(statsData);
             this.renderTransactions(transactions);
-            // Update chart visualization with the loaded transactions
             this.updateChart();
             
             this.hideLoading();
         } catch (error) {
             this.hideLoading();
             
-            if (error.message.includes('401') || error.message.includes('403')) {
+            if (error.message.includes('401') || error.message.includes('403') || error.message.includes('Authentication failed')) {
                 this.showError('Session expired. Redirecting to login...');
                 setTimeout(() => {
                     window.location.href = '/login.html';
@@ -358,13 +380,11 @@ class ProfitManager {
 
         try {
             const ctx = canvas.getContext('2d');
-            // If Chart.js is not loaded, warn and skip
             if (typeof Chart === 'undefined') {
                 console.warn('Chart.js not loaded. Please include Chart.js script.');
                 return;
             }
 
-            // Create an initial empty chart
             this.chart = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -431,7 +451,6 @@ class ProfitManager {
             labels = this.transactions.map(m => m.month_label || m.label || m.month || 'Month');
             data = this.transactions.map(m => Number(m.total_profit) || 0);
         } else {
-            // Fallback
             labels = this.transactions.map((t, i) => this.formatDate(t.date) || `#${i+1}`);
             data = this.transactions.map(t => Number(t.profit) || 0);
         }
@@ -450,7 +469,6 @@ class ProfitManager {
             this.chart.data.labels = series.labels;
             this.chart.data.datasets[0].data = series.data;
             this.chart.data.datasets[0].pointBackgroundColor = series.data.map(v => v >= 0 ? '#16a34a' : '#dc2626');
-            // set line color depending on majority sign (simple heuristic)
             const positiveCount = series.data.filter(v => v >= 0).length;
             this.chart.data.datasets[0].borderColor = positiveCount >= (series.data.length / 2) ? '#16a34a' : '#dc2626';
             this.chart.update();
