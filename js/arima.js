@@ -31,12 +31,14 @@ function setButtonsDisabled(disabled) {
 }
 
 // Get best model parameters as suggestions
+// Get best model parameters as suggestions
 async function getSuggestedParameters() {
+    const suggestionDiv = document.getElementById('parameterSuggestion');
+    
     try {
-        // Show loading for parameter suggestion
-        const suggestionDiv = document.getElementById('parameterSuggestion');
+        // Show loading state
         if (suggestionDiv) {
-            suggestionDiv.textContent = 'Loading suggested parameters...';
+            suggestionDiv.textContent = '⏳ Finding optimal parameters...';
             suggestionDiv.style.display = 'block';
             suggestionDiv.style.color = '#666';
         }
@@ -46,41 +48,75 @@ async function getSuggestedParameters() {
             credentials: 'include'
         });
 
-        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+        }
 
-        if (response.ok && result.success) {
+        const result = await response.json();
+        
+        console.log('Best params response:', result); // Debug log
+
+        if (result.success) {
+            // Extract parameters - use actual values from response
             const p = result.p;
             const d = result.d;
             const q = result.q;
-            const aic = result.aic;
-            const bic = result.bic;
             
-            // Fill in the parameter inputs
+            console.log(`Received parameters: p=${p}, d=${d}, q=${q}`); // Debug log
+            
+            // Fill in the parameter inputs with actual values
             document.getElementById('pOrder').value = p;
             document.getElementById('dOrder').value = d;
             document.getElementById('qOrder').value = q;
             
-            // Show success message with model info
+            // Display appropriate message based on what data is available
             if (suggestionDiv) {
-                suggestionDiv.innerHTML = `✓ Suggested parameters: <strong>ARIMA(${p},${d},${q})</strong> | AIC: ${aic.toFixed(2)} | BIC: ${bic.toFixed(2)}`;
-                suggestionDiv.style.color = '#10b981';
+                let message = '';
+                let color = '';
+                
+                if (result.warning) {
+                    // Model fitting had issues - show warning with ACTUAL parameters
+                    message = `⚠ ${result.warning}<br>Using: <strong>ARIMA(${p},${d},${q})</strong>`;
+                    color = '#f59e0b'; // Orange
+                } else if (typeof result.aic === 'number' && typeof result.bic === 'number') {
+                    // Has valid metrics - show them with ACTUAL parameters
+                    message = `✓ Optimal model: <strong>ARIMA(${p},${d},${q})</strong> | AIC: ${result.aic.toFixed(2)} | BIC: ${result.bic.toFixed(2)}`;
+                    color = '#10b981'; // Green
+                } else {
+                    // No metrics but successful - show ACTUAL parameters
+                    message = `✓ Recommended: <strong>ARIMA(${p},${d},${q})</strong>`;
+                    color = '#10b981'; // Green
+                }
+                
+                suggestionDiv.innerHTML = message;
+                suggestionDiv.style.color = color;
             }
             
-            console.log(`Auto-filled suggested parameters: ARIMA(${p},${d},${q})`);
+            console.log(`✓ Parameters loaded: ARIMA(${p},${d},${q})`);
+            
         } else {
             throw new Error(result.error || 'Failed to load suggestions');
         }
+        
     } catch (error) {
         console.error('Error getting parameter suggestions:', error);
-        const suggestionDiv = document.getElementById('parameterSuggestion');
+        
+        // Fall back to safe defaults
+        const defaultP = 1;
+        const defaultD = 1;
+        const defaultQ = 1;
+        
         if (suggestionDiv) {
-            suggestionDiv.textContent = '⚠ Could not load suggestions - using default values';
+            suggestionDiv.innerHTML = `⚠ Could not optimize parameters. Using defaults: <strong>ARIMA(${defaultP},${defaultD},${defaultQ})</strong>`;
             suggestionDiv.style.color = '#f59e0b';
-            // Set default values
-            document.getElementById('pOrder').value = document.getElementById('pOrder').value || 1;
-            document.getElementById('dOrder').value = document.getElementById('dOrder').value || 1;
-            document.getElementById('qOrder').value = document.getElementById('qOrder').value || 1;
         }
+        
+        // Set default values
+        document.getElementById('pOrder').value = defaultP;
+        document.getElementById('dOrder').value = defaultD;
+        document.getElementById('qOrder').value = defaultQ;
+        
+        console.log(`⚠ Fell back to default parameters: ARIMA(${defaultP},${defaultD},${defaultQ})`);
     }
 }
 
