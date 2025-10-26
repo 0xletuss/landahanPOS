@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
                    <a href="Arima.html"><i class="fas fa-chart-line"></i><span>Analyze</span></a>
             </li>
             <li class="nav-item" data-page="price">
-                <a href="Arima.html"><i class="fas fa-peso-sign"></i><span>Profit</span></a>
+                <a href="profit.html"><i class="fas fa-peso-sign"></i><span>Profit</span></a>
             </li>
             <li class="nav-item main-pos" data-page="pos">
                 <a href="home.html"><i class="fas fa-calculator"></i><span>POS</span></a>

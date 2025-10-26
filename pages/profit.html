@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profit Analytics - POS System</title>
+         <link rel="stylesheet" href="../css/navbar.css" />
+               <link rel="stylesheet" href="../css/profit.css" />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="loader"></div>
+    </div>
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>📊 Profit Analytics</h1>
+            <p>Track your sales performance, profit margins, and delivery insights</p>
+        </div>
+
+        <!-- Controls Section -->
+        <div class="controls-section">
+            <div class="controls-row">
+                <div class="control-group">
+                    <label for="start-date">Start Date</label>
+                    <input type="date" id="start-date">
+                </div>
+
+                <div class="control-group">
+                    <label for="end-date">End Date</label>
+                    <input type="date" id="end-date">
+                </div>
+
+                <div class="control-group">
+                    <label for="product-filter">Product</label>
+                    <select id="product-filter">
+                        <option value="">All Products</option>
+                    </select>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-clear" id="clear-filters">Clear Filters</button>
+                    <button class="btn btn-export" id="export-btn">Export CSV</button>
+                </div>
+
+                <div class="group-buttons">
+                    <button class="group-btn" data-group="raw">Raw</button>
+                    <button class="group-btn active" data-group="daily">Daily</button>
+                    <button class="group-btn" data-group="weekly">Weekly</button>
+                    <button class="group-btn" data-group="monthly">Monthly</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card sales">
+                <h3>Total Sales</h3>
+                <div class="value" id="total-sales">₱0.00</div>
+                <div class="sub-value">Revenue Generated</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Cost of Goods Sold</h3>
+                <div class="value" id="total-cogs">₱0.00</div>
+                <div class="sub-value">Total Expenses</div>
+            </div>
+
+            <div class="stat-card profit">
+                <h3>Total Profit</h3>
+                <div class="value" id="total-profit">₱0.00</div>
+                <div class="sub-value">Net Earnings</div>
+            </div>
+
+            <div class="stat-card margin">
+                <h3>Profit Margin</h3>
+                <div class="value" id="profit-margin">0%</div>
+                <div class="sub-value">Overall Margin</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Total Deliveries</h3>
+                <div class="value" id="total-deliveries">0</div>
+                <div class="sub-value">Transactions</div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Avg Profit/Delivery</h3>
+                <div class="value" id="avg-profit">₱0.00</div>
+                <div class="sub-value">Per Transaction</div>
+            </div>
+        </div>
+
+        <!-- Best/Worst Deliveries -->
+        <div class="performance-section">
+            <div class="performance-card">
+                <h2>🏆 Best Delivery</h2>
+                <div id="best-delivery">
+                    <p class="no-data">No data available</p>
+                </div>
+            </div>
+
+            <div class="performance-card">
+                <h2>📉 Worst Delivery</h2>
+                <div id="worst-delivery">
+                    <p class="no-data">No data available</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Performance -->
+        <div class="product-performance-section">
+            <h2>📦 Product Performance</h2>
+            <table class="transactions-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Deliveries</th>
+                        <th>Quantity</th>
+                        <th>Sales</th>
+                        <th>COGS</th>
+                        <th>Profit</th>
+                        <th>Margin</th>
+                    </tr>
+                </thead>
+                <tbody id="product-performance">
+                    <tr>
+                        <td colspan="7" class="no-data">Loading...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="chart-section">
+            <h2>📈 Profit Trend Analysis</h2>
+            <div class="chart-container">
+                <canvas id="profit-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Transactions Section -->
+        <div class="transactions-section">
+            <h2>💰 Transactions</h2>
+            <div id="transactions-container">
+                <p class="no-data">Loading transactions...</p>
+            </div>
+        </div>
+    </div>
+<div id="nav-placeholder"></div>
+    <!-- Chart.js for profit trend chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/profit.js"></script>
+    <script src="../js/navbar.js"></script>
+</body>
+</html>
