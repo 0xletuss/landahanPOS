@@ -17,6 +17,11 @@ class ProfitManager {
         this.stats = null;
         this.products = [];
         this.chart = null;
+        // Pagination state to avoid extremely long pages when there are many items
+        this.pagination = {
+            pageSize: 20,
+            currentPage: 1
+        };
     }
 
     // ============================================
@@ -242,6 +247,8 @@ class ProfitManager {
             ]);
 
             this.renderStatistics(statsData);
+            // render transactions with pagination applied
+            this.pagination.currentPage = 1; // reset to first page when filters/load change
             this.renderTransactions(transactions);
             this.updateChart();
             
@@ -356,15 +363,82 @@ class ProfitManager {
             return;
         }
 
+        // Apply pagination on the outer array (works for raw transactions or grouped arrays like daily/weekly/monthly)
+        const totalItems = data.length;
+        const pageSize = this.pagination.pageSize;
+        const currentPage = this.pagination.currentPage || 1;
+        const start = (currentPage - 1) * pageSize;
+        const end = start + pageSize;
+        const pageData = data.slice(start, end);
+
+        let html = '';
         if (this.currentGroupBy === 'raw') {
-            container.innerHTML = this.renderRawTransactions(data);
+            html = this.renderRawTransactions(pageData);
         } else if (this.currentGroupBy === 'daily') {
-            container.innerHTML = this.renderDailyTransactions(data);
+            html = this.renderDailyTransactions(pageData);
         } else if (this.currentGroupBy === 'weekly') {
-            container.innerHTML = this.renderWeeklyTransactions(data);
+            html = this.renderWeeklyTransactions(pageData);
         } else if (this.currentGroupBy === 'monthly') {
-            container.innerHTML = this.renderMonthlyTransactions(data);
+            html = this.renderMonthlyTransactions(pageData);
         }
+
+        // Append pagination controls under the transactions
+        container.innerHTML = html + this.getPaginationHtml(totalItems, pageSize, currentPage);
+    }
+
+    // Build pagination HTML
+    getPaginationHtml(totalItems, pageSize, currentPage) {
+        if (!totalItems || totalItems <= pageSize) return '';
+        const totalPages = Math.ceil(totalItems / pageSize);
+        const maxButtons = 7; // show up to 7 numbered buttons
+        let start = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+        let end = start + maxButtons - 1;
+        if (end > totalPages) {
+            end = totalPages;
+            start = Math.max(1, end - maxButtons + 1);
+        }
+
+        let buttons = '';
+        buttons += `<button class="pagination-btn" data-page="1">«</button>`;
+        buttons += `<button class="pagination-btn" data-page="${Math.max(1, currentPage - 1)}">‹</button>`;
+
+        for (let p = start; p <= end; p++) {
+            buttons += `<button class="pagination-btn ${p === currentPage ? 'active' : ''}" data-page="${p}">${p}</button>`;
+        }
+
+        buttons += `<button class="pagination-btn" data-page="${Math.min(totalPages, currentPage + 1)}">›</button>`;
+        buttons += `<button class="pagination-btn" data-page="${totalPages}">»</button>`;
+
+        // container for pagination
+        return `
+            <div class="pagination-container">
+                <div class="pagination-info">Page ${currentPage} of ${totalPages} — ${totalItems} items</div>
+                <div class="pagination-controls">${buttons}</div>
+            </div>
+        `;
+    }
+
+    // Handle page change (called by click handlers)
+    changePage(page) {
+        const totalItems = this.transactions ? this.transactions.length : 0;
+        const totalPages = Math.max(1, Math.ceil(totalItems / this.pagination.pageSize));
+        const newPage = Math.min(Math.max(1, page), totalPages);
+        this.pagination.currentPage = newPage;
+        // Re-render transactions using current dataset without re-fetching
+        this.renderTransactions(this.transactions);
+        // Re-attach pagination handlers after DOM update
+        this.attachPaginationEvents();
+    }
+
+    attachPaginationEvents() {
+        const container = document.querySelector('.pagination-container');
+        if (!container) return;
+        container.querySelectorAll('.pagination-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const page = parseInt(e.currentTarget.dataset.page, 10);
+                if (!isNaN(page)) this.changePage(page);
+            });
+        });
     }
 
     // ============================================
@@ -495,18 +569,14 @@ class ProfitManager {
                 <tbody>
                     ${transactions.map(t => `
                         <tr>
-                            <td>${this.formatDate(t.date)}</td>
-                            <td>${t.time}</td>
-                            <td>${t.product_name}</td>
-                            <td>${t.quantity}</td>
-                            <td>${this.formatCurrency(t.selling_price)}</td>
-                            <td>${this.formatCurrency(t.cost_of_goods_sold)}</td>
-                            <td class="${t.profit >= 0 ? 'positive' : 'negative'}">
-                                ${this.formatCurrency(t.profit)}
-                            </td>
-                            <td class="${this.getMarginColorClass(t.margin)}">
-                                ${t.margin}%
-                            </td>
+                            <td>${this.getMobileIconHtml('date')}${this.formatDate(t.date)}</td>
+                            <td>${this.getMobileIconHtml('time')}${t.time}</td>
+                            <td>${this.getMobileIconHtml('product')}${t.product_name}</td>
+                            <td>${this.getMobileIconHtml('quantity')}${t.quantity}</td>
+                            <td>${this.getMobileIconHtml('sales')}${this.formatCurrency(t.selling_price)}</td>
+                            <td>${this.getMobileIconHtml('cogs')}${this.formatCurrency(t.cost_of_goods_sold)}</td>
+                            <td class="${t.profit >= 0 ? 'positive' : 'negative'}">${this.getMobileIconHtml('profit')}${this.formatCurrency(t.profit)}</td>
+                            <td class="${this.getMarginColorClass(t.margin)}">${this.getMobileIconHtml('margin')}${t.margin}%</td>
                         </tr>
                     `).join('')}
                 </tbody>
@@ -558,17 +628,13 @@ class ProfitManager {
                         <tbody>
                             ${day.deliveries.map(t => `
                                 <tr>
-                                    <td>${t.time}</td>
-                                    <td>${t.product_name}</td>
-                                    <td>${t.quantity}</td>
-                                    <td>${this.formatCurrency(t.selling_price)}</td>
-                                    <td>${this.formatCurrency(t.cost_of_goods_sold)}</td>
-                                    <td class="${t.profit >= 0 ? 'positive' : 'negative'}">
-                                        ${this.formatCurrency(t.profit)}
-                                    </td>
-                                    <td class="${this.getMarginColorClass(t.margin)}">
-                                        ${t.margin}%
-                                    </td>
+                                    <td>${this.getMobileIconHtml('time')}${t.time}</td>
+                                    <td>${this.getMobileIconHtml('product')}${t.product_name}</td>
+                                    <td>${this.getMobileIconHtml('quantity')}${t.quantity}</td>
+                                    <td>${this.getMobileIconHtml('sales')}${this.formatCurrency(t.selling_price)}</td>
+                                    <td>${this.getMobileIconHtml('cogs')}${this.formatCurrency(t.cost_of_goods_sold)}</td>
+                                    <td class="${t.profit >= 0 ? 'positive' : 'negative'}">${this.getMobileIconHtml('profit')}${this.formatCurrency(t.profit)}</td>
+                                    <td class="${this.getMarginColorClass(t.margin)}">${this.getMobileIconHtml('margin')}${t.margin}%</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -623,18 +689,14 @@ class ProfitManager {
                         <tbody>
                             ${week.transactions.map(t => `
                                 <tr>
-                                    <td>${this.formatDate(t.date)}</td>
-                                    <td>${t.time}</td>
-                                    <td>${t.product_name}</td>
-                                    <td>${t.quantity}</td>
-                                    <td>${this.formatCurrency(t.selling_price)}</td>
-                                    <td>${this.formatCurrency(t.cost_of_goods_sold)}</td>
-                                    <td class="${t.profit >= 0 ? 'positive' : 'negative'}">
-                                        ${this.formatCurrency(t.profit)}
-                                    </td>
-                                    <td class="${this.getMarginColorClass(t.margin)}">
-                                        ${t.margin}%
-                                    </td>
+                                    <td>${this.getMobileIconHtml('date')}${this.formatDate(t.date)}</td>
+                                    <td>${this.getMobileIconHtml('time')}${t.time}</td>
+                                    <td>${this.getMobileIconHtml('product')}${t.product_name}</td>
+                                    <td>${this.getMobileIconHtml('quantity')}${t.quantity}</td>
+                                    <td>${this.getMobileIconHtml('sales')}${this.formatCurrency(t.selling_price)}</td>
+                                    <td>${this.getMobileIconHtml('cogs')}${this.formatCurrency(t.cost_of_goods_sold)}</td>
+                                    <td class="${t.profit >= 0 ? 'positive' : 'negative'}">${this.getMobileIconHtml('profit')}${this.formatCurrency(t.profit)}</td>
+                                    <td class="${this.getMarginColorClass(t.margin)}">${this.getMobileIconHtml('margin')}${t.margin}%</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -689,18 +751,14 @@ class ProfitManager {
                         <tbody>
                             ${month.transactions.map(t => `
                                 <tr>
-                                    <td>${this.formatDate(t.date)}</td>
-                                    <td>${t.time}</td>
-                                    <td>${t.product_name}</td>
-                                    <td>${t.quantity}</td>
-                                    <td>${this.formatCurrency(t.selling_price)}</td>
-                                    <td>${this.formatCurrency(t.cost_of_goods_sold)}</td>
-                                    <td class="${t.profit >= 0 ? 'positive' : 'negative'}">
-                                        ${this.formatCurrency(t.profit)}
-                                    </td>
-                                    <td class="${this.getMarginColorClass(t.margin)}">
-                                        ${t.margin}%
-                                    </td>
+                                    <td>${this.getMobileIconHtml('date')}${this.formatDate(t.date)}</td>
+                                    <td>${this.getMobileIconHtml('time')}${t.time}</td>
+                                    <td>${this.getMobileIconHtml('product')}${t.product_name}</td>
+                                    <td>${this.getMobileIconHtml('quantity')}${t.quantity}</td>
+                                    <td>${this.getMobileIconHtml('sales')}${this.formatCurrency(t.selling_price)}</td>
+                                    <td>${this.getMobileIconHtml('cogs')}${this.formatCurrency(t.cost_of_goods_sold)}</td>
+                                    <td class="${t.profit >= 0 ? 'positive' : 'negative'}">${this.getMobileIconHtml('profit')}${this.formatCurrency(t.profit)}</td>
+                                    <td class="${this.getMarginColorClass(t.margin)}">${this.getMobileIconHtml('margin')}${t.margin}%</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -744,6 +802,15 @@ class ProfitManager {
         document.getElementById('export-btn')?.addEventListener('click', () => {
             this.exportData();
         });
+
+        // Delegate pagination clicks (works after pagination controls are rendered)
+        document.addEventListener('click', (e) => {
+            const target = e.target.closest && e.target.closest('.pagination-btn');
+            if (target) {
+                const page = parseInt(target.dataset.page, 10);
+                if (!isNaN(page)) this.changePage(page);
+            }
+        });
     }
 
     changeGroupBy(groupBy) {
@@ -775,6 +842,24 @@ class ProfitManager {
     // ============================================
     // UTILITY FUNCTIONS
     // ============================================
+
+    // Return HTML for a small mobile icon label for a given column key
+    getMobileIconHtml(key) {
+        // Use FontAwesome 6 class names (included in the page)
+        const icons = {
+            date: '<i class="fa-solid fa-calendar"></i>',
+            time: '<i class="fa-solid fa-clock"></i>',
+            product: '<i class="fa-solid fa-box"></i>',
+            quantity: '<i class="fa-solid fa-hashtag"></i>',
+            sales: '<i class="fa-solid fa-money-bill-wave"></i>',
+            cogs: '<i class="fa-solid fa-coins"></i>',
+            profit: '<i class="fa-solid fa-chart-line"></i>',
+            margin: '<i class="fa-solid fa-percent"></i>'
+        };
+
+        const icon = icons[key] || '';
+        return `<span class="cell-label">${icon}</span>`;
+    }
 
     populateProductFilter() {
         const select = document.getElementById('product-filter');

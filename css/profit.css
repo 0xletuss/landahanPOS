@@ -705,12 +705,21 @@ body {
     border: 5px solid rgba(255, 255, 255, 0.2);
     border-top: 5px solid var(--color-primary);
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    /* Use a namespaced animation to avoid conflicts with other files that define `spin` */
+    -webkit-animation: loader-spin 1s linear infinite;
+    animation: loader-spin 1s linear infinite;
+    will-change: transform;
+    animation-play-state: running;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+@-webkit-keyframes loader-spin {
+    0% { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+@keyframes loader-spin {
+    0% { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
 }
 
 /* ============================================= */
@@ -867,24 +876,68 @@ body {
         text-align: right;
     }
 
+    /* Mobile label inside each cell (hidden on desktop) */
+    .cell-label {
+        display: none;
+    }
+
     .transactions-table td:last-child {
         border-bottom: none;
     }
 
-    .transactions-table td::before {
-        content: attr(data-label);
-        font-weight: 700;
-        text-align: left;
+    /* Use an inline element containing an icon inside each td instead of ::before text
+       .cell-label is injected by JS at render time and shown only on small screens */
+    .cell-label {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        margin-right: var(--space-md);
         color: var(--color-text-secondary);
-        padding-right: var(--space-md);
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 0.5px;
+        font-size: 1rem;
     }
 
     .transaction-group {
         margin-bottom: var(--space-md);
     }
+}
+
+/* Pagination styles (works on desktop and mobile) */
+.pagination-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: var(--space-md);
+    align-items: center;
+}
+.pagination-info {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}
+.pagination-controls {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.pagination-btn {
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.pagination-btn.active {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    color: white;
+    border-color: transparent;
+}
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
 }
 
 /* Small Mobile */
@@ -957,6 +1010,19 @@ body {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+    }
+}
+
+/* Exception: force loader animation even when the OS prefers reduced motion.
+   Note: This overrides the user's reduced-motion setting for this single UI element.
+   Remove these rules if you want to fully respect accessibility preferences. */
+@media (prefers-reduced-motion: reduce) {
+    .loader {
+        -webkit-animation-duration: 1s !important;
+        animation-duration: 1s !important;
+        -webkit-animation-name: loader-spin !important;
+        animation-name: loader-spin !important;
+        animation-play-state: running !important;
     }
 }
 
