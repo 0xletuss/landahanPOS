@@ -5,10 +5,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ARIMA Forecasting - LANDAHAN</title>
-    <link rel="stylesheet" href="../css/home.css" />
+    <script src="../js/auth_check.js"></script>
+
+    <link rel="stylesheet" href="../css/inventory.css">
+    <link rel="stylesheet" href="../css/seller.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/background.css">
     <link rel="stylesheet" href="../css/modal.css" />
-    <link rel="stylesheet" href="../css/navbar.css" />
-    <link rel="stylesheet" href="../css/background.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -21,16 +24,16 @@
         }
 
         .arima-header {
-            background: white;
+            background: var(--color-surface-bg);
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
             margin-bottom: 30px;
             text-align: center;
         }
 
         .arima-header h1 {
-            color: #333;
+            color: var(--color-text-dark);
             font-size: 32px;
             margin-bottom: 10px;
             display: flex;
@@ -40,7 +43,7 @@
         }
 
         .arima-header p {
-            color: #666;
+            color: var(--color-text-light);
             font-size: 16px;
         }
 
@@ -73,9 +76,9 @@
             display: none;
             text-align: center;
             padding: 40px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: var(--color-surface-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
             margin-bottom: 30px;
         }
 
@@ -84,9 +87,9 @@
         }
 
         .spinner {
-            border: 4px solid rgba(102, 126, 234, 0.2);
+            border: 4px solid rgba(22, 101, 52, 0.12);
             border-radius: 50%;
-            border-top: 4px solid #667eea;
+            border-top: 4px solid var(--color-primary-med);
             width: 50px;
             height: 50px;
             animation: spin 1s linear infinite;
@@ -99,21 +102,21 @@
         }
 
         .loading p {
-            color: #667eea;
+            color: var(--color-primary-med);
             font-size: 16px;
             font-weight: 600;
         }
 
         .controls-panel {
-            background: white;
+            background: var(--color-surface-bg);
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
             margin-bottom: 30px;
         }
 
         .controls-panel h2 {
-            color: #333;
+            color: var(--color-text-dark);
             font-size: 22px;
             margin-bottom: 20px;
             display: flex;
@@ -134,7 +137,7 @@
         }
 
         .input-group label {
-            color: #555;
+            color: var(--color-text-light);
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 8px;
@@ -151,8 +154,8 @@
 
         .input-group input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: var(--color-primary-med);
+            box-shadow: 0 0 0 3px rgba(22, 101, 52, 0.08);
         }
 
         .button-group {
@@ -176,18 +179,18 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--color-primary-med) 0%, var(--color-primary-dark) 100%);
             color: white;
         }
 
         .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 15px rgba(22,101,52,0.18);
         }
 
         .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
+            background: var(--color-border);
+            color: var(--color-text-dark);
         }
 
         .btn-secondary:hover:not(:disabled) {
@@ -201,16 +204,16 @@
         }
 
         .chart-container {
-            background: white;
+            background: var(--color-surface-bg);
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
             margin-bottom: 30px;
         }
 
         .chart-container h2 {
             margin-bottom: 20px;
-            color: #333;
+            color: var(--color-text-dark);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -229,20 +232,20 @@
         }
 
         .stat-card {
-            background: white;
+            background: var(--color-surface-bg);
             padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
             transition: transform 0.3s;
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+            box-shadow: var(--shadow-lg);
         }
 
         .stat-card h3 {
-            color: #666;
+            color: var(--color-text-light);
             font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -251,7 +254,7 @@
         }
 
         .stat-card .value {
-            color: #333;
+            color: var(--color-text-dark);
             font-size: 32px;
             font-weight: 700;
             margin-bottom: 8px;
@@ -263,23 +266,23 @@
         }
 
         .positive {
-            color: #10b981;
+            color: var(--color-primary-med);
         }
 
         .negative {
-            color: #ef4444;
+            color: var(--color-danger-dark);
         }
 
         .faq-section {
-            background: white;
+            background: var(--color-surface-bg);
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
             margin-bottom: 30px;
         }
 
         .faq-section h2 {
-            color: #333;
+            color: var(--color-text-dark);
             font-size: 24px;
             margin-bottom: 25px;
             display: flex;
@@ -300,7 +303,7 @@
         }
 
         .faq-question {
-            color: #667eea;
+            color: var(--color-primary-med);
             font-size: 18px;
             font-weight: 600;
             margin-bottom: 10px;
@@ -312,7 +315,7 @@
         }
 
         .faq-question:focus {
-            box-shadow: 0 0 0 3px rgba(102,126,234,0.12);
+            box-shadow: 0 0 0 3px rgba(22,101,52,0.08);
             border-radius: 6px;
         }
 
@@ -323,7 +326,7 @@
         }
 
         .faq-answer {
-            color: #555;
+            color: var(--color-text-light);
             font-size: 15px;
             line-height: 1.6;
             margin-left: 30px;
@@ -342,7 +345,7 @@
         }
 
         .faq-answer strong {
-            color: #333;
+            color: var(--color-text-dark);
         }
 
         .faq-answer ul {
@@ -355,8 +358,8 @@
         }
 
         .example-box {
-            background: #f8f9fa;
-            border-left: 4px solid #667eea;
+            background: #f8faf5;
+            border-left: 4px solid var(--color-primary-med);
             padding: 15px;
             margin: 10px 0;
             border-radius: 5px;
@@ -397,6 +400,7 @@
 </head>
 
 <body>
+    <div class="coconut-container"></div>
     <div class="arima-container">
         <div class="arima-header">
             <h1>
@@ -625,6 +629,9 @@
     </div>
 
     <script src="../js/arima.js"></script>
+    <div id="nav-placeholder"></div>
+    <div id="notification-container"></div>
+    <script src="../js/navbar.js"></script>
     <script>
         (function(){
             function closeItem(item){
