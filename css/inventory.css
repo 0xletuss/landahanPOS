@@ -2,11 +2,11 @@
 /* GLOBAL VARIABLES & BASE STYLES                */
 /* ============================================= */
 :root {
-    /* Color Palette */
-    --color-primary-dark: #14532d;
-    --color-primary-med: #166534;
-    --color-primary-light: #dcfce7;
-    --color-primary-bg: rgba(240, 253, 244, 0.7);
+    /* Color Palette - Updated to match main theme */
+    --color-primary-dark: #2f855a;
+    --color-primary-med: #38a169;
+    --color-primary-light: #c7f52e;
+    --color-primary-bg: rgba(199, 245, 46, 0.1);
 
     --color-secondary-dark: #b45309;
     --color-secondary-med: #854d0e;
@@ -21,7 +21,7 @@
     --color-text-light: #4b5563;
     --color-text-subtle: #9ca3af;
     
-    --color-surface-bg: rgba(255, 255, 255, 0.85);
+    --color-surface-bg: rgba(255, 255, 255, 0.95);
     --color-border: #e5e7eb;
 
     /* Spacing & Radius */
@@ -36,6 +36,7 @@
     /* Shadows */
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ============================================= */
@@ -50,31 +51,38 @@
 
 .metric-card {
     background: var(--color-surface-bg);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(15px);
     border-radius: var(--border-radius);
     padding: var(--spacing-lg);
     display: flex;
     align-items: center;
     gap: var(--spacing-lg);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: var(--shadow-md);
+    border: 2px solid rgba(199, 245, 46, 0.2);
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition);
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(199, 245, 46, 0.4);
+    box-shadow: 0 15px 35px rgba(199, 245, 46, 0.15);
 }
 
 .metric-card i {
-    font-size: 2rem;
+    font-size: 2.5rem;
     padding: var(--spacing-md);
-    border-radius: 50%;
-    color: var(--color-primary-med);
-    background-color: rgba(134, 239, 172, 0.4);
+    border-radius: 16px;
+    color: white;
+    background: linear-gradient(135deg, #c7f52e, #38a169);
+    font-weight: 700;
 }
 
 .metric-card.low-stock i {
-    color: var(--color-secondary-dark);
-    background-color: var(--color-secondary-bg);
+    background: linear-gradient(135deg, #fbbf24, #b45309);
 }
 
 .metric-info .metric-value {
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 800;
     color: var(--color-text-dark);
     line-height: 1;
@@ -83,6 +91,9 @@
 .metric-info .metric-label {
     font-size: 0.9rem;
     color: var(--color-text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
 }
 
 /* ============================================= */
@@ -90,11 +101,12 @@
 /* ============================================= */
 .inventory-table-container {
     background: var(--color-surface-bg);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(15px);
     border-radius: var(--border-radius);
     padding: var(--spacing-md);
     box-shadow: var(--shadow-lg);
     overflow-x: auto;
+    border: 2px solid rgba(199, 245, 46, 0.15);
 }
 
 .data-table {
@@ -111,20 +123,21 @@
 }
 
 .data-table thead {
-    background-color: var(--color-primary-bg);
+    background-color: linear-gradient(135deg, rgba(199, 245, 46, 0.15), rgba(56, 161, 105, 0.1));
 }
 
 .data-table th {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color: var(--color-primary-dark);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    background: linear-gradient(135deg, rgba(199, 245, 46, 0.15), rgba(56, 161, 105, 0.1));
 }
 
 .data-table tbody tr {
     border-bottom: 1px solid var(--color-border);
-    transition: background-color 0.2s ease;
+    transition: var(--transition);
 }
 
 .data-table tbody tr:last-child {
@@ -132,7 +145,8 @@
 }
 
 .data-table tbody tr:hover {
-    background-color: rgba(240, 253, 244, 0.9);
+    background-color: rgba(199, 245, 46, 0.08);
+    transform: translateX(4px);
 }
 
 /* Table Column & Cell Styles */
@@ -351,43 +365,52 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1rem 1.5rem;
+    padding: 1.2rem 1.5rem;
     font-size: 0.95rem;
-    background-color: #FFFBEB;
-    color: #B45309;
-    border: 1px solid #FBBF24;
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(180, 83, 9, 0.05));
+    color: #b45309;
+    border: 2px solid #fbbf24;
     border-left-width: 5px;
-    border-radius: 12px; 
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); 
+    border-radius: 14px; 
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.15); 
+    transition: var(--transition);
+}
+
+.alert.alert-warning:hover {
+    border-color: #f59e0b;
+    box-shadow: 0 6px 20px rgba(251, 191, 36, 0.25);
 }
 
 .alert.alert-warning i {
-    font-size: 1.25rem;
-    color: #FBBF24;
+    font-size: 1.5rem;
+    color: #fbbf24;
+    font-weight: 700;
 }
 
 .alert.alert-warning strong {
-    color: #92400E;
+    color: #92400e;
+    font-weight: 700;
 }
 
 
 /* --- 2. The Highlighted Table Row --- */
 .data-table tbody tr.high-stock-warning {
-    background-color: #EFF6FF;
-    border-left: 4px solid #3B82F6;
+    background: linear-gradient(135deg, rgba(199, 245, 46, 0.12), rgba(56, 161, 105, 0.08));
+    border-left: 4px solid #c7f52e;
 }
 
 .data-table tbody tr.high-stock-warning td {
-    color: #1E40AF; 
+    color: #2f855a; 
+    font-weight: 600;
 }
 
 .data-table tbody tr.high-stock-warning .col-name strong {
-    color: #1D4ED8;
+    color: #2f855a;
     font-weight: 700;
 }
 
 .data-table tbody tr.high-stock-warning:hover {
-    background-color: #DBEAFE;
+    background: linear-gradient(135deg, rgba(199, 245, 46, 0.2), rgba(56, 161, 105, 0.12));
 }
 
 
@@ -398,12 +421,12 @@
 
 @keyframes pulse-animation {
     0% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+        box-shadow: 0 0 0 0 rgba(199, 245, 46, 0.7);
     }
     70% {
-        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+        box-shadow: 0 0 0 10px rgba(199, 245, 46, 0);
     }
     100% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+        box-shadow: 0 0 0 0 rgba(199, 245, 46, 0);
     }
 }
