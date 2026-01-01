@@ -1,16 +1,54 @@
 /* frontend/css/style.css */
 :root {
-  --primary-color: #c7f52e;
-  --primary-dark: #38a169;
-  --secondary-color: #667eea;
-  --background-light: #f7fafc;
-  --background-white: #ffffff;
-  --text-dark: #1a202c;
-  --text-light: #718096;
-  --border-color: #e2e8f0;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
-  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.2);
+  /* Brand/Accent Colors */
+  --primary-orange: #F8A055;
+  --primary-peach: #F5C9A8;
+  --accent-yellow: #E8D68A;
+  
+  /* Background Colors */
+  --bg-white: #FFFFFF;
+  --bg-cream: #FAF7F4;
+  --bg-light-beige: #F9F5F1;
+  
+  /* Text Colors */
+  --text-dark: #2D2D2D;
+  --text-gray: #666666;
+  --text-light-gray: #999999;
+  
+  /* Coconut Product Colors */
+  --coconut-brown: #8B6F47;
+  --coconut-shell: #6B5744;
+  --coconut-white: #F5F5F0;
+  
+  /* Decorative Colors */
+  --leaf-green: #B8C5A0;
+  --tropical-green: #9DB88F;
+  --light-yellow: #FFF8E1;
+  
+  /* Drip Effect */
+  --milk-drip: #F0E9E1;
+  --cream-drip: #E8DFD6;
+  
+  /* Map & UI Elements */
+  --map-green: #A8D5A3;
+  --map-blue: #89B8E5;
+  --border-light: #E5E5E5;
+  
+  /* Shadow Colors */
+  --shadow-soft: rgba(0, 0, 0, 0.08);
+  --shadow-medium: rgba(0, 0, 0, 0.12);
+  
+  /* Legacy aliases for compatibility */
+  --primary-color: #F8A055;
+  --primary-dark: #8B6F47;
+  --secondary-color: #9DB88F;
+  --background-light: #FAF7F4;
+  --background-white: #FFFFFF;
+  --text-light: #999999;
+  --border-color: #E5E5E5;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -25,8 +63,8 @@ html {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background: linear-gradient(135deg, var(--background-light) 0%, #edf2f7 100%);
+  font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: linear-gradient(135deg, var(--bg-cream) 0%, var(--bg-light-beige) 100%);
   color: var(--text-dark);
   line-height: 1.6;
   min-height: 100vh;
@@ -55,8 +93,8 @@ form input {
 
 form input:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(199, 245, 46, 0.1);
+  border-color: var(--primary-orange);
+  box-shadow: 0 0 0 3px rgba(248, 160, 85, 0.1);
 }
 
 form input::placeholder {
@@ -72,7 +110,7 @@ button {
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  background: linear-gradient(135deg, var(--primary-orange), var(--primary-peach));
   color: white;
   box-shadow: var(--shadow-md);
   text-transform: capitalize;

@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LANDAHAN</title>
+  <title>LANDAHAN - Coconut Products POS</title>
+  <link rel="stylesheet" href="css/design-theme.css">
   <style>
     * {
       margin: 0;
@@ -12,9 +13,9 @@
     }
     
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      font-family: var(--font-family-primary);
       line-height: 1.6;
-      color: #2d3748;
+      color: var(--color-text-dark);
       overflow-x: hidden;
     }
     
@@ -28,7 +29,8 @@
       backdrop-filter: blur(20px);
       z-index: 1000;
       padding: 1rem 0;
-      transition: all 0.3s ease;
+      transition: var(--transition-base);
+      border-bottom: 1px solid var(--color-border-light);
     }
     
     .nav-container {
@@ -43,7 +45,7 @@
     .logo {
       font-size: 1.5rem;
       font-weight: 700;
-      color: #2d3748;
+      color: var(--color-text-dark);
       text-decoration: none;
       display: flex;
       align-items: center;
@@ -63,41 +65,40 @@
     
     .nav-links a {
       text-decoration: none;
-      color: #4a5568;
+      color: var(--color-text-gray);
       font-weight: 500;
-      transition: color 0.3s ease;
+      transition: var(--transition-base);
     }
     
     .nav-links a:hover {
-      color: #38a169;
+      color: var(--color-primary-orange);
     }
     
     .get-started-btn {
-      background: linear-gradient(135deg, #c7f52e 0%, #38a169 100%);
-      color: #1a202c;
+      background: linear-gradient(135deg, var(--color-primary-orange) 0%, var(--color-coconut-brown) 100%);
+      color: white;
       padding: 0.75rem 1.5rem;
       border-radius: 50px;
       text-decoration: none;
       font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(199, 245, 46, 0.3);
+      transition: var(--transition-base);
+      box-shadow: 0 4px 15px rgba(248, 160, 85, 0.3);
     }
     
     .get-started-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(199, 245, 46, 0.4);
+      box-shadow: 0 8px 25px rgba(248, 160, 85, 0.4);
     }
     
     /* Hero Section */
     .hero {
       min-height: 100vh;
-      background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 50%, #e2e8f0 100%);
+      background: linear-gradient(135deg, var(--color-bg-cream) 0%, var(--color-bg-light-beige) 50%, var(--color-light-yellow) 100%);
       display: flex;
       align-items: center;
       position: relative;
       overflow: hidden;
     }
-    
     .hero::before {
       content: '';
       position: absolute;
@@ -105,7 +106,7 @@
       right: -10%;
       width: 60%;
       height: 120%;
-      background: radial-gradient(circle, rgba(199, 245, 46, 0.1) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(248, 160, 85, 0.1) 0%, transparent 70%);
       border-radius: 50%;
       animation: float 6s ease-in-out infinite;
     }
@@ -127,21 +128,20 @@
       font-weight: 800;
       line-height: 1.1;
       margin-bottom: 1.5rem;
-      background: linear-gradient(135deg, #2d3748 0%, #38a169 100%);
+      background: linear-gradient(135deg, var(--color-text-dark) 0%, var(--color-primary-orange) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
     
     .hero-title {
-      color: #c7f52e;
+      color: var(--color-primary-orange);
       text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-      /* REPLACE THIS COMMENT WITH YOUR SYSTEM NAME */
     }
     
     .hero-content p {
       font-size: 1.25rem;
-      color: #4a5568;
+      color: var(--color-text-gray);
       margin-bottom: 2rem;
       line-height: 1.6;
     }
@@ -153,40 +153,40 @@
     }
     
     .btn-primary {
-      background: linear-gradient(135deg, #c7f52e 0%, #38a169 100%);
-      color: #1a202c;
+      background: linear-gradient(135deg, var(--color-primary-orange) 0%, var(--color-primary-peach) 100%);
+      color: white;
       padding: 1rem 2rem;
       border-radius: 50px;
       text-decoration: none;
       font-weight: 600;
       font-size: 1.1rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 8px 25px rgba(199, 245, 46, 0.3);
+      transition: var(--transition-base);
+      box-shadow: 0 8px 25px rgba(248, 160, 85, 0.3);
       border: none;
       cursor: pointer;
     }
     
     .btn-primary:hover {
       transform: translateY(-3px);
-      box-shadow: 0 12px 35px rgba(199, 245, 46, 0.4);
+      box-shadow: 0 12px 35px rgba(248, 160, 85, 0.4);
     }
     
     .btn-secondary {
       background: transparent;
-      color: #4a5568;
+      color: var(--color-text-gray);
       padding: 1rem 2rem;
-      border: 2px solid #e2e8f0;
+      border: 2px solid var(--color-border-light);
       border-radius: 50px;
       text-decoration: none;
       font-weight: 600;
       font-size: 1.1rem;
-      transition: all 0.3s ease;
+      transition: var(--transition-base);
     }
     
     .btn-secondary:hover {
-      background: #f7fafc;
-      border-color: #c7f52e;
-      color: #2d3748;
+      background: var(--color-bg-light-beige);
+      border-color: var(--color-primary-orange);
+      color: var(--color-text-dark);
     }
     
     .hero-visual {

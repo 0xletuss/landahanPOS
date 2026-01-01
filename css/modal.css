@@ -29,17 +29,17 @@
 
 /* Modal Content */
 .modal-content {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.98));
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(245, 201, 168, 0.03));
     backdrop-filter: blur(30px);
-    border: 2px solid rgba(199, 245, 46, 0.2);
+    border: 1.5px solid rgba(248, 160, 85, 0.15);
     border-radius: 24px;
     width: 90%;
     max-width: 650px;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25), 0 0 1px rgba(199, 245, 46, 0.1);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 0 0 1px rgba(248, 160, 85, 0.1);
     animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: #2d3748;
+    color: #2D2D2D;
 }
 
 @keyframes slideIn {
@@ -59,8 +59,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 30px 35px;
-    border-bottom: 2px solid rgba(199, 245, 46, 0.15);
-    background: linear-gradient(135deg, rgba(199, 245, 46, 0.08), rgba(56, 161, 105, 0.05));
+    border-bottom: 1.5px solid rgba(248, 160, 85, 0.1);
+    background: linear-gradient(135deg, rgba(248, 160, 85, 0.05), rgba(139, 111, 71, 0.03));
     border-radius: 24px 24px 0 0;
 }
 
@@ -70,12 +70,12 @@
     gap: 15px;
     font-size: 24px;
     font-weight: 700;
-    color: #2d3748;
+    color: #2D2D2D;
     margin: 0;
 }
 
 .modal-header i {
-    color: #38a169;
+    color: #F8A055;
     font-size: 28px;
 }
 
@@ -145,11 +145,11 @@
 }
 
 .modal-option-btn:hover {
-    background: linear-gradient(135deg, rgba(199, 245, 46, 0.2), rgba(56, 161, 105, 0.15));
-    border-color: rgba(199, 245, 46, 0.5);
+    background: linear-gradient(135deg, rgba(248, 160, 85, 0.2), rgba(139, 111, 71, 0.15));
+    border-color: rgba(248, 160, 85, 0.5);
     transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(199, 245, 46, 0.2);
-    color: #38a169;
+    box-shadow: 0 12px 24px rgba(248, 160, 85, 0.2);
+    color: #8B6F47;
 }
 
 .modal-option-btn:hover::before {
@@ -158,11 +158,11 @@
 
 /* General Modal Section Styling */
 .modal-section {
-    background: linear-gradient(135deg, rgba(199, 245, 46, 0.05), rgba(56, 161, 105, 0.02));
+    background: linear-gradient(135deg, rgba(248, 160, 85, 0.05), rgba(139, 111, 71, 0.02));
     padding: 30px;
     border-radius: 18px;
     margin-top: 25px;
-    border: 2px solid rgba(199, 245, 46, 0.15);
+    border: 2px solid rgba(248, 160, 85, 0.15);
 }
 
 /* Input Group Styling */
@@ -187,7 +187,7 @@
 }
 
 .modal-section .input-group i {
-    color: #38a169;
+    color: #F8A055;
     font-size: 18px;
 }
 
@@ -212,8 +212,8 @@
 .modal-input:focus,
 .modal-select:focus {
     outline: none;
-    border-color: #c7f52e;
-    box-shadow: 0 0 0 4px rgba(199, 245, 46, 0.15);
+    border-color: #F8A055;
+    box-shadow: 0 0 0 4px rgba(248, 160, 85, 0.15);
     background: #ffffff;
 }
 
@@ -224,7 +224,7 @@
 
 /* Style for Select Dropdown Arrow */
 .modal-select {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2338a169' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%238B6F47' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
     background-position: right 16px center;
     background-repeat: no-repeat;
     background-size: 18px;
@@ -256,15 +256,15 @@
 
 /* Confirm Button Specifics */
 .modal-confirm-btn {
-    background: linear-gradient(135deg, #c7f52e, #38a169);
-    color: #1a202c;
-    box-shadow: 0 4px 16px rgba(199, 245, 46, 0.3);
+    background: linear-gradient(135deg, #F8A055, #F5C9A8);
+    color: white;
+    box-shadow: 0 4px 16px rgba(248, 160, 85, 0.3);
 }
 
 .modal-confirm-btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, #a8e526, #2f855a);
+    background: linear-gradient(135deg, #E8D68A, #8B6F47);
     transform: translateY(-3px);
-    box-shadow: 0 12px 30px rgba(199, 245, 46, 0.4);
+    box-shadow: 0 12px 30px rgba(248, 160, 85, 0.4);
 }
 
 .modal-confirm-btn:disabled {
@@ -274,15 +274,15 @@
 
 /* Save Button Specifics */
 .modal-save-btn {
-    background: linear-gradient(135deg, #c7f52e, #38a169);
-    color: #1a202c;
-    box-shadow: 0 4px 16px rgba(199, 245, 46, 0.3);
+    background: linear-gradient(135deg, #F8A055, #F5C9A8);
+    color: white;
+    box-shadow: 0 4px 16px rgba(248, 160, 85, 0.3);
 }
 
 .modal-save-btn:hover {
-    background: linear-gradient(135deg, #a8e526, #2f855a);
+    background: linear-gradient(135deg, #E8D68A, #8B6F47);
     transform: translateY(-3px);
-    box-shadow: 0 12px 30px rgba(199, 245, 46, 0.4);
+    box-shadow: 0 12px 30px rgba(248, 160, 85, 0.4);
 }
 
 /* Form Grid for Add New Seller */

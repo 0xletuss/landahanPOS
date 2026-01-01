@@ -2,14 +2,14 @@
 /* GLOBAL VARIABLES & RESET                      */
 /* ============================================= */
 :root {
-    /* Modern Color Palette - Green Theme */
-    --color-primary: #166534;
-    --color-primary-dark: #14532d;
-    --color-primary-light: #dcfce7;
-    --color-secondary: #15803d;
+    /* Modern Color Palette - Tropical Orange Theme */
+    --color-primary: #F8A055;
+    --color-primary-dark: #8B6F47;
+    --color-primary-light: #FAF7F4;
+    --color-secondary: #F5C9A8;
     
-    --color-success: #16a34a;
-    --color-success-light: #dcfce7;
+    --color-success: #F8A055;
+    --color-success-light: #FAF7F4;
     --color-danger: #991b1b;
     --color-danger-light: #fee2e2;
     --color-warning: #b45309;
@@ -347,7 +347,7 @@ body {
 }
 
 .stat-card.profit .value {
-    background: linear-gradient(135deg, #16a34a, #15803d);
+    background: linear-gradient(135deg, #F8A055, #8B6F47);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -601,6 +601,10 @@ body {
     position: relative;
     height: 400px;
     width: 100%;
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 /* ============================================= */

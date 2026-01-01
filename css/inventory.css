@@ -2,27 +2,27 @@
 /* GLOBAL VARIABLES & BASE STYLES                */
 /* ============================================= */
 :root {
-    /* Color Palette - Updated to match main theme */
-    --color-primary-dark: #2f855a;
-    --color-primary-med: #38a169;
-    --color-primary-light: #c7f52e;
-    --color-primary-bg: rgba(199, 245, 46, 0.1);
+    /* Brand/Accent Colors */
+    --color-primary-dark: #8B6F47;
+    --color-primary-med: #F8A055;
+    --color-primary-light: #F5C9A8;
+    --color-primary-bg: rgba(248, 160, 85, 0.08);
 
-    --color-secondary-dark: #b45309;
-    --color-secondary-med: #854d0e;
-    --color-secondary-light: #fef9c3;
-    --color-secondary-bg: rgba(251, 191, 36, 0.2);
+    --color-secondary-dark: #6B5744;
+    --color-secondary-med: #B8C5A0;
+    --color-secondary-light: #FFF8E1;
+    --color-secondary-bg: rgba(184, 197, 160, 0.1);
     
     --color-danger-dark: #991b1b;
     --color-danger-light: #fee2e2;
 
-    --color-text-dark: #1f2937;
-    --color-text-med: #2d3748;
-    --color-text-light: #4b5563;
-    --color-text-subtle: #9ca3af;
+    --color-text-dark: #2D2D2D;
+    --color-text-med: #2D2D2D;
+    --color-text-light: #666666;
+    --color-text-subtle: #999999;
     
     --color-surface-bg: rgba(255, 255, 255, 0.95);
-    --color-border: #e5e7eb;
+    --color-border: #E5E5E5;
 
     /* Spacing & Radius */
     --spacing-xs: 0.25rem;
@@ -34,7 +34,7 @@
     --border-radius-sm: 12px;
 
     /* Shadows */
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.08);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -57,15 +57,15 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-lg);
-    border: 2px solid rgba(199, 245, 46, 0.2);
+    border: 2px solid rgba(248, 160, 85, 0.15);
     box-shadow: var(--shadow-lg);
     transition: var(--transition);
 }
 
 .metric-card:hover {
     transform: translateY(-5px);
-    border-color: rgba(199, 245, 46, 0.4);
-    box-shadow: 0 15px 35px rgba(199, 245, 46, 0.15);
+    border-color: rgba(248, 160, 85, 0.4);
+    box-shadow: 0 15px 35px rgba(248, 160, 85, 0.15);
 }
 
 .metric-card i {
@@ -73,7 +73,7 @@
     padding: var(--spacing-md);
     border-radius: 16px;
     color: white;
-    background: linear-gradient(135deg, #c7f52e, #38a169);
+    background: linear-gradient(135deg, #F8A055, #8B6F47);
     font-weight: 700;
 }
 
@@ -395,17 +395,17 @@
 
 /* --- 2. The Highlighted Table Row --- */
 .data-table tbody tr.high-stock-warning {
-    background: linear-gradient(135deg, rgba(199, 245, 46, 0.12), rgba(56, 161, 105, 0.08));
-    border-left: 4px solid #c7f52e;
+    background: linear-gradient(135deg, rgba(248, 160, 85, 0.08), rgba(139, 111, 71, 0.05));
+    border-left: 4px solid #F8A055;
 }
 
 .data-table tbody tr.high-stock-warning td {
-    color: #2f855a; 
+    color: #8B6F47; 
     font-weight: 600;
 }
 
 .data-table tbody tr.high-stock-warning .col-name strong {
-    color: #2f855a;
+    color: #8B6F47;
     font-weight: 700;
 }
 

@@ -466,10 +466,20 @@ class ProfitManager {
                     datasets: [{
                         label: 'Profit',
                         data: [],
-                        borderColor: '#16a34a',
-                        backgroundColor: 'rgba(22,101,52,0.08)',
-                        tension: 0.25,
-                        pointRadius: 4,
+                        borderColor: '#F8A055',
+                        backgroundColor: (context) => {
+                            const ctx = context.chart.ctx;
+                            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                            gradient.addColorStop(0, 'rgba(248, 160, 85, 0.4)');
+                            gradient.addColorStop(1, 'rgba(248, 160, 85, 0.01)');
+                            return gradient;
+                        },
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBorderWidth: 2,
+                        pointBorderColor: '#fff',
                         pointBackgroundColor: []
                     }]
                 },
@@ -477,22 +487,32 @@ class ProfitManager {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false },
+                        legend: { 
+                            display: true,
+                            labels: { color: '#2D2D2D', font: { weight: 'bold' } }
+                        },
                         tooltip: {
+                            backgroundColor: 'rgba(45, 45, 45, 0.95)',
+                            padding: 12,
+                            cornerRadius: 8,
                             callbacks: {
                                 label: (ctx) => {
-                                    return `${this.formatCurrency(ctx.raw)}`;
+                                    return `Profit: ${this.formatCurrency(ctx.raw)}`;
                                 }
                             }
                         }
                     },
                     scales: {
                         x: {
-                            display: true
+                            display: true,
+                            grid: { display: false },
+                            ticks: { color: '#666', font: { size: 12 } }
                         },
                         y: {
                             beginAtZero: false,
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' },
                             ticks: {
+                                color: '#666',
                                 callback: (val) => this.formatCurrency(val)
                             }
                         }
@@ -529,7 +549,8 @@ class ProfitManager {
             data = this.transactions.map(t => Number(t.profit) || 0);
         }
 
-        return { labels, data };
+        // Reverse to show chronologically (oldest to newest, left to right)
+        return { labels: labels.reverse(), data: data.reverse() };
     }
 
     updateChart() {

@@ -1,0 +1,432 @@
+/* ================================================================
+   LANDAHAN POS - COCONUT TROPICAL DESIGN THEME
+   Modern design system with warm tropical colors
+   ================================================================ */
+
+:root {
+  /* ==================== COLOR SYSTEM ==================== */
+  
+  /* Primary Accent Colors - Warm Tropical Palette */
+  --color-primary-orange: #F8A055;
+  --color-primary-peach: #F5C9A8;
+  --color-accent-yellow: #E8D68A;
+  
+  /* Background Colors - Soft & Creamy */
+  --color-bg-white: #FFFFFF;
+  --color-bg-cream: #FAF7F4;
+  --color-bg-light-beige: #F9F5F1;
+  
+  /* Text Colors - High Contrast */
+  --color-text-dark: #2D2D2D;
+  --color-text-gray: #666666;
+  --color-text-light-gray: #999999;
+  
+  /* Coconut Theme Colors */
+  --color-coconut-brown: #8B6F47;
+  --color-coconut-shell: #6B5744;
+  --color-coconut-white: #F5F5F0;
+  
+  /* Decorative Colors */
+  --color-leaf-green: #B8C5A0;
+  --color-tropical-green: #9DB88F;
+  --color-light-yellow: #FFF8E1;
+  
+  /* Special Effects */
+  --color-milk-drip: #F0E9E1;
+  --color-cream-drip: #E8DFD6;
+  
+  /* UI Elements */
+  --color-map-green: #A8D5A3;
+  --color-map-blue: #89B8E5;
+  --color-border-light: #E5E5E5;
+  
+  /* Status Colors */
+  --color-success: #A8D5A3;
+  --color-warning: #E8D68A;
+  --color-error: #E17055;
+  --color-info: #89B8E5;
+  
+  /* Shadows */
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-large: 0 10px 30px rgba(0, 0, 0, 0.15);
+  
+  /* ==================== TYPOGRAPHY ==================== */
+  --font-family-primary: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-family-mono: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+  
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* ==================== SPACING ==================== */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  /* ==================== BORDER RADIUS ==================== */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+  
+  /* ==================== TRANSITIONS ==================== */
+  --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ================================================================
+   UTILITY CLASSES
+   ================================================================ */
+
+/* Glassmorphism Effect */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(248, 160, 85, 0.15);
+  border-radius: var(--radius-xl);
+}
+
+/* Gradient Backgrounds */
+.gradient-tropical {
+  background: linear-gradient(135deg, var(--color-bg-cream) 0%, var(--color-bg-light-beige) 50%, var(--color-light-yellow) 100%);
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, var(--color-primary-orange), var(--color-primary-peach));
+}
+
+.gradient-earth {
+  background: linear-gradient(135deg, var(--color-coconut-brown), var(--color-coconut-shell));
+}
+
+/* Shadow Utilities */
+.shadow-soft {
+  box-shadow: var(--shadow-soft);
+}
+
+.shadow-medium {
+  box-shadow: var(--shadow-medium);
+}
+
+.shadow-large {
+  box-shadow: var(--shadow-large);
+}
+
+/* Text Utilities */
+.text-primary {
+  color: var(--color-primary-orange);
+}
+
+.text-dark {
+  color: var(--color-text-dark);
+}
+
+.text-gray {
+  color: var(--color-text-gray);
+}
+
+.text-light {
+  color: var(--color-text-light-gray);
+}
+
+/* Hover Effects */
+.hover-lift {
+  transition: var(--transition-base);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-large);
+}
+
+.hover-glow {
+  transition: var(--transition-base);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(248, 160, 85, 0.4);
+}
+
+/* ================================================================
+   ENHANCED COMPONENT STYLES
+   ================================================================ */
+
+/* Cards */
+.card {
+  background: var(--color-bg-white);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border-light);
+  box-shadow: var(--shadow-soft);
+  transition: var(--transition-base);
+  padding: var(--spacing-lg);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-medium);
+  border-color: rgba(248, 160, 85, 0.3);
+}
+
+.card-premium {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(245, 201, 168, 0.05));
+  border: 1.5px solid rgba(248, 160, 85, 0.15);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-base);
+  gap: var(--spacing-sm);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary-orange), var(--color-primary-peach));
+  color: white;
+  box-shadow: 0 4px 12px rgba(248, 160, 85, 0.25);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(248, 160, 85, 0.35);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(248, 160, 85, 0.2);
+}
+
+.btn-secondary {
+  background: var(--color-coconut-brown);
+  color: white;
+  box-shadow: 0 4px 12px rgba(139, 111, 71, 0.2);
+}
+
+.btn-secondary:hover {
+  background: var(--color-coconut-shell);
+  transform: translateY(-2px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-primary-orange);
+  border: 2px solid var(--color-primary-orange);
+}
+
+.btn-ghost:hover {
+  background: rgba(248, 160, 85, 0.1);
+}
+
+/* Input Fields */
+.input,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+  width: 100%;
+  padding: var(--spacing-md);
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  border: 2px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-white);
+  color: var(--color-text-dark);
+  transition: var(--transition-base);
+}
+
+.input:focus,
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-primary-orange);
+  box-shadow: 0 0 0 3px rgba(248, 160, 85, 0.1);
+}
+
+.input::placeholder {
+  color: var(--color-text-light-gray);
+}
+
+/* Badge */
+.badge {
+  display: inline-block;
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-full);
+  background: rgba(248, 160, 85, 0.1);
+  color: var(--color-primary-orange);
+}
+
+.badge-success {
+  background: rgba(168, 213, 163, 0.2);
+  color: var(--color-map-green);
+}
+
+.badge-warning {
+  background: rgba(232, 214, 138, 0.2);
+  color: var(--color-accent-yellow);
+}
+
+.badge-error {
+  background: rgba(225, 112, 85, 0.2);
+  color: var(--color-error);
+}
+
+/* ================================================================
+   ANIMATIONS
+   ================================================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Animation Classes */
+.animate-fadeIn {
+  animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-slideInDown {
+  animation: slideInDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-slideInUp {
+  animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-slideInLeft {
+  animation: slideInLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* ================================================================
+   RESPONSIVE UTILITIES
+   ================================================================ */
+
+@media (max-width: 768px) {
+  :root {
+    --font-size-xl: 1.25rem;
+    --font-size-lg: 1.125rem;
+    --spacing-xl: 1.5rem;
+    --radius-xl: 16px;
+  }
+  
+  .btn {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-size-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --font-size-2xl: 1.5rem;
+    --font-size-xl: 1.125rem;
+    --spacing-xl: 1rem;
+    --spacing-lg: 1rem;
+  }
+}

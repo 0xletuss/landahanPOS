@@ -43,22 +43,22 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #c7f52e, #38a169);
-    color: #1a202c;
+    background: linear-gradient(135deg, #F8A055, #F5C9A8);
+    color: white;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 24px;
-    box-shadow: 0 8px 25px rgba(199, 245, 46, 0.4);
+    box-shadow: 0 8px 25px rgba(248, 160, 85, 0.4);
     transition: all 0.3s ease;
     z-index: 100;
 }
 
 .btn-floating:hover {
     transform: scale(1.15) translateY(-5px);
-    box-shadow: 0 12px 40px rgba(199, 245, 46, 0.5);
+    box-shadow: 0 12px 40px rgba(248, 160, 85, 0.5);
 }
 
 .btn-floating:active {
@@ -111,11 +111,11 @@
     gap: 1rem;
     z-index: 1001;
     animation: slideInUp 0.3s ease;
-    border-left: 4px solid #38a169;
+    border-left: 4px solid #F8A055;
 }
 
 .toast.success {
-    border-left-color: #38a169;
+    border-left-color: #F8A055;
 }
 
 .toast.error {
@@ -156,8 +156,8 @@
 }
 
 .badge-success {
-    background: rgba(56, 161, 105, 0.15);
-    color: #2f855a;
+    background: rgba(248, 160, 85, 0.15);
+    color: #8B6F47;
 }
 
 .badge-danger {
@@ -171,8 +171,8 @@
 }
 
 .badge-info {
-    background: rgba(199, 245, 46, 0.15);
-    color: #38a169;
+    background: rgba(248, 160, 85, 0.15);
+    color: #F8A055;
 }
 
 /* ===================================================================
@@ -189,10 +189,10 @@
 
 .progress-bar {
     height: 100%;
-    background: linear-gradient(90deg, #c7f52e, #38a169);
+    background: linear-gradient(90deg, #F8A055, #F5C9A8);
     border-radius: 4px;
     transition: width 0.3s ease;
-    box-shadow: 0 0 10px rgba(199, 245, 46, 0.3);
+    box-shadow: 0 0 10px rgba(248, 160, 85, 0.3);
 }
 
 /* ===================================================================
@@ -203,7 +203,7 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #c7f52e, #38a169);
+    background: linear-gradient(135deg, #F8A055, #F5C9A8);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -244,27 +244,27 @@
     padding: 1.5rem;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
-    border: 2px solid rgba(199, 245, 46, 0.1);
+    border: 2px solid rgba(248, 160, 85, 0.1);
 }
 
 .card-elevated:hover {
     transform: translateY(-8px);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    border-color: rgba(199, 245, 46, 0.3);
+    border-color: rgba(248, 160, 85, 0.3);
 }
 
 .card-filled {
-    background: linear-gradient(135deg, rgba(199, 245, 46, 0.1), rgba(56, 161, 105, 0.05));
+    background: linear-gradient(135deg, rgba(248, 160, 85, 0.1), rgba(245, 201, 168, 0.05));
     border-radius: 16px;
     padding: 1.5rem;
-    border: 2px solid rgba(199, 245, 46, 0.2);
+    border: 2px solid rgba(248, 160, 85, 0.2);
 }
 
 .card-outlined {
     background: transparent;
     border-radius: 16px;
     padding: 1.5rem;
-    border: 2px solid rgba(199, 245, 46, 0.3);
+    border: 2px solid rgba(248, 160, 85, 0.3);
 }
 
 /* ===================================================================
@@ -290,7 +290,7 @@
 .link-hover {
     position: relative;
     text-decoration: none;
-    color: #38a169;
+    color: #F8A055;
     font-weight: 600;
 }
 
@@ -301,7 +301,7 @@
     left: 0;
     width: 0;
     height: 2px;
-    background: linear-gradient(90deg, #c7f52e, #38a169);
+    background: linear-gradient(90deg, #F8A055, #F5C9A8);
     transition: width 0.3s ease;
 }
 
@@ -362,14 +362,14 @@
     background: white;
     border-radius: 16px;
     padding: 1.5rem;
-    border: 2px solid rgba(199, 245, 46, 0.2);
+    border: 2px solid rgba(248, 160, 85, 0.2);
     text-align: center;
 }
 
 .stats-number {
     font-size: 2.5rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #c7f52e, #38a169);
+    background: linear-gradient(135deg, #F8A055, #F5C9A8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -392,7 +392,7 @@
 }
 
 .stats-change.positive {
-    color: #38a169;
+    color: #F8A055;
 }
 
 .stats-change.negative {
@@ -429,15 +429,15 @@
 =================================================================== */
 
 /* Text colors */
-.text-primary { color: #38a169; }
+.text-primary { color: #F8A055; }
 .text-secondary { color: #718096; }
 .text-danger { color: #e53e3e; }
 .text-warning { color: #d97706; }
-.text-success { color: #38a169; }
+.text-success { color: #F8A055; }
 
 /* Background colors */
-.bg-primary { background: rgba(199, 245, 46, 0.1); }
-.bg-secondary { background: rgba(199, 245, 46, 0.05); }
+.bg-primary { background: rgba(248, 160, 85, 0.1); }
+.bg-secondary { background: rgba(248, 160, 85, 0.05); }
 
 /* Shadows */
 .shadow-sm { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }

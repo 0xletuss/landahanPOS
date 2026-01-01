@@ -6,8 +6,8 @@
 }
 
 body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #FAF7F4 0%, #F9F5F1 50%, #FFF8E1 100%);
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
@@ -21,9 +21,9 @@ body {
     width: 100%;
     height: 100%;
     background: 
-        radial-gradient(circle at 20% 50%, rgba(199, 245, 46, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(56, 161, 105, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 40% 80%, rgba(168, 229, 38, 0.1) 0%, transparent 50%);
+        radial-gradient(circle at 20% 50%, rgba(248, 160, 85, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(139, 111, 71, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(184, 197, 160, 0.06) 0%, transparent 50%);
     z-index: -2;
 }
 
@@ -31,9 +31,9 @@ body {
 .glassmorphism {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(199, 245, 46, 0.2);
+    border: 1px solid rgba(248, 160, 85, 0.15);
     border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
 }
 
 /* Container */
@@ -51,12 +51,12 @@ header {
     align-items: center;
     padding: 20px 30px;
     margin-bottom: 30px;
-    color: #2d3748;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    border: 1px solid rgba(199, 245, 46, 0.2);
-    box-shadow: 0 4px 15px rgba(199, 245, 46, 0.1);
+    color: #2D2D2D;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(15px);
+    border-radius: 18px;
+    border: 1px solid rgba(248, 160, 85, 0.12);
+    box-shadow: 0 4px 15px rgba(248, 160, 85, 0.08);
     animation: slideDown 0.5s ease;
 }
 
@@ -91,16 +91,16 @@ header {
 }
 
 .logo i {
-    color: #c7f52e;
+    color: #F8A055;
     font-size: 28px;
-    text-shadow: 0 2px 4px rgba(199, 245, 46, 0.3);
+    text-shadow: 0 2px 4px rgba(248, 160, 85, 0.2);
     animation: pulse 2.5s ease-in-out infinite;
 }
 
 .header-left h1 {
     font-size: 28px;
     font-weight: 600;
-    color: #2d3748;
+    color: #2D2D2D;
     letter-spacing: 0.3px;
 }
 
@@ -113,7 +113,7 @@ header {
 .user-avatar {
     width: 45px;
     height: 45px;
-    background: linear-gradient(135deg, #c7f52e, #38a169);
+    background: linear-gradient(135deg, #F8A055, #8B6F47);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -121,13 +121,13 @@ header {
     color: white;
     font-weight: 700;
     font-size: 18px;
-    box-shadow: 0 4px 12px rgba(199, 245, 46, 0.3);
+    box-shadow: 0 4px 12px rgba(248, 160, 85, 0.25);
     transition: all 0.3s ease;
 }
 
 .user-avatar:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(199, 245, 46, 0.4);
+    box-shadow: 0 6px 16px rgba(248, 160, 85, 0.35);
 }
 
 .user-details {
@@ -138,13 +138,13 @@ header {
 
 .greeting {
     font-size: 14px;
-    color: #4a5568;
+    color: #666666;
 }
 
 .user-name {
     font-size: 16px;
     font-weight: 600;
-    color: #2d3748;
+    color: #2D2D2D;
 }
 
 .logout-btn {
@@ -171,12 +171,12 @@ header {
 /* Main Content */
 .main-content {
     padding: 40px;
-    color: #2d3748;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.98));
+    color: #2D2D2D;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(245, 201, 168, 0.05));
     backdrop-filter: blur(30px);
-    border: 2px solid rgba(199, 245, 46, 0.2);
+    border: 1.5px solid rgba(248, 160, 85, 0.15);
     border-radius: 30px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06);
     transition: all 0.3s ease;
 }
 
@@ -213,8 +213,8 @@ header {
 
 .pos-icon {
     font-size: 40px;
-    color: #c7f52e;
-    text-shadow: 0 3px 10px rgba(199, 245, 46, 0.4);
+    color: #F8A055;
+    text-shadow: 0 3px 10px rgba(248, 160, 85, 0.4);
     animation: bounce 2s ease-in-out infinite;
 }
 
@@ -227,7 +227,7 @@ header {
     font-size: 32px;
     font-weight: 900;
     color: #2d3748;
-    background: linear-gradient(135deg, #c7f52e, #38a169);
+    background: linear-gradient(135deg, #F8A055, #8B6F47);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -250,7 +250,7 @@ header {
 .decoration-dot {
     width: 8px;
     height: 8px;
-    background: linear-gradient(135deg, #c7f52e, #38a169);
+    background: linear-gradient(135deg, #F8A055, #8B6F47);
     border-radius: 50%;
     animation: pulse 2s infinite;
 }
@@ -281,9 +281,9 @@ header {
 }
 
 .seller-btn {
-    background: linear-gradient(135deg, #c7f52e, #38a169);
+    background: linear-gradient(135deg, #F8A055, #F5C9A8);
     border: none;
-    color: #1a202c;
+    color: white;
     padding: 16px 32px;
     border-radius: 16px;
     font-size: 16px;
@@ -295,20 +295,20 @@ header {
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 16px rgba(199, 245, 46, 0.3);
+    box-shadow: 0 4px 16px rgba(248, 160, 85, 0.3);
 }
 
 .seller-btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(199, 245, 46, 0.4);
-    background: linear-gradient(135deg, #a8e526, #2f855a);
+    box-shadow: 0 8px 25px rgba(248, 160, 85, 0.4);
+    background: linear-gradient(135deg, #E8D68A, #8B6F47);
 }
 
 /* Transaction Card */
 .pos-card {
     background: linear-gradient(135deg, #ffffff 0%, #f8fafb 100%);
     backdrop-filter: blur(10px);
-    border: 2px solid rgba(199, 245, 46, 0.25);
+    border: 2px solid rgba(248, 160, 85, 0.15);
     border-radius: 20px;
     padding: 0;
     margin-bottom: 30px;
@@ -320,13 +320,13 @@ header {
 .pos-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-    border-color: rgba(199, 245, 46, 0.4);
+    border-color: rgba(248, 160, 85, 0.4);
 }
 
 .pos-card-header {
-    background: linear-gradient(135deg, rgba(199, 245, 46, 0.12), rgba(56, 161, 105, 0.08));
+    background: linear-gradient(135deg, rgba(248, 160, 85, 0.08), rgba(139, 111, 71, 0.05));
     padding: 28px 30px;
-    border-bottom: 2px solid rgba(199, 245, 46, 0.2);
+    border-bottom: 2px solid rgba(248, 160, 85, 0.15);
     display: flex;
     align-items: center;
     gap: 16px;
@@ -336,7 +336,7 @@ header {
 .card-icon {
     width: 55px;
     height: 55px;
-    background: linear-gradient(135deg, #c7f52e, #38a169);
+    background: linear-gradient(135deg, #F8A055, #8B6F47);
     border-radius: 14px;
     display: flex;
     align-items: center;
@@ -344,7 +344,7 @@ header {
     color: white;
     font-size: 24px;
     font-weight: 700;
-    box-shadow: 0 4px 12px rgba(199, 245, 46, 0.25);
+    box-shadow: 0 4px 12px rgba(248, 160, 85, 0.25);
 }
 
 .pos-card-header h3 {
@@ -361,7 +361,7 @@ header {
     right: 0;
     width: 4px;
     height: 100%;
-    background: linear-gradient(180deg, #c7f52e, #38a169);
+    background: linear-gradient(180deg, #F8A055, #8B6F47);
 }
 
 .pos-card-body {
@@ -399,7 +399,7 @@ header {
 }
 
 .input-group label i {
-    color: #c7f52e;
+    color: #F8A055;
     font-size: 16px;
 }
 
@@ -417,9 +417,9 @@ header {
 
 .pos-input:focus {
     outline: none;
-    border-color: #c7f52e;
+    border-color: #F8A055;
     background: #ffffff;
-    box-shadow: 0 0 0 4px rgba(199, 245, 46, 0.15), inset 0 0 0 1px rgba(199, 245, 46, 0.1);
+    box-shadow: 0 0 0 4px rgba(248, 160, 85, 0.15), inset 0 0 0 1px rgba(248, 160, 85, 0.1);
     transform: translateY(-2px);
 }
 
@@ -431,10 +431,10 @@ header {
 .total-input {
     font-size: 18px;
     font-weight: 800;
-    color: #38a169;
+    color: #8B6F47;
     padding-right: 50px;
-    background: linear-gradient(135deg, rgba(199, 245, 46, 0.1), rgba(56, 161, 105, 0.08));
-    border-color: #c7f52e;
+    background: linear-gradient(135deg, rgba(248, 160, 85, 0.1), rgba(139, 111, 71, 0.08));
+    border-color: #F8A055;
     letter-spacing: 0.5px;
 }
 
@@ -443,7 +443,7 @@ header {
     right: 14px;
     top: 50%;
     transform: translateY(-50%);
-    color: #c7f52e;
+    color: #F8A055;
     font-size: 18px;
     pointer-events: none;
 }
@@ -451,7 +451,7 @@ header {
 /* Payment Button */
 .pos-payment-btn {
     width: 100%;
-    background: linear-gradient(135deg, #c7f52e, #38a169);
+    background: linear-gradient(135deg, #F8A055, #F5C9A8);
     border: none;
     color: white;
     padding: 18px;
@@ -469,8 +469,8 @@ header {
 
 .pos-payment-btn:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 30px rgba(199, 245, 46, 0.45);
-    background: linear-gradient(135deg, #a8e526, #2f855a);
+    box-shadow: 0 10px 30px rgba(248, 160, 85, 0.45);
+    background: linear-gradient(135deg, #E8D68A, #8B6F47);
 }
 
 .pos-payment-btn:active {
@@ -506,7 +506,7 @@ header {
 
 /* Action Buttons */
 .pos-action-btn {
-    background: linear-gradient(135deg, #c7f52e, #38a169);
+    background: linear-gradient(135deg, #F8A055, #F5C9A8);
     border: none;
     color: white;
     padding: 16px 28px;
@@ -527,8 +527,8 @@ header {
 
 .pos-action-btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(199, 245, 46, 0.4);
-    background: linear-gradient(135deg, #a8e526, #2f855a);
+    box-shadow: 0 8px 25px rgba(248, 160, 85, 0.4);
+    background: linear-gradient(135deg, #E8D68A, #8B6F47);
 }
 
 .btn-shine {
@@ -548,9 +548,9 @@ header {
 .transactions-container {
     margin: 30px 0 0 0;
     padding: 30px;
-    background: linear-gradient(135deg, rgba(199, 245, 46, 0.08), rgba(56, 161, 105, 0.05));
+    background: linear-gradient(135deg, rgba(248, 160, 85, 0.08), rgba(245, 201, 168, 0.05));
     border-radius: 20px;
-    border: 2px solid rgba(199, 245, 46, 0.25);
+    border: 2px solid rgba(248, 160, 85, 0.25);
     max-height: 500px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
@@ -598,7 +598,7 @@ header {
 }
 
 .transactions-table th {
-    background: linear-gradient(135deg, #c7f52e 0%, #38a169 100%);
+    background: linear-gradient(135deg, #F8A055 0%, #F5C9A8 100%);
     color: white;
     padding: 14px 12px;
     text-align: left;
@@ -609,7 +609,7 @@ header {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-size: 12px;
-    box-shadow: 0 4px 8px rgba(199, 245, 46, 0.15);
+    box-shadow: 0 4px 8px rgba(248, 160, 85, 0.15);
 }
 
 .transactions-table th:first-child {
@@ -622,7 +622,7 @@ header {
 
 .transactions-table td {
     padding: 14px 12px;
-    border-bottom: 1px solid rgba(199, 245, 46, 0.12);
+    border-bottom: 1px solid rgba(248, 160, 85, 0.12);
     vertical-align: middle;
     color: #2d3748;
     font-weight: 500;
@@ -634,9 +634,9 @@ header {
 }
 
 .transactions-table tbody tr:hover {
-    background: linear-gradient(135deg, rgba(199, 245, 46, 0.08), rgba(56, 161, 105, 0.05));
+    background: linear-gradient(135deg, rgba(248, 160, 85, 0.08), rgba(245, 201, 168, 0.05));
     transform: scale(1.01);
-    box-shadow: inset 0 0 0 1px rgba(199, 245, 46, 0.2);
+    box-shadow: inset 0 0 0 1px rgba(248, 160, 85, 0.2);
 }
 
 .transactions-table tbody tr:last-child td {
@@ -646,7 +646,7 @@ header {
 /* Column Specific Styles */
 .date-col {
     font-weight: 700;
-    color: #38a169;
+    color: #8B6F47;
     width: 20%;
 }
 
@@ -665,16 +665,16 @@ header {
 .quantity-col {
     text-align: center;
     font-weight: 700;
-    color: #38a169;
+    color: #8B6F47;
     width: 12%;
 }
 
 .total-col {
     font-weight: 700;
-    color: #c7f52e;
+    color: #F8A055;
     text-align: right;
     width: 13%;
-    background: rgba(199, 245, 46, 0.08);
+    background: rgba(248, 160, 85, 0.08);
     border-radius: 6px;
     padding-left: 8px !important;
 }
@@ -685,19 +685,19 @@ header {
 }
 
 .table-container::-webkit-scrollbar-track {
-    background: linear-gradient(180deg, rgba(199, 245, 46, 0.05), rgba(56, 161, 105, 0.05));
+    background: linear-gradient(180deg, rgba(248, 160, 85, 0.05), rgba(245, 201, 168, 0.05));
     border-radius: 10px;
 }
 
 .table-container::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #c7f52e, #38a169);
+    background: linear-gradient(180deg, #F8A055, #F5C9A8);
     border-radius: 10px;
-    box-shadow: 0 0 6px rgba(199, 245, 46, 0.3);
+    box-shadow: 0 0 6px rgba(248, 160, 85, 0.3);
 }
 
 .table-container::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #a8e526, #2f855a);
-    box-shadow: 0 0 8px rgba(199, 245, 46, 0.4);
+    background: linear-gradient(180deg, #E8D68A, #8B6F47);
+    box-shadow: 0 0 8px rgba(248, 160, 85, 0.4);
 }
 
 /* Responsive Design */
@@ -730,17 +730,17 @@ header {
 
 /* Messages */
 .pos-message {
-    background: linear-gradient(135deg, rgba(56, 161, 105, 0.12), rgba(199, 245, 46, 0.08));
-    border: 2px solid rgba(56, 161, 105, 0.4);
+    background: linear-gradient(135deg, rgba(139, 111, 71, 0.12), rgba(248, 160, 85, 0.08));
+    border: 2px solid rgba(139, 111, 71, 0.4);
     border-radius: 14px;
     padding: 16px 20px;
     margin-top: 25px;
     display: flex;
     align-items: center;
     gap: 14px;
-    color: #2f855a;
+    color: #8B6F47;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(56, 161, 105, 0.15);
+    box-shadow: 0 4px 12px rgba(139, 111, 71, 0.15);
     animation: slideInUp 0.3s ease;
 }
 
@@ -804,7 +804,7 @@ header {
 }
 
 .message-close:hover {
-    background: rgba(199, 245, 46, 0.2);
+    background: rgba(248, 160, 85, 0.2);
     transform: rotate(90deg);
 }
 
@@ -925,7 +925,7 @@ header {
 }
 
 .product-toggle-container .toggle-label.active {
-    color: #38a169;
+    color: #F8A055;
     transform: scale(1.08);
     font-weight: 800;
 }
@@ -971,8 +971,8 @@ header {
 }
 
 input:checked + .slider {
-    background: linear-gradient(90deg, #c7f52e, #38a169);
-    box-shadow: 0 4px 12px rgba(199, 245, 46, 0.3);
+    background: linear-gradient(90deg, #F8A055, #F5C9A8);
+    box-shadow: 0 4px 12px rgba(248, 160, 85, 0.3);
 }
 
 input:checked + .slider:before {

@@ -3,12 +3,12 @@
     position: fixed;
     bottom: 0;
     width: 100%;
-    background: #121212;
+    background: rgba(45, 45, 45, 0.95);
     backdrop-filter: blur(10px);
-    box-shadow: 0 -1px 10px rgba(0,0,0,0.5);
+    box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.15);
     display: none;
     z-index: 1000;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(248, 160, 85, 0.15);
 }
 
 .nav-items {
@@ -26,7 +26,7 @@
 }
 
 .nav-item a {
-    color: #b3b3b3;
+    color: #999999;
     text-decoration: none;
     display: flex;
     flex-direction: column;
@@ -45,13 +45,13 @@
     transform: translateX(-50%) scaleX(0);
     width: 20px;
     height: 2px;
-    background: #1db954;
+    background: #F8A055;
     border-radius: 1px;
     transition: transform 0.3s ease;
 }
 
 .nav-item a:hover {
-    color: #ffffff;
+    color: #F8A055;
 }
 
 .nav-item i {
@@ -60,7 +60,7 @@
 }
 
 .nav-item.active a {
-    color: #1db954;
+    color: #F8A055;
     font-weight: 600;
 }
 
@@ -69,17 +69,17 @@
 }
 
 .main-pos a {
-    background: #1db954;
+    background: #F8A055;
     color: white !important;
     border-radius: 50%;
     padding: 0.8rem;
     margin-top: -2.5rem;
-    box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
+    box-shadow: 0 4px 15px rgba(248, 160, 85, 0.4);
     transition: all 0.3s ease;
 }
 
 .main-pos a:hover {
-    background: #1ed760;
+    background: #F8A055;
     transform: scale(1.05);
 }
 
@@ -123,7 +123,7 @@
     }
 
     .nav-item.active a {
-        color: #1db954;
+        color: #F8A055;
     }
 
     .nav-item.active a::after {
@@ -204,7 +204,7 @@
         top: 0;
         height: 100%;
         width: 3px;
-        background: #1db954;
+        background: #F8A055;
         transform: translateX(-100%);
         transition: transform 0.3s ease;
     }
@@ -222,8 +222,8 @@
 
     .nav-item.active a {
         color: #ffffff;
-        background: rgba(29, 185, 84, 0.1);
-        border-left: 3px solid #1db954;
+        background: rgba(248, 160, 85, 0.1);
+        border-left: 3px solid #F8A055;
         padding-left: calc(1rem - 3px);
     }
 
@@ -238,20 +238,20 @@
     .main-pos a {
         border-radius: 0;
         background: transparent;
-        color: #1db954 !important;
+        color: #F8A055 !important;
         box-shadow: none;
         margin: 0;
         padding: 0.75rem 1rem;
         font-weight: 600;
-        border-left: 3px solid #1db954;
+        border-left: 3px solid #F8A055;
         padding-left: calc(1rem - 3px);
         transition: all 0.3s ease;
         transform: translateX(0);
     }
 
     .main-pos a:hover {
-        color: #1ed760 !important;
-        background: rgba(29, 185, 84, 0.1);
+        color: #F8A055 !important;
+        background: rgba(248, 160, 85, 0.1);
         transform: translateX(8px);
         padding-left: calc(1rem - 3px + 8px);
     }
