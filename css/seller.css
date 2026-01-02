@@ -628,23 +628,424 @@ body {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-    .container { padding: 1rem; }
-    .header { flex-direction: column; gap: 1rem; text-align: center; }
-    .page-title { font-size: 2rem; }
-    .filters-section, .filter-controls { flex-direction: column; align-items: stretch; }
-    .sellers-grid { grid-template-columns: 1fr; }
-    .seller-stats { grid-template-columns: repeat(2, 1fr); }
-    .modal-container { width: 95%; margin: 20px; }
-    .form-grid { grid-template-columns: 1fr; }
+
+/* Tablet Responsiveness (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .container {
+        padding: 1.5rem;
+    }
+    
+    .header {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        gap: 1.5rem;
+    }
+    
+    .page-title {
+        font-size: 2.2rem;
+        gap: 0.75rem;
+    }
+    
+    .page-title i {
+        font-size: 1.8rem;
+    }
+    
+    .header-actions {
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    
+    .filters-section {
+        padding: 1.25rem;
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .search-box {
+        min-width: 250px;
+        flex: 1;
+    }
+    
+    .filter-controls {
+        gap: 0.75rem;
+    }
+    
+    .filter-select {
+        min-width: 140px;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+    
+    .sellers-grid {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .seller-card {
+        padding: 1.5rem;
+    }
+    
+    .seller-name {
+        font-size: 1.3rem;
+    }
+    
+    .seller-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .seller-stat {
+        padding: 1rem;
+    }
+    
+    .seller-stat-value {
+        font-size: 1.4rem;
+    }
+    
+    .seller-stat-label {
+        font-size: 0.85rem;
+    }
 }
 
+/* Mobile Responsiveness (max-width 768px) */
+@media (max-width: 768px) {
+    .container {
+        padding: 12px;
+        max-width: 100%;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+        padding: 16px;
+        margin-bottom: 16px;
+        border-radius: 16px;
+    }
+    
+    .page-title {
+        font-size: 20px;
+        gap: 0.75rem;
+        justify-content: center;
+    }
+    
+    .page-title i {
+        font-size: 24px;
+    }
+    
+    .header-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .header-actions .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 16px;
+        font-size: 13px;
+        gap: 8px;
+    }
+    
+    .filters-section {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px;
+        margin-bottom: 16px;
+        border-radius: 16px;
+    }
+    
+    .search-box {
+        min-width: 100%;
+        flex: 1;
+    }
+    
+    .search-box input {
+        padding: 11px 11px 11px 38px;
+        font-size: 14px;
+        border-radius: 10px;
+    }
+    
+    .search-box i {
+        left: 0.75rem;
+        font-size: 1rem;
+    }
+    
+    .filter-controls {
+        width: 100%;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .filter-select {
+        width: 100%;
+        min-width: auto;
+        padding: 11px 14px;
+        font-size: 13px;
+        border-radius: 10px;
+    }
+    
+    .sellers-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .seller-card {
+        padding: 16px;
+        border-radius: 16px;
+        gap: 12px;
+    }
+    
+    .seller-avatar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .avatar-img {
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+    }
+    
+    .seller-info {
+        width: 100%;
+    }
+    
+    .seller-name {
+        font-size: 16px;
+        margin-bottom: 4px;
+    }
+    
+    .seller-email {
+        font-size: 12px;
+    }
+    
+    .seller-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 12px;
+    }
+    
+    .seller-stat {
+        padding: 10px;
+        border-radius: 10px;
+        text-align: center;
+    }
+    
+    .seller-stat-value {
+        font-size: 1.3rem;
+    }
+    
+    .seller-stat-label {
+        font-size: 0.8rem;
+        margin-top: 2px;
+    }
+    
+    .seller-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+        margin-top: 12px;
+    }
+    
+    .seller-actions .btn {
+        width: 100%;
+        padding: 10px 14px;
+        font-size: 12px;
+        gap: 6px;
+        justify-content: center;
+    }
+    
+    .modal-container {
+        width: 95%;
+        max-width: 100%;
+        margin: 15px auto;
+        border-radius: 16px;
+        padding: 16px;
+    }
+    
+    .modal-header {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px 0 12px 0;
+        margin-bottom: 12px;
+    }
+    
+    .modal-title {
+        font-size: 18px;
+        gap: 8px;
+    }
+    
+    .close-modal {
+        width: 32px;
+        height: 32px;
+        font-size: 24px;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .form-group {
+        margin-bottom: 12px;
+    }
+    
+    .form-group label {
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+    
+    .form-group input,
+    .form-group select {
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 10px;
+    }
+    
+    .modal-actions {
+        gap: 10px;
+        flex-direction: column;
+    }
+    
+    .modal-actions .btn {
+        width: 100%;
+        padding: 12px 14px;
+        font-size: 13px;
+        justify-content: center;
+    }
+}
+
+/* Extra Small Devices (max-width 480px) */
 @media (max-width: 480px) {
-    .seller-card { padding: 1.5rem; }
-    .seller-avatar { flex-direction: column; align-items: flex-start; }
-    .seller-stats { grid-template-columns: 1fr; gap: 0.5rem; }
-    .header-actions { flex-direction: column; width: 100%;}
-    .header-actions .btn { justify-content: center; }
+    .container {
+        padding: 10px;
+    }
+    
+    .header {
+        padding: 12px;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    
+    .page-title {
+        font-size: 18px;
+        gap: 0.5rem;
+    }
+    
+    .page-title i {
+        font-size: 20px;
+    }
+    
+    .header-actions {
+        gap: 8px;
+    }
+    
+    .header-actions .btn {
+        padding: 10px 12px;
+        font-size: 12px;
+        gap: 6px;
+    }
+    
+    .filters-section {
+        gap: 10px;
+        padding: 10px;
+        margin-bottom: 12px;
+    }
+    
+    .filter-select {
+        padding: 9px 12px;
+        font-size: 12px;
+    }
+    
+    .sellers-grid {
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    
+    .seller-card {
+        padding: 12px;
+        border-radius: 12px;
+    }
+    
+    .seller-card::before {
+        height: 3px;
+    }
+    
+    .seller-avatar {
+        gap: 10px;
+    }
+    
+    .avatar-img {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .seller-name {
+        font-size: 15px;
+    }
+    
+    .seller-email {
+        font-size: 11px;
+    }
+    
+    .seller-stats {
+        gap: 8px;
+        margin-top: 10px;
+    }
+    
+    .seller-stat {
+        padding: 8px;
+        border-radius: 8px;
+    }
+    
+    .seller-stat-value {
+        font-size: 1.2rem;
+    }
+    
+    .seller-stat-label {
+        font-size: 0.75rem;
+    }
+    
+    .seller-actions {
+        gap: 6px;
+        margin-top: 10px;
+    }
+    
+    .seller-actions .btn {
+        padding: 8px 10px;
+        font-size: 11px;
+        gap: 4px;
+    }
+    
+    .modal-container {
+        width: 98%;
+        padding: 12px;
+        margin: 10px auto;
+    }
+    
+    .modal-title {
+        font-size: 16px;
+    }
+    
+    .form-group {
+        margin-bottom: 10px;
+    }
+    
+    .form-group label {
+        font-size: 11px;
+        margin-bottom: 4px;
+    }
+    
+    .form-group input,
+    .form-group select {
+        padding: 8px;
+        font-size: 13px;
+    }
 }
 
 /* ✅ START: FINAL CSS FIX */

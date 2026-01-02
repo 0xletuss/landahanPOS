@@ -417,19 +417,175 @@
       to { transform: rotate(360deg); }
     }
     
-    /* Mobile Responsiveness */
+    /* Tablet Responsiveness (769px - 1024px) */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      /* Header Tablet */
+      .header {
+        padding: 0.875rem 0;
+      }
+      
+      .nav-container {
+        padding: 0 1.5rem;
+      }
+      
+      .logo {
+        font-size: 1.35rem;
+      }
+      
+      .logo::before {
+        font-size: 1.55rem;
+      }
+      
+      .nav-links {
+        gap: 1.5rem;
+      }
+      
+      .get-started-btn {
+        padding: 0.65rem 1.3rem;
+        font-size: 0.95rem;
+      }
+      
+      /* Hero Tablet */
+      .hero {
+        min-height: 90vh;
+        padding-top: 60px;
+      }
+      
+      .hero-container {
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        padding: 2.5rem 1.5rem;
+        align-items: center;
+      }
+      
+      .hero-content h1 {
+        font-size: 2.8rem;
+        margin-bottom: 1.25rem;
+      }
+      
+      .hero-content p {
+        font-size: 1.1rem;
+        margin-bottom: 1.75rem;
+      }
+      
+      .hero-buttons {
+        gap: 0.875rem;
+      }
+      
+      .btn-primary, .btn-secondary {
+        padding: 0.875rem 1.75rem;
+        font-size: 1rem;
+      }
+      
+      .coconut-3d-container {
+        max-width: 350px;
+        height: 350px;
+      }
+      
+      .fallback-coconut {
+        font-size: 6rem;
+      }
+      
+      /* Features Tablet */
+      .features {
+        padding: 4.5rem 0;
+      }
+      
+      .features-container {
+        padding: 0 1.5rem;
+      }
+      
+      .features-header {
+        margin-bottom: 3rem;
+      }
+      
+      .features-header h2 {
+        font-size: 2.2rem;
+        margin-bottom: 0.875rem;
+      }
+      
+      .features-header p {
+        font-size: 1.1rem;
+      }
+      
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.75rem;
+      }
+      
+      .feature-card {
+        padding: 1.75rem;
+      }
+      
+      .feature-icon {
+        font-size: 2.75rem;
+      }
+      
+      .feature-card h3 {
+        font-size: 1.4rem;
+        margin-bottom: 0.875rem;
+      }
+      
+      .feature-card p {
+        font-size: 0.975rem;
+      }
+      
+      /* CTA Tablet */
+      .cta {
+        padding: 4.5rem 0;
+      }
+      
+      .cta-container {
+        padding: 0 1.5rem;
+      }
+      
+      .cta h2 {
+        font-size: 2.2rem;
+        margin-bottom: 0.875rem;
+      }
+      
+      .cta p {
+        font-size: 1.1rem;
+        margin-bottom: 1.75rem;
+      }
+      
+      /* Footer Tablet */
+      .footer {
+        padding: 2.5rem 1.5rem 1rem;
+      }
+      
+      .footer-container {
+        padding: 0 1.5rem;
+      }
+      
+      .footer-logo {
+        font-size: 1.35rem;
+        margin-bottom: 0.875rem;
+      }
+      
+      .footer p {
+        margin-top: 1.25rem;
+        padding-top: 1.25rem;
+        font-size: 0.95rem;
+      }
+    }
+    
+    /* Mobile Responsiveness (max-width 768px) */
     @media (max-width: 768px) {
       /* Header Mobile */
       .header {
         padding: 0.75rem 0;
+        position: relative;
       }
       
       .nav-container {
         padding: 0 1rem;
+        flex-wrap: wrap;
       }
       
       .logo {
         font-size: 1.2rem;
+        flex-grow: 1;
       }
       
       .logo::before {
@@ -461,6 +617,7 @@
       .hero-content h1 {
         font-size: 2.2rem;
         margin-bottom: 1rem;
+        line-height: 1.1;
       }
       
       .hero-content p {
@@ -476,6 +633,7 @@
       
       .btn-primary, .btn-secondary {
         width: 100%;
+        padding: 0.875rem 1.5rem;
       }
       
       .hero-visual {
@@ -508,6 +666,7 @@
       .features-header h2 {
         font-size: 1.8rem;
         margin-bottom: 0.75rem;
+        line-height: 1.2;
       }
       
       .features-header p {
@@ -521,6 +680,7 @@
       
       .feature-card {
         padding: 1.5rem;
+        border-radius: 16px;
       }
       
       .feature-icon {
@@ -534,6 +694,7 @@
       
       .feature-card p {
         font-size: 0.95rem;
+        line-height: 1.5;
       }
       
       /* CTA Mobile */
@@ -548,11 +709,17 @@
       .cta h2 {
         font-size: 1.8rem;
         margin-bottom: 0.75rem;
+        line-height: 1.2;
       }
       
       .cta p {
         font-size: 1rem;
         margin-bottom: 1.5rem;
+      }
+      
+      .cta .btn-primary {
+        font-size: 1rem;
+        padding: 0.875rem 1.75rem;
       }
       
       /* Footer Mobile */
@@ -574,10 +741,16 @@
         padding-top: 1rem;
         font-size: 0.9rem;
       }
+      
+      .footer-credit {
+        margin-top: 1rem;
+        font-size: 0.8rem;
+      }
     }
     
+    /* Small Mobile Devices (480px and below) */
     @media (max-width: 480px) {
-      /* Extra Small Devices */
+      /* Header Extra Small */
       .header {
         padding: 0.5rem 0;
       }
@@ -597,11 +770,16 @@
       .get-started-btn {
         padding: 0.5rem 1rem;
         font-size: 0.85rem;
+        white-space: nowrap;
       }
       
       /* Hero Extra Small */
       .hero {
         padding-top: 70px;
+      }
+      
+      .hero::before {
+        opacity: 0.5;
       }
       
       .hero-container {

@@ -288,6 +288,76 @@
 /* ============================================= */
 /* RESPONSIVE DESIGN FOR MOBILE                  */
 /* ============================================= */
+/* Tablet Responsiveness (769px - 1024px) */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .container {
+        padding: 18px;
+    }
+    
+    header {
+        padding: 18px 25px;
+        gap: 20px;
+    }
+    
+    .page-title {
+        font-size: 28px;
+    }
+    
+    .header-actions {
+        gap: 12px;
+    }
+    
+    .btn {
+        padding: 10px 18px;
+        font-size: 14px;
+        gap: 8px;
+    }
+    
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+    
+    .metric-card {
+        padding: 16px;
+        gap: 12px;
+    }
+    
+    .metric-card i {
+        font-size: 2rem;
+        padding: 10px;
+    }
+    
+    .metric-info .metric-value {
+        font-size: 1.8rem;
+    }
+    
+    .metric-info .metric-label {
+        font-size: 0.85rem;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 12px 10px;
+        font-size: 13px;
+    }
+    
+    .data-table th {
+        font-size: 12px;
+    }
+    
+    .col-actions {
+        width: 120px;
+    }
+    
+    .inventory-table-container {
+        padding: 16px;
+        border-radius: 24px;
+    }
+}
+
+/* Mobile Responsiveness (max-width 768px) */
 @media screen and (max-width: 768px) {
     .responsive-table-container .data-table thead {
         display: none;
@@ -304,16 +374,19 @@
     .responsive-table-container .data-table {
         min-width: 100%;
     }
+    
     .responsive-table-container {
         overflow-x: hidden;
+        padding: 12px;
+        border-radius: 18px;
     }
 
     .responsive-table-container .data-table tr {
-        margin-bottom: var(--spacing-md);
-        border-radius: 15px;
+        margin-bottom: 12px;
+        border-radius: 14px;
         border: 1px solid var(--color-border);
         background-color: #ffffff;
-        box-shadow: var(--shadow-md);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         overflow: hidden;
     }
 
@@ -321,9 +394,10 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.75rem var(--spacing-md);
+        padding: 10px 12px;
         text-align: right; 
         border-bottom: 1px solid #f3f4f6;
+        font-size: 13px;
     }
 
     .responsive-table-container .data-table td:last-child {
@@ -334,18 +408,218 @@
         content: attr(data-label);
         font-weight: 600;
         text-align: left;
-        color: var(--color-text-light);
-        padding-right: var(--spacing-md);
+        color: #666;
+        padding-right: 12px;
+        font-size: 12px;
     }
 
     .responsive-table-container .data-table td.col-name {
         background-color: var(--color-primary-bg);
         justify-content: center;
-        padding: var(--spacing-md);
+        padding: 12px;
     }
     
     .responsive-table-container .data-table td.col-name::before {
         display: none; 
+    }
+    
+    .container {
+        padding: 12px;
+        min-height: 100vh;
+    }
+    
+    header {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px;
+        border-radius: 16px;
+        margin-bottom: 18px;
+    }
+    
+    .page-title {
+        font-size: 20px;
+        gap: 10px;
+    }
+    
+    .page-title i {
+        font-size: 24px;
+    }
+    
+    .header-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 13px;
+        gap: 8px;
+        justify-content: center;
+    }
+    
+    .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .metric-card {
+        padding: 14px 12px;
+        gap: 12px;
+        flex-direction: column;
+        text-align: center;
+        border-radius: 14px;
+    }
+    
+    .metric-card i {
+        font-size: 1.8rem;
+        padding: 8px;
+    }
+    
+    .metric-info {
+        width: 100%;
+    }
+    
+    .metric-info .metric-value {
+        font-size: 1.6rem;
+    }
+    
+    .metric-info .metric-label {
+        font-size: 0.8rem;
+    }
+    
+    .inventory-table-container {
+        padding: 0;
+        border-radius: 16px;
+        overflow: visible;
+        border: none;
+        box-shadow: none;
+        background: transparent;
+    }
+    
+    .data-table {
+        min-width: auto;
+    }
+    
+    .modal-overlay .modal-content {
+        width: 95%;
+        max-width: 100%;
+        border-radius: 16px;
+        padding: 20px;
+        max-height: 80vh;
+    }
+    
+    .form-group {
+        margin-bottom: 12px;
+    }
+    
+    .form-group label {
+        font-size: 12px;
+    }
+    
+    .form-group input,
+    .form-group select {
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 10px;
+    }
+    
+    .form-actions {
+        gap: 10px;
+        flex-direction: column;
+    }
+    
+    .alerts-container {
+        margin-bottom: 16px;
+    }
+    
+    .alert {
+        font-size: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        gap: 8px;
+    }
+    
+    .alert i {
+        font-size: 1.2rem;
+    }
+}
+
+/* Extra Small Devices (max-width 480px) */
+@media screen and (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+    
+    header {
+        padding: 12px;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .page-title {
+        font-size: 18px;
+        gap: 8px;
+    }
+    
+    .page-title i {
+        font-size: 20px;
+    }
+    
+    .header-actions {
+        gap: 8px;
+    }
+    
+    .btn {
+        padding: 10px 12px;
+        font-size: 12px;
+        gap: 6px;
+    }
+    
+    .metrics-grid {
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+    
+    .metric-card {
+        padding: 12px;
+        gap: 10px;
+        border-radius: 12px;
+    }
+    
+    .metric-card i {
+        font-size: 1.5rem;
+        padding: 6px;
+    }
+    
+    .metric-info .metric-value {
+        font-size: 1.4rem;
+    }
+    
+    .metric-info .metric-label {
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+    
+    .responsive-table-container {
+        padding: 10px;
+    }
+    
+    .responsive-table-container .data-table tr {
+        margin-bottom: 10px;
+        border-radius: 10px;
+    }
+    
+    .responsive-table-container .data-table td {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    
+    .responsive-table-container .data-table td::before {
+        font-size: 11px;
+        padding-right: 8px;
     }
 }
 

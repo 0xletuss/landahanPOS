@@ -730,180 +730,451 @@ body {
 /* RESPONSIVE DESIGN                             */
 /* ============================================= */
 
-/* Tablet */
-@media (max-width: 1024px) {
+/* Tablet (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
     body {
-        padding: var(--space-sm);
+        padding: var(--space-md);
     }
-
+    
+    .container {
+        max-width: 100%;
+    }
+    
     .page-header {
         padding: var(--space-lg);
+        margin-bottom: var(--space-lg);
     }
-
+    
+    .page-header h1 {
+        font-size: 2rem;
+    }
+    
+    .page-header p {
+        font-size: 0.95rem;
+    }
+    
     .controls-section {
-        padding: var(--space-md);
+        padding: var(--space-lg);
+        margin-bottom: var(--space-lg);
     }
-
-    .stats-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    
+    .controls-row {
+        gap: var(--space-md);
     }
-
-    .performance-section {
-        grid-template-columns: 1fr;
+    
+    .control-group {
+        min-width: 140px;
+        flex: 0 1 auto;
     }
-
-    .group-summary {
-        flex-direction: column;
-        align-items: flex-start;
+    
+    .action-buttons {
         gap: var(--space-sm);
     }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-    body {
-        padding: var(--space-xs);
-    }
-
-    .page-header {
-        padding: var(--space-md);
-        margin-bottom: var(--space-md);
-    }
-
-    .page-header h1 {
-        font-size: 1.5rem;
-    }
-
-    .controls-section {
-        padding: var(--space-md);
-        margin-bottom: var(--space-md);
-    }
-
-    .controls-row {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .control-group {
-        width: 100%;
-    }
-
-    .action-buttons,
-    .group-buttons {
-        width: 100%;
-        margin-left: 0;
-    }
-
-    .btn,
-    .group-btn {
-        flex: 1;
-        justify-content: center;
-    }
-
+    
     .stats-grid {
-        grid-template-columns: 1fr;
-        gap: var(--space-md);
-        margin-bottom: var(--space-md);
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: var(--space-lg);
+        margin-bottom: var(--space-lg);
     }
-
+    
     .stat-card {
         padding: var(--space-lg);
     }
+    
+    .stat-card .label {
+        font-size: 0.875rem;
+    }
+    
+    .stat-card .value {
+        font-size: 1.75rem;
+    }
+    
+    .performance-section {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+    }
+    
+    .performance-card {
+        padding: var(--space-lg);
+        margin-bottom: var(--space-lg);
+    }
+    
+    .performance-card h2 {
+        font-size: 1.4rem;
+        margin-bottom: var(--space-md);
+    }
+    
+    .product-performance-section {
+        padding: var(--space-lg);
+        margin-bottom: var(--space-lg);
+    }
+    
+    .transactions-section {
+        padding: var(--space-lg);
+        margin-bottom: var(--space-lg);
+    }
+    
+    .delivery-card {
+        padding: var(--space-lg);
+    }
+    
+    .group-header {
+        padding: var(--space-lg);
+    }
+}
 
+/* Mobile (max-width 768px) */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .page-header {
+        padding: 16px;
+        margin-bottom: 16px;
+        border-radius: 16px;
+    }
+    
+    .page-header h1 {
+        font-size: 1.5rem;
+        line-height: 1.2;
+        margin-bottom: 8px;
+    }
+    
+    .page-header p {
+        font-size: 0.9rem;
+    }
+    
+    .controls-section {
+        padding: 16px;
+        margin-bottom: 16px;
+        border-radius: 16px;
+    }
+    
+    .controls-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    
+    .control-group {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .control-group label {
+        font-size: 0.8rem;
+    }
+    
+    .control-group input,
+    .control-group select {
+        padding: 10px;
+        font-size: 13px;
+        border-radius: 10px;
+    }
+    
+    .action-buttons,
+    .group-buttons {
+        width: 100%;
+        gap: 8px;
+        flex-direction: column;
+    }
+    
+    .btn,
+    .group-btn {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 13px;
+        justify-content: center;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .stat-card {
+        padding: 14px 12px;
+        border-radius: 14px;
+    }
+    
+    .stat-card .label {
+        font-size: 0.75rem;
+    }
+    
+    .stat-card .value {
+        font-size: 1.4rem;
+    }
+    
+    .stat-card i {
+        font-size: 1.5rem;
+    }
+    
+    .performance-section {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
     .performance-card,
     .product-performance-section,
     .transactions-section {
-        padding: var(--space-md);
-        margin-bottom: var(--space-md);
+        padding: 16px;
+        margin-bottom: 16px;
+        border-radius: 14px;
     }
-
+    
     .performance-card h2,
     .product-performance-section h2,
     .transactions-section h2 {
-        font-size: 1.125rem;
+        font-size: 1.1rem;
+        margin-bottom: 12px;
     }
-
+    
     .delivery-card {
-        padding: var(--space-md);
+        padding: 14px;
+        margin-bottom: 12px;
+        border-radius: 12px;
     }
-
+    
+    .delivery-header {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
     .product-name {
-        font-size: 1rem;
+        font-size: 14px;
     }
-
+    
     .profit-amount {
-        font-size: 1.25rem;
+        font-size: 1.2rem;
     }
-
+    
     .delivery-details {
-        gap: var(--space-md);
+        gap: 8px;
+        flex-direction: column;
     }
-
+    
+    .delivery-detail-item {
+        font-size: 12px;
+        padding: 4px 0;
+    }
+    
     .group-header {
-        padding: var(--space-md);
+        padding: 14px 12px;
+        margin-bottom: 12px;
     }
-
+    
     .group-info h3 {
         font-size: 1rem;
+        margin-bottom: 4px;
     }
-
+    
+    .group-summary {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+    
+    .summary-item {
+        font-size: 0.9rem;
+    }
+    
     /* Responsive Table for Mobile */
     .transactions-table {
         display: block;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
     }
-
+    
     .transactions-table thead {
         display: none;
     }
-
+    
     .transactions-table tbody {
         display: block;
     }
-
+    
     .transactions-table tr {
         display: block;
-        margin-bottom: var(--space-md);
-        border: 2px solid var(--color-border);
-        border-radius: var(--radius-md);
+        margin-bottom: 12px;
+        border: 1px solid var(--color-border);
+        border-radius: 10px;
         background: var(--color-bg-primary);
         box-shadow: var(--shadow-sm);
+        overflow: hidden;
     }
-
+    
     .transactions-table td {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: var(--space-md);
+        padding: 10px 12px;
         border-bottom: 1px solid var(--color-border-light);
         text-align: right;
+        font-size: 13px;
     }
-
-    /* Mobile label inside each cell (hidden on desktop) */
-    .cell-label {
-        display: none;
-    }
-
+    
     .transactions-table td:last-child {
         border-bottom: none;
     }
-
-    /* Use an inline element containing an icon inside each td instead of ::before text
-       .cell-label is injected by JS at render time and shown only on small screens */
+    
     .cell-label {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 32px;
-        height: 32px;
-        margin-right: var(--space-md);
+        width: 30px;
+        height: 30px;
+        margin-right: 8px;
         color: var(--color-text-secondary);
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
-
+    
     .transaction-group {
-        margin-bottom: var(--space-md);
+        margin-bottom: 12px;
+    }
+    
+    .pagination-container {
+        margin-top: 12px;
+    }
+    
+    .pagination-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+        border-radius: 6px;
+    }
+}
+
+/* Extra Small Mobile (max-width 480px) */
+@media (max-width: 480px) {
+    body {
+        padding: 8px;
+    }
+    
+    .page-header {
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .page-header h1 {
+        font-size: 1.25rem;
+        margin-bottom: 6px;
+    }
+    
+    .page-header p {
+        font-size: 0.85rem;
+    }
+    
+    .controls-section {
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .controls-row {
+        gap: 8px;
+    }
+    
+    .control-group input,
+    .control-group select {
+        padding: 8px;
+        font-size: 12px;
+    }
+    
+    .action-buttons,
+    .group-buttons {
+        gap: 6px;
+    }
+    
+    .btn,
+    .group-btn {
+        padding: 10px 12px;
+        font-size: 12px;
+        gap: 6px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    
+    .stat-card {
+        padding: 12px 10px;
+        border-radius: 12px;
+    }
+    
+    .stat-card .label {
+        font-size: 0.7rem;
+    }
+    
+    .stat-card .value {
+        font-size: 1.3rem;
+    }
+    
+    .stat-card i {
+        font-size: 1.3rem;
+    }
+    
+    .performance-card,
+    .product-performance-section,
+    .transactions-section {
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .performance-card h2,
+    .product-performance-section h2,
+    .transactions-section h2 {
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+    
+    .delivery-card {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+    
+    .product-name {
+        font-size: 13px;
+    }
+    
+    .profit-amount {
+        font-size: 1.1rem;
+    }
+    
+    .group-header {
+        padding: 12px 10px;
+        margin-bottom: 10px;
+    }
+    
+    .group-info h3 {
+        font-size: 0.95rem;
+    }
+    
+    .summary-item {
+        font-size: 0.85rem;
+    }
+    
+    .transactions-table tr {
+        margin-bottom: 10px;
+        border-radius: 8px;
+    }
+    
+    .transactions-table td {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    
+    .cell-label {
+        width: 28px;
+        height: 28px;
+        margin-right: 6px;
+        font-size: 0.85rem;
     }
 }
 
