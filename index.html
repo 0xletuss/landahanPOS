@@ -196,22 +196,22 @@
       position: relative;
     }
     
-    .coconut-illustration {
+    .coconut-3d-container {
       width: 100%;
-      max-width: 400px;
-      height: 400px;
+      max-width: 500px;
+      height: 500px;
       background: linear-gradient(135deg, #f7fafc 0%, #c7f52e 100%);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 8rem;
       animation: bounce 2s ease-in-out infinite;
       box-shadow: 0 20px 60px rgba(199, 245, 46, 0.3);
       position: relative;
+      overflow: hidden;
     }
     
-    .coconut-illustration::before {
+    .coconut-3d-container::before {
       content: '';
       position: absolute;
       top: -10px;
@@ -222,6 +222,25 @@
       border-radius: 50%;
       z-index: -1;
       animation: pulse 3s ease-in-out infinite;
+    }
+    
+    .coconut-3d-viewer {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    model-viewer {
+      width: 100%;
+      height: 100%;
+      --poster-color: transparent;
+    }
+    
+    .fallback-coconut {
+      font-size: 8rem;
+      animation: spin 10s linear infinite;
     }
     
     /* Features Section */
@@ -361,6 +380,22 @@
       border-top: 1px solid #2d3748;
     }
     
+    .footer-credit {
+      opacity: 0.5;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
+    
+    .footer-credit a {
+      color: #c7f52e;
+      text-decoration: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    .footer-credit a:hover {
+      opacity: 0.8;
+    }
+    
     /* Animations */
     @keyframes float {
       0%, 100% { transform: translateY(0px); }
@@ -375,6 +410,11 @@
     @keyframes pulse {
       0%, 100% { opacity: 0.5; transform: scale(1); }
       50% { opacity: 0.8; transform: scale(1.05); }
+    }
+    
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
     
     /* Mobile Responsiveness */
@@ -397,9 +437,12 @@
         justify-content: center;
       }
       
-      .coconut-illustration {
-        max-width: 300px;
-        height: 300px;
+      .coconut-3d-container {
+        max-width: 350px;
+        height: 350px;
+      }
+      
+      .fallback-coconut {
         font-size: 6rem;
       }
       
@@ -434,20 +477,27 @@
         font-size: 1rem;
       }
       
+      .coconut-3d-container {
+        max-width: 280px;
+        height: 280px;
+      }
+      
+      .fallback-coconut {
+        font-size: 5rem;
+      }
+      
       .features-container, .cta-container, .footer-container {
         padding: 0 1rem;
       }
     }
   </style>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 </head>
 <body>
   <!-- Header -->
   <header class="header">
     <nav class="nav-container">
-      <a href="#" class="logo">
-        <!-- ADD YOUR SYSTEM NAME HERE -->
-        LANDAHAN
-      </a>
+      <a href="#" class="logo">LANDAHAN</a>
       <ul class="nav-links">
         <li><a href="#features">Features</a></li>
         <li><a href="#about">About</a></li>
@@ -461,7 +511,7 @@
   <section class="hero">
     <div class="hero-container">
       <div class="hero-content">
-        <h1>Welcome to <span class="hero-title"><!-- ADD YOUR SYSTEM NAME HERE -->LANDAHAN</span></h1>
+        <h1>Welcome to <span class="hero-title">LANDAHAN</span></h1>
         <p>Experience the fresh, natural approach to digital solutions. Built with simplicity and powered by innovation.</p>
         <div class="hero-buttons">
           <a href="/pages/login.html" class="btn-primary">Get Started</a>
@@ -469,15 +519,29 @@
         </div>
       </div>
       <div class="hero-visual">
-        <div class="coconut-illustration">
-          🥥
+        <div class="coconut-3d-container">
+          <div class="coconut-3d-viewer">
+         <model-viewer
+              src="https://res.cloudinary.com/dwpaud00s/image/upload/v1767362245/coconut_knthfg.glb"
+              alt="3D Coconut Model"
+              auto-rotate
+              camera-controls
+              shadow-intensity="1"
+              exposure="1"
+              camera-orbit="45deg 75deg 2.5m"
+              min-camera-orbit="auto auto 1m"
+              max-camera-orbit="auto auto 10m"
+              style="width: 100%; height: 100%;">
+              <div class="fallback-coconut" slot="poster">🥥</div>
+            </model-viewer>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Features Section -->
- <section class="features" id="features">
+  <section class="features" id="features">
     <div class="features-container">
       <div class="features-header">
         <h2>Why Choose LANDAHAN</h2>
@@ -515,11 +579,11 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
-      <div class="footer-logo">
-        <!-- ADD YOUR SYSTEM NAME HERE -->
-        LANDAHAN
-      </div>
-      <p>&copy; 2025 <!-- ADD YOUR SYSTEM NAME HERE -->LANDAHAN. All rights reserved.</p>
+      <div class="footer-logo">LANDAHAN</div>
+      <p>&copy; 2025 LANDAHAN. All rights reserved.</p>
+      <p class="footer-credit">
+        3D Coconut Model by <a href="https://sketchfab.com/lornainman" target="_blank" rel="noopener">Lorna Inman</a> #nutkhut #girmit
+      </p>
     </div>
   </footer>
 
@@ -549,6 +613,15 @@
         header.style.boxShadow = 'none';
       }
     });
+
+    // Handle model-viewer loading errors
+    const modelViewer = document.querySelector('model-viewer');
+    if (modelViewer) {
+      modelViewer.addEventListener('error', (event) => {
+        console.error('Error loading 3D model:', event);
+        // Fallback is already handled by the poster slot
+      });
+    }
   </script>
 </body>
 </html>

@@ -1,5 +1,5 @@
-// Configuration
-const API_BASE = 'https://landahan-5.onrender.com/arima'; // Your Flask backend URL
+// Configuration - FIXED: Added /api to match Flask blueprint registration
+const API_BASE = 'https://landahan-5.onrender.com/api/arima'; // ✅ Changed from /arima to /api/arima
 
 // Global chart instance
 let chart = null;
@@ -31,7 +31,6 @@ function setButtonsDisabled(disabled) {
 }
 
 // Get best model parameters as suggestions
-// Get best model parameters as suggestions
 async function getSuggestedParameters() {
     const suggestionDiv = document.getElementById('parameterSuggestion');
     
@@ -54,15 +53,14 @@ async function getSuggestedParameters() {
 
         const result = await response.json();
         
-        console.log('Best params response:', result); // Debug log
+        console.log('Best params response:', result);
 
         if (result.success) {
-            // Extract parameters - use actual values from response
             const p = result.p;
             const d = result.d;
             const q = result.q;
             
-            console.log(`Received parameters: p=${p}, d=${d}, q=${q}`); // Debug log
+            console.log(`Received parameters: p=${p}, d=${d}, q=${q}`);
             
             // Fill in the parameter inputs with actual values
             document.getElementById('pOrder').value = p;
@@ -75,17 +73,14 @@ async function getSuggestedParameters() {
                 let color = '';
                 
                 if (result.warning) {
-                    // Model fitting had issues - show warning with ACTUAL parameters
                     message = `⚠ ${result.warning}<br>Using: <strong>ARIMA(${p},${d},${q})</strong>`;
-                    color = '#f59e0b'; // Orange
+                    color = '#f59e0b';
                 } else if (typeof result.aic === 'number' && typeof result.bic === 'number') {
-                    // Has valid metrics - show them with ACTUAL parameters
                     message = `✓ Optimal model: <strong>ARIMA(${p},${d},${q})</strong> | AIC: ${result.aic.toFixed(2)} | BIC: ${result.bic.toFixed(2)}`;
-                    color = '#10b981'; // Green
+                    color = '#10b981';
                 } else {
-                    // No metrics but successful - show ACTUAL parameters
                     message = `✓ Recommended: <strong>ARIMA(${p},${d},${q})</strong>`;
-                    color = '#10b981'; // Green
+                    color = '#10b981';
                 }
                 
                 suggestionDiv.innerHTML = message;
@@ -101,7 +96,6 @@ async function getSuggestedParameters() {
     } catch (error) {
         console.error('Error getting parameter suggestions:', error);
         
-        // Fall back to safe defaults
         const defaultP = 1;
         const defaultD = 1;
         const defaultQ = 1;
@@ -111,7 +105,6 @@ async function getSuggestedParameters() {
             suggestionDiv.style.color = '#f59e0b';
         }
         
-        // Set default values
         document.getElementById('pOrder').value = defaultP;
         document.getElementById('dOrder').value = defaultD;
         document.getElementById('qOrder').value = defaultQ;
@@ -128,7 +121,7 @@ async function loadHistoricalData() {
 
         const response = await fetch(`${API_BASE}/husked-coconut-prices`, {
             method: 'GET',
-            credentials: 'include' // Important for session cookies
+            credentials: 'include'
         });
 
         const result = await response.json();
@@ -137,7 +130,6 @@ async function loadHistoricalData() {
             throw new Error(result.message || result.error || 'Failed to load data');
         }
 
-        // Render the chart with historical data only
         renderChart(
             result.data.dates,
             result.data.prices,
@@ -147,7 +139,6 @@ async function loadHistoricalData() {
             'Historical Husked Coconut Prices'
         );
 
-        // Update statistics
         updateStats(result.data);
 
     } catch (error) {
@@ -165,13 +156,11 @@ async function generateForecast() {
         showLoading(true);
         setButtonsDisabled(true);
 
-        // Get input values
         const forecastDays = parseInt(document.getElementById('forecastDays').value);
         const p = parseInt(document.getElementById('pOrder').value);
         const d = parseInt(document.getElementById('dOrder').value);
         const q = parseInt(document.getElementById('qOrder').value);
 
-        // Validate inputs
         if (isNaN(forecastDays) || forecastDays < 7 || forecastDays > 90) {
             throw new Error('Forecast days must be between 7 and 90');
         }
@@ -200,14 +189,12 @@ async function generateForecast() {
             throw new Error(result.error || 'Forecast failed');
         }
 
-        // Combine historical and forecast dates
         const allDates = [...result.historical.dates, ...result.forecast.dates];
         const historicalPrices = result.historical.prices;
         const forecastPrices = result.forecast.prices;
         const lowerBound = result.forecast.lower_bound;
         const upperBound = result.forecast.upper_bound;
 
-        // Render chart with forecast
         renderChart(
             allDates,
             historicalPrices,
@@ -217,7 +204,6 @@ async function generateForecast() {
             `Price Forecast - ${result.model_info.order}`
         );
 
-        // Update statistics with forecast info
         updateForecastStats(result);
 
     } catch (error) {
@@ -246,14 +232,12 @@ async function autoForecast() {
             throw new Error(result.error || 'Auto-forecast failed');
         }
 
-        // Combine historical and forecast dates
         const allDates = [...result.historical.dates, ...result.forecast.dates];
         const historicalPrices = result.historical.prices;
         const forecastPrices = result.forecast.prices;
         const lowerBound = result.forecast.lower_bound;
         const upperBound = result.forecast.upper_bound;
 
-        // Render chart with forecast
         renderChart(
             allDates,
             historicalPrices,
@@ -263,7 +247,6 @@ async function autoForecast() {
             `Best Model: ${result.model_info.order}`
         );
 
-        // Update statistics with forecast info
         updateForecastStats(result);
 
     } catch (error) {
@@ -283,12 +266,10 @@ function renderChart(dates, historical, forecast, lower, upper, title) {
         return;
     }
 
-    // Destroy existing chart if it exists
     if (chart) {
         chart.destroy();
     }
 
-    // Prepare datasets
     const datasets = [{
         label: 'Historical Prices',
         data: historical,
@@ -301,9 +282,7 @@ function renderChart(dates, historical, forecast, lower, upper, title) {
         fill: false
     }];
 
-    // Add forecast data if available
     if (forecast && forecast.length > 0) {
-        // Create forecast data array with nulls for historical period
         const forecastData = new Array(historical.length).fill(null).concat(forecast);
         
         datasets.push({
@@ -319,7 +298,6 @@ function renderChart(dates, historical, forecast, lower, upper, title) {
             fill: false
         });
 
-        // Add confidence intervals if available
         if (lower && upper) {
             const lowerData = new Array(historical.length).fill(null).concat(lower);
             const upperData = new Array(historical.length).fill(null).concat(upper);
@@ -344,13 +322,12 @@ function renderChart(dates, historical, forecast, lower, upper, title) {
                 borderWidth: 1,
                 borderDash: [2, 2],
                 pointRadius: 0,
-                fill: '-1', // Fill to previous dataset (lower bound)
+                fill: '-1',
                 tension: 0.4
             });
         }
     }
 
-    // Create the chart
     chart = new Chart(ctx.getContext('2d'), {
         type: 'line',
         data: {
@@ -512,7 +489,6 @@ async function predictSpecificDay() {
             throw new Error('Please enter a valid day between 1 and 90');
         }
 
-        // We need to forecast up to that specific day
         const response = await fetch(`${API_BASE}/forecast`, {
             method: 'POST',
             headers: {
@@ -533,13 +509,11 @@ async function predictSpecificDay() {
             throw new Error(result.error || 'Forecast failed');
         }
 
-        // Get the price for the specific day (last day of forecast)
         const predictedPrice = result.forecast.prices[specificDay - 1];
         const lowerBound = result.forecast.lower_bound[specificDay - 1];
         const upperBound = result.forecast.upper_bound[specificDay - 1];
         const targetDate = result.forecast.dates[specificDay - 1];
 
-        // Display the result
         const resultDiv = document.getElementById('specificDayResult');
         const dateDiv = document.getElementById('specificDayDate');
         const priceDiv = document.getElementById('specificDayPrice');
@@ -550,11 +524,8 @@ async function predictSpecificDay() {
         rangeDiv.textContent = `₱${lowerBound.toFixed(2)} - ₱${upperBound.toFixed(2)}`;
 
         resultDiv.style.display = 'block';
-
-        // Scroll to result
         resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-        // Also show the full forecast chart
         const allDates = [...result.historical.dates, ...result.forecast.dates];
         const historicalPrices = result.historical.prices;
         const forecastPrices = result.forecast.prices;
@@ -582,8 +553,6 @@ async function predictSpecificDay() {
 // Initialize on page load
 window.addEventListener('DOMContentLoaded', () => {
     console.log('ARIMA page loaded');
-    // Load initial historical data
     loadHistoricalData();
-    // Auto-fill suggested parameters
     getSuggestedParameters();
 });

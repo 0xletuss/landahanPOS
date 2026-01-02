@@ -1,7 +1,8 @@
 // announcement.js
 class AnnouncementSystem {
     constructor() {
-        this.apiUrl = 'https://landahan-5.onrender.com/api/mail/price-announcement';
+        this.priceApiUrl = 'https://landahan-5.onrender.com/api/mail/price-announcement';
+        this.notAvailableApiUrl = 'https://landahan-5.onrender.com/api/mail/not-available-announcement';
         this.init();
     }
 
@@ -35,7 +36,7 @@ class AnnouncementSystem {
 
         const notAvailableBtn = document.getElementById('notAvailableBtn');
         if (notAvailableBtn) {
-            notAvailableBtn.addEventListener('click', () => this.sendNotAvailableAnnouncement());
+            notAvailableBtn.addEventListener('click', () => this.showNotAvailableForm());
         }
 
         // Close modal on overlay click
@@ -177,6 +178,76 @@ class AnnouncementSystem {
         });
     }
 
+    showNotAvailableForm() {
+        const modal = document.getElementById('announcementModal');
+        const modalBody = modal.querySelector('.modal-body');
+        
+        document.getElementById('announcementModalTitle').textContent = 'Product Not Available Announcement';
+        
+        modalBody.innerHTML = `
+            <form id="notAvailableForm" class="announcement-form">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>This will notify all sellers that coconut products are not available.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="unavailableDate">Date *</label>
+                    <input type="date" id="unavailableDate" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="unavailableReason">Reason (Optional)</label>
+                    <textarea id="unavailableReason" class="form-input" rows="4" placeholder="e.g., Supply shortage, Weather conditions, Maintenance, etc."></textarea>
+                    <small style="color: #999; display: block; margin-top: 5px;">
+                        Provide a brief explanation for the unavailability (optional)
+                    </small>
+                </div>
+
+                <div class="preview-box" style="background: #f9f5f1; border: 2px solid #E17055; border-radius: 12px; padding: 20px; margin: 20px 0;">
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <div style="font-size: 40px; margin-bottom: 10px;">🚫</div>
+                        <h3 style="color: #E17055; margin: 0; font-size: 18px;">Preview</h3>
+                    </div>
+                    <p style="margin: 10px 0; color: #666; font-size: 14px;">
+                        Sellers will receive an email notification about product unavailability with the date and reason you provide.
+                    </p>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <span>This announcement will be sent to all sellers via email.</span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelNotAvailableBtn">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="sendNotAvailableBtn">
+                        <i class="fas fa-paper-plane"></i> Send to All Sellers
+                    </button>
+                </div>
+            </form>
+        `;
+
+        // Set default date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('unavailableDate').value = today;
+
+        // Cancel button handler
+        const cancelBtn = document.getElementById('cancelNotAvailableBtn');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => this.closeAnnouncementModal());
+        }
+
+        // Form submit handler
+        const form = document.getElementById('notAvailableForm');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.sendNotAvailableAnnouncement();
+        });
+    }
+
     async sendPriceChangeAnnouncement(type) {
         const btn = document.getElementById('sendAnnouncementBtn');
         const originalText = btn.innerHTML;
@@ -207,7 +278,7 @@ class AnnouncementSystem {
                 day: 'numeric' 
             });
 
-            const response = await fetch(this.apiUrl, {
+            const response = await fetch(this.priceApiUrl, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -246,28 +317,59 @@ class AnnouncementSystem {
     }
 
     async sendNotAvailableAnnouncement() {
-        const confirmed = confirm('Send "Not Available Today" announcement to all sellers?');
-        if (!confirmed) return;
-
+        const btn = document.getElementById('sendNotAvailableBtn');
+        const originalText = btn.innerHTML;
+        
         try {
-            this.showNotification('Sending announcement...', 'info');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
 
-            const today = new Date().toLocaleDateString('en-US', { 
+            const unavailableDate = document.getElementById('unavailableDate').value;
+            const reason = document.getElementById('unavailableReason').value.trim();
+
+            // Format date
+            const dateObj = new Date(unavailableDate);
+            const formattedDate = dateObj.toLocaleDateString('en-US', { 
                 weekday: 'long',
                 year: 'numeric', 
                 month: 'long', 
                 day: 'numeric' 
             });
 
-            this.showNotification(
-                'Not Available announcement feature coming soon!', 
-                'info'
-            );
-            this.closeAnnouncementModal();
+            const response = await fetch(this.notAvailableApiUrl, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    date: formattedDate,
+                    reason: reason,
+                    send_to_all_sellers: true
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                this.showNotification(
+                    `"Not Available" announcement sent successfully to ${data.recipients_count} sellers!`, 
+                    'success'
+                );
+                this.closeAnnouncementModal();
+            } else {
+                throw new Error(data.error || 'Failed to send announcement');
+            }
 
         } catch (error) {
             console.error('Error sending announcement:', error);
-            this.showNotification('Failed to send announcement', 'error');
+            this.showNotification(
+                `Failed to send announcement: ${error.message}`, 
+                'error'
+            );
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
         }
     }
 
@@ -283,7 +385,8 @@ class AnnouncementSystem {
         const icons = { 
             success: 'fa-check-circle', 
             error: 'fa-exclamation-triangle', 
-            info: 'fa-info-circle' 
+            info: 'fa-info-circle',
+            warning: 'fa-exclamation-triangle'
         };
         notif.innerHTML = `<i class="fas ${icons[type] || 'fa-info-circle'}"></i><span>${msg}</span>`;
         container.appendChild(notif);
