@@ -4,99 +4,327 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Register - LANDAHAN</title>
-  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/design-theme.css">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
-      font-family: Arial, sans-serif;
+      font-family: var(--font-family-primary);
       padding: 1rem;
       margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      background-color: #f4f4f4;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--color-bg-cream) 0%, var(--color-bg-light-beige) 50%, var(--color-light-yellow) 100%);
+      background-attachment: fixed;
     }
-
+    
+    .container {
+      width: 100%;
+      max-width: 450px;
+      margin: 0 auto;
+    }
+    
     form {
-      background: #fff;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background: var(--color-bg-white);
+      padding: 2.5rem 2rem 2rem;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
       width: 100%;
-      max-width: 400px;
+      position: relative;
+      backdrop-filter: blur(10px);
     }
-
-    input, button {
-      width: 100%;
-      padding: 0.8rem;
-      margin-bottom: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+    
+    .back-button {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--color-text-gray);
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: var(--transition-fast);
+      width: auto;
+      margin-bottom: 0;
     }
-
-    #match-message {
+    
+    .back-button:hover {
+      background-color: var(--color-bg-light-beige);
+      color: var(--color-text-dark);
+    }
+    
+    h2 {
+      text-align: center;
+      font-size: 1.75rem;
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-dark);
+      margin-bottom: 0.5rem;
+      margin-top: 1rem;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: var(--color-text-gray);
       font-size: 0.9rem;
+      margin-bottom: 2rem;
+      line-height: 1.4;
+    }
+    
+    .input-group {
+      margin-bottom: 1.25rem;
+      position: relative;
+    }
+    
+    input {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      border: 2px solid var(--color-border-light);
+      border-radius: 16px;
+      font-size: 1rem;
+      transition: var(--transition-fast);
+      background: var(--color-bg-light-beige);
+      color: var(--color-text-dark);
+      font-family: var(--font-family-primary);
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: var(--color-primary-orange);
+      background: var(--color-bg-white);
+      box-shadow: 0 0 0 3px rgba(248, 160, 85, 0.1);
+    }
+    
+    input::placeholder {
+      color: var(--color-text-light-gray);
+      font-weight: 400;
+    }
+    
+    button {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-weight: var(--font-weight-semibold);
+      cursor: pointer;
+      transition: var(--transition-fast);
+      text-transform: none;
+      font-family: var(--font-family-primary);
+    }
+    
+    button[type="submit"] {
+      background: linear-gradient(135deg, var(--color-primary-orange) 0%, var(--color-coconut-brown) 100%);
+      color: white;
+      margin-bottom: 1.5rem;
+      margin-top: 0.5rem;
+    }
+    
+    button[type="submit"]:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 25px rgba(248, 160, 85, 0.3);
+    }
+    
+    #match-message {
+      font-size: 0.85rem;
       margin-top: -0.8rem;
       margin-bottom: 1rem;
       text-align: left;
+      padding: 0.5rem;
+      border-radius: 8px;
+      display: none;
     }
-
-    button {
-     background-color: #28a745;
-      color: white;
-      border: none;
-      cursor: pointer;
+    
+    #match-message.show {
+      display: block;
     }
-
-    button:hover {
-      background-color: #218838;
+    
+    #match-message.match {
+      color: var(--color-success);
+      background-color: rgba(168, 213, 163, 0.1);
+      border-left: 3px solid var(--color-success);
     }
-
-    p {
+    
+    #match-message.mismatch {
+      color: var(--color-error);
+      background-color: rgba(225, 112, 85, 0.1);
+      border-left: 3px solid var(--color-error);
+    }
+    
+    .links-container {
       text-align: center;
     }
-
-    a {
-      color: #007bff;
-      text-decoration: none;
+    
+    p {
+      text-align: center;
+      color: var(--color-text-gray);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 0.75rem;
     }
-
+    
+    a {
+      color: var(--color-primary-orange);
+      text-decoration: none;
+      font-weight: var(--font-weight-semibold);
+      font-size: 0.95rem;
+      transition: var(--transition-fast);
+    }
+    
     a:hover {
+      color: var(--color-coconut-brown);
       text-decoration: underline;
+    }
+    
+    #message {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      text-align: center;
+      display: none;
+    }
+    
+    #message.show {
+      display: block;
+    }
+    
+    #message.error {
+      background-color: rgba(225, 112, 85, 0.15);
+      color: var(--color-error);
+      border: 1px solid rgba(225, 112, 85, 0.3);
+    }
+    
+    #message.success {
+      background-color: rgba(168, 213, 163, 0.15);
+      color: var(--color-success);
+      border: 1px solid rgba(168, 213, 163, 0.3);
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 480px) {
+      body {
+        padding: 0.5rem;
+      }
+      
+      form {
+        padding: 2rem 1.5rem 1.5rem;
+        border-radius: 20px;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+      }
+      
+      .subtitle {
+        font-size: 0.85rem;
+      }
+      
+      input, button {
+        padding: 0.9rem 1rem;
+        font-size: 0.95rem;
+      }
+    }
+    
+    /* Loading state */
+    button[type="submit"]:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .loading {
+      position: relative;
+      color: transparent;
+    }
+    
+    .loading::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      top: 50%;
+      left: 50%;
+      margin-left: -10px;
+      margin-top: -10px;
+      border: 2px solid white;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
     }
   </style>
 </head>
 <body>
-  <form id="register">
-    <h2 style="text-align:center;">Register</h2>
-    <input type="text" id="name" placeholder="Full Name" required />
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Password" required />
-    <input type="password" id="confirm_password" placeholder="Confirm Password" required />
-    <div id="match-message"></div>
-    <button type="submit">Register</button>
-    <p>Already have an account? <a href="login.html">Login here</a>
-    <p id="message"></p>
-  </form>
+  <div class="container">
+    <form id="register">
+      <button type="button" class="back-button" onclick="history.back()">←</button>
+      
+      <h2>Create Account</h2>
+      <p class="subtitle">Join LANDAHAN and start managing your business</p>
+      
+      <div class="input-group">
+        <input type="text" id="name" placeholder="Full Name" required />
+      </div>
+      
+      <div class="input-group">
+        <input type="email" id="email" placeholder="Email" required />
+      </div>
+      
+      <div class="input-group">
+        <input type="password" id="password" placeholder="Password" required />
+      </div>
+      
+      <div class="input-group">
+        <input type="password" id="confirm_password" placeholder="Confirm Password" required />
+        <div id="match-message"></div>
+      </div>
+      
+      <button type="submit">Create Account</button>
+      
+      <div class="links-container">
+        <p>Already have an account? <a href="login.html">Sign in</a></p>
+      </div>
+      
+      <p id="message"></p>
+    </form>
+  </div>
 
   <script src="../js/register.js"></script>
   <script>
     const password = document.getElementById('password');
     const confirm = document.getElementById('confirm_password');
     const message = document.getElementById('match-message');
-    const form = document.getElementById('registerForm');
+    const form = document.getElementById('register');
 
     function checkMatch() {
       if (confirm.value === "") {
         message.textContent = "";
+        message.classList.remove('show', 'match', 'mismatch');
         return;
       }
+      message.classList.add('show');
       if (password.value === confirm.value) {
-        message.textContent = "Passwords match";
-        message.style.color = "green";
+        message.textContent = "✓ Passwords match";
+        message.classList.remove('mismatch');
+        message.classList.add('match');
       } else {
-        message.textContent = "Passwords do not match";
-        message.style.color = "red";
+        message.textContent = "✗ Passwords do not match";
+        message.classList.remove('match');
+        message.classList.add('mismatch');
       }
     }
 
@@ -106,8 +334,9 @@
     form.addEventListener('submit', function (e) {
       if (password.value !== confirm.value) {
         e.preventDefault();
-        message.textContent = "Passwords do not match";
-        message.style.color = "red";
+        message.textContent = "✗ Passwords do not match";
+        message.classList.add('show', 'mismatch');
+        message.classList.remove('match');
       }
     });
   </script>
