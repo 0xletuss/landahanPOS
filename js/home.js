@@ -2,8 +2,7 @@ const API_BASE_URL = "https://landahan-5.onrender.com/api";
 
 const state = {
     selectedSellerId: null,
-    // ✅ NEW: Track the selected product ID. Default to '2' which is 'Unhusked'.
-    selectedProductId: 2,
+    selectedProductId: 2, // Default to 'Unhusked'
 };
 
 /**
@@ -32,7 +31,6 @@ const api = {
             }
             return data;
         } catch (error) {
-            // Catch network errors like timeouts
             throw new Error(error.message);
         }
     },
@@ -40,8 +38,6 @@ const api = {
     verifySession() { return this._fetch("/verify-session"); },
     getSellers() { return this._fetch("/sellers"); },
     getTransactions() { return this._fetch("/transactions"); },
-
-    // ✅ ADDED: New API function to get the product summary
     getProductSummary() { return this._fetch("/products-summary"); },
 
     addSeller(sellerData) {
@@ -127,10 +123,9 @@ const ui = {
         elements.sellerDropdownSection?.classList.add("hidden");
         elements.addSellerFormSection?.classList.add("hidden");
 
-        // ✅ NEW: Reset the toggle switch after payment
         if (elements.productTypeToggle) elements.productTypeToggle.checked = false;
         this.updateToggleLabels(false);
-        state.selectedProductId = 2; // Reset state to Unhusked
+        state.selectedProductId = 2;
     },
     populateSellerList(sellers = []) {
         const { sellerList } = this.elements;
@@ -141,8 +136,6 @@ const ui = {
             sellerList.add(option);
         });
     },
-
-    // ✅ NEW: A function to update the toggle labels' active state
     updateToggleLabels(isHusked) {
         if (this.elements.huskedLabel && this.elements.unhuskedLabel) {
             if (isHusked) {
@@ -194,7 +187,6 @@ const handlers = {
                     ui.elements.userName.textContent = firstName;
                 }
             }
-            // ✅ UPDATED: Load all data in parallel, including summary
             await Promise.all([
                 handlers.loadSellers(),
                 handlers.loadTransactions(),
@@ -215,11 +207,9 @@ const handlers = {
             return [];
         }
     },
-    // ✅ ADDED: New handler to load and display the summary
     async loadProductSummary() {
         try {
             const products = await api.getProductSummary();
-            // Assuming ui.displayProductSummary is defined elsewhere to render the summary
             // ui.displayProductSummary(products);
         } catch (error) {
             console.error("Failed to load product summary:", error);
@@ -266,12 +256,12 @@ const handlers = {
         }
     },
     async handlePayment() {
-        const { quantityInput, priceInput, totalInput } = ui.elements;
+        const { quantityInput, priceInput, totalInput, selectedSellerText } = ui.elements;
         const transactionData = {
             seller_id: state.selectedSellerId,
             product_id: state.selectedProductId,
             quantity: parseInt(quantityInput.value, 10),
-            price_per_unit: parseFloat(priceInput.value), // Renamed from 'price'
+            price_per_unit: parseFloat(priceInput.value),
             total_cost: parseFloat(totalInput.value.replace("₱", "")),
         };
         if (!transactionData.seller_id || !transactionData.product_id || !transactionData.quantity || !transactionData.price_per_unit) {
@@ -280,8 +270,19 @@ const handlers = {
         try {
             const data = await api.submitTransaction(transactionData);
             ui.showMessage(`✅ ${data.message || "Transaction successful!"}`, "success");
+            
+            // Generate and download PDF receipt
+            const receiptData = {
+                sellerName: selectedSellerText.textContent,
+                productName: state.selectedProductId === 1 ? 'Husked Coconuts' : 'Unhusked Coconuts',
+                quantity: transactionData.quantity,
+                pricePerUnit: transactionData.price_per_unit,
+                totalCost: transactionData.total_cost,
+                date: new Date().toLocaleString()
+            };
+            handlers.downloadReceipt(receiptData);
+            
             ui.resetForm();
-            // ✅ UPDATED: Refresh both lists after a successful payment
             await Promise.all([
                 handlers.loadTransactions(),
                 handlers.loadProductSummary()
@@ -291,10 +292,134 @@ const handlers = {
             ui.showMessage(`❌ Payment failed: ${error.message}`, "error");
         }
     },
-    // ✅ NEW: A handler for when the toggle switch is clicked
+    downloadReceipt(receiptData) {
+        // Create canvas for receipt image
+        const canvas = document.createElement('canvas');
+        canvas.width = 600;
+        canvas.height = 800;
+        const ctx = canvas.getContext('2d');
+        
+        // Background
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Add gradient background
+        const gradient = ctx.createLinearGradient(0, 0, 0, 800);
+        gradient.addColorStop(0, '#f8f9fa');
+        gradient.addColorStop(1, '#e9ecef');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Success icon circle
+        ctx.fillStyle = '#28a745';
+        ctx.beginPath();
+        ctx.arc(300, 80, 40, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Checkmark
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(280, 80);
+        ctx.lineTo(295, 95);
+        ctx.lineTo(320, 65);
+        ctx.stroke();
+        
+        // Title
+        ctx.fillStyle = '#212529';
+        ctx.font = 'bold 32px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Payment Successful', 300, 160);
+        
+        // Date
+        ctx.font = '16px Arial';
+        ctx.fillStyle = '#6c757d';
+        ctx.fillText(receiptData.date, 300, 190);
+        
+        // White card background
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = 'rgba(0,0,0,0.1)';
+        ctx.shadowBlur = 20;
+        ctx.shadowOffsetY = 4;
+        ctx.fillRect(40, 220, 520, 480);
+        ctx.shadowColor = 'transparent';
+        
+        // Receipt details
+        let y = 270;
+        const leftX = 80;
+        const rightX = 520;
+        
+        // Helper function to draw row
+        const drawRow = (label, value, bold = false) => {
+            ctx.textAlign = 'left';
+            ctx.font = bold ? 'bold 18px Arial' : '16px Arial';
+            ctx.fillStyle = '#6c757d';
+            ctx.fillText(label, leftX, y);
+            
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#212529';
+            ctx.font = bold ? 'bold 20px Arial' : '18px Arial';
+            ctx.fillText(value, rightX, y);
+            y += 45;
+        };
+        
+        // Draw divider line
+        const drawDivider = () => {
+            ctx.strokeStyle = '#e9ecef';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(80, y - 20);
+            ctx.lineTo(520, y - 20);
+            ctx.stroke();
+        };
+        
+        // Details
+        drawRow('Seller', receiptData.sellerName);
+        drawRow('Product', receiptData.productName);
+        drawRow('Quantity', receiptData.quantity.toString());
+        drawRow('Price per Unit', `₱${receiptData.pricePerUnit.toFixed(2)}`);
+        
+        drawDivider();
+        
+        // Total with highlight background
+        ctx.fillStyle = '#f8f9fa';
+        ctx.fillRect(60, y - 30, 480, 50);
+        
+        ctx.textAlign = 'left';
+        ctx.font = 'bold 22px Arial';
+        ctx.fillStyle = '#212529';
+        ctx.fillText('Total Amount', leftX, y);
+        
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#28a745';
+        ctx.font = 'bold 28px Arial';
+        ctx.fillText(`₱${receiptData.totalCost.toFixed(2)}`, rightX, y);
+        
+        // Footer
+        ctx.textAlign = 'center';
+        ctx.font = '14px Arial';
+        ctx.fillStyle = '#6c757d';
+        ctx.fillText('Thank you for your business!', 300, 740);
+        
+        // Convert canvas to blob and download
+        canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `receipt_${Date.now()}.png`;
+            document.body.appendChild(link);
+            link.click();
+            
+            // Cleanup
+            setTimeout(() => {
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }, 100);
+        }, 'image/png');
+    },
     handleProductToggle(event) {
         const isHusked = event.target.checked;
-        // Your database has Husked as ID 1, Unhusked as ID 2
         state.selectedProductId = isHusked ? 1 : 2;
         ui.updateToggleLabels(isHusked);
         const productName = isHusked ? 'Husked Coconuts' : 'Unhusked Coconuts';
@@ -345,11 +470,8 @@ document.addEventListener("DOMContentLoaded", () => {
     el.sellerList?.addEventListener("change", handlers.handleSellerSelection);
     el.confirmSellerBtn?.addEventListener("click", handlers.confirmSellerSelection);
     el.saveSellerBtn?.addEventListener("click", (event) => handlers.handleSaveSeller(event));
-
-    // ✅ NEW: Add event listener for our new toggle switch
     el.productTypeToggle?.addEventListener("change", handlers.handleProductToggle);
 
     handlers.initialPageLoad();
-    // Set the initial active state for the label
     ui.updateToggleLabels(false);
 });
