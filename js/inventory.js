@@ -1,7 +1,7 @@
 class InventoryManager {
     constructor() {
         console.log('1. InventoryManager class instantiated.');
-        this.apiBaseUrl = 'https://landahan-5.onrender.com/api';
+        this.apiBaseUrl = window.API_BASE_URL || 'https://landahan-5.onrender.com/api';
         this.products = [];
         this.currentDelivery = {};
         this.cacheDOMElements();

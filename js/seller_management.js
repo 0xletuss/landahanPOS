@@ -6,7 +6,7 @@ class SellerManagement {
         this.filteredSellers = [];
         this.currentPage = 1;
         this.sellersPerPage = 6;
-        this.apiUrl = 'https://landahan-5.onrender.com/api/sellers';
+        this.apiUrl = window.API_BASE_URL ? window.API_BASE_URL + '/sellers' : 'https://landahan-5.onrender.com/api/sellers';
         this.init();
     }
     

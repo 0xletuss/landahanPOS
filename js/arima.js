@@ -1,5 +1,5 @@
 // Configuration - FIXED: Added /api to match Flask blueprint registration
-const API_BASE = 'https://landahan-5.onrender.com/api/arima'; // ✅ Changed from /arima to /api/arima
+const API_BASE = window.API_BASE_URL ? window.API_BASE_URL + '/arima' : 'https://landahan-5.onrender.com/api/arima'; // ✅ Changed from /arima to /api/arima
 
 // Global chart instance
 let chart = null;

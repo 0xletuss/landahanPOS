@@ -16,7 +16,7 @@
     }
 
     try {
-        const response = await fetch('https://landahan-5.onrender.com/api/verify-session', {
+        const response = await fetch(`${window.API_BASE_URL}/verify-session`, {
             method: 'GET',
             credentials: 'include' // This is crucial for sending the session cookie
         });
@@ -59,7 +59,7 @@ async function logout() {
     const loginPage = `${rootPath}index.html`;
 
     try {
-        await fetch('https://landahan-5.onrender.com/api/logout', {
+        await fetch(`${window.API_BASE_URL}/logout`, {
             method: 'POST',
             credentials: 'include'
         });

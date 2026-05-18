@@ -9,7 +9,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
   message.textContent = '';
   
   try {
-    const res = await fetch("https://landahan-5.onrender.com/api/login", {
+    const res = await fetch(`${window.API_BASE_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -35,7 +35,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 // Optional: Check if user is already logged in when page loads
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    const res = await fetch("https://landahan-5.onrender.com/api/auth-status", {
+    const res = await fetch(`${window.API_BASE_URL}/auth-status`, {
       method: "GET",
       credentials: 'include'
     });

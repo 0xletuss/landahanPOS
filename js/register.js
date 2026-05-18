@@ -23,7 +23,7 @@ document.getElementById('register').addEventListener('submit', async (e) => {
   sessionStorage.setItem('temp_password', password);
 
   try {
-    const res = await fetch("https://landahan-5.onrender.com/api/request-registration-otp", {
+    const res = await fetch(`${window.API_BASE_URL}/request-registration-otp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email })

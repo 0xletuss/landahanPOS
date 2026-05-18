@@ -5,7 +5,7 @@
 class ProfitManager {
     constructor() {
         // API Configuration - Match exactly with home.js pattern
-        this.API_BASE_URL = 'https://landahan-5.onrender.com/api';
+        this.API_BASE_URL = window.API_BASE_URL || 'https://landahan-5.onrender.com/api';
         
         this.currentGroupBy = 'daily';
         this.filters = {

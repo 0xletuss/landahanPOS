@@ -23,7 +23,7 @@ document.getElementById('otpForm').addEventListener('submit', async (e) => {
   try {
     if (step === 1) {
       // Step 1: Request OTP
-      const res = await fetch('https://landahan-5.onrender.com/api/request-reset', {
+      const res = await fetch(`${window.API_BASE_URL}/request-reset`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -45,7 +45,7 @@ document.getElementById('otpForm').addEventListener('submit', async (e) => {
 
     } else if (step === 2) {
       // Step 2: Validate OTP
-      const res = await fetch('https://landahan-5.onrender.com/api/verify-otp', {
+      const res = await fetch(`${window.API_BASE_URL}/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp })
@@ -68,7 +68,7 @@ document.getElementById('otpForm').addEventListener('submit', async (e) => {
 
     } else if (step === 3) {
       // Step 3: Submit new password
-      const res = await fetch('https://landahan-5.onrender.com/api/reset-password', {
+      const res = await fetch(`${window.API_BASE_URL}/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, new_password: newPassword })

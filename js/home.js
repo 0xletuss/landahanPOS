@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://landahan-5.onrender.com/api";
+const API_BASE_URL = window.API_BASE_URL || "https://landahan-5.onrender.com/api";
 
 const state = {
     selectedSellerId: null,
